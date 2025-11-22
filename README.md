@@ -1,10 +1,10 @@
 # LegalHub Frontend
 
-**LegalHub** is a modern web application that democratizes access to legal services through an intuitive ChatGPT-like interface. This repository contains the frontend application that delivers a seamless, conversational user experience for legal assistance, lawyer booking, and case management.
+**LegalHub** is a modern web application that democratizes access to legal services through an intuitive ChatGPT-like interface. This repository contains the React-based frontend application that delivers a seamless, conversational user experience for legal assistance, lawyer booking, and case management.
 
 ## 🌟 Overview
 
-LegalHub is a comprehensive legal technology web platform featuring a **ChatGPT-style conversational interface** as its core experience. Users interact with an AI-powered legal assistant through a modern chat interface, while also accessing additional features like lawyer booking, article creation, and case reporting - all within a unified, responsive web application.
+LegalHub is a comprehensive legal technology web platform featuring a **ChatGPT-style conversational interface** as its core experience. Built with React, the application provides users with an AI-powered legal assistant through a modern chat interface, while also accessing additional features like lawyer booking, article creation, and case reporting - all within a unified, responsive web application.
 
 ## 💬 ChatGPT-Like Interface
 
@@ -131,63 +131,97 @@ The centerpiece of LegalHub is its **conversational AI interface** that mirrors 
 
 ## 🛠️ Technology Stack
 
-_[Recommended stack for ChatGPT-like experience]_
-
 ### Frontend Framework
-- **React** (v18+) with TypeScript - Component-based architecture
-- **Next.js 14+** - Server-side rendering, API routes, and optimization
-- OR **Vite + React** - Fast development with optimal build performance
+- **React 18+** with TypeScript
+  - Component-based architecture
+  - Hooks for state and side effects
+  - Context API for state management
+  - Functional components pattern
+
+### Build Tool
+- **Vite**
+  - Lightning-fast development server
+  - Optimized production builds
+  - Hot Module Replacement (HMR)
+  - Modern ESM-based bundling
 
 ### UI/Design
-- **Tailwind CSS** - Utility-first styling for rapid development
-- **Shadcn/ui** or **Headless UI** - Accessible component primitives
-- **Framer Motion** - Smooth animations and transitions
-- **Lucide Icons** - Modern, consistent icon library
+- **Tailwind CSS** - Utility-first CSS framework for rapid styling
+- **Shadcn/ui** - Accessible, customizable component library built on Radix UI
+- **Radix UI** - Unstyled, accessible component primitives
+- **Framer Motion** - Production-ready animation library
+- **Lucide React** - Beautiful, consistent icon library
 
-### Chat Interface
-- **React Markdown** - Render formatted text responses
+### Chat Interface Components
+- **React Markdown** - Render formatted markdown responses
 - **React Syntax Highlighter** - Code block syntax highlighting
 - **React Virtual** - Efficient rendering of long chat histories
-- **Stream API** - Real-time response streaming
+- **React Textarea Autosize** - Auto-expanding input field
 
 ### State Management
-- **Zustand** or **Redux Toolkit** - Global state management
-- **React Query (TanStack Query)** - Server state and caching
-- **Context API** - Local component state
+- **Zustand** - Lightweight, fast state management
+- **TanStack Query (React Query)** - Server state management and caching
+- **Context API** - Component-level state sharing
 
 ### Data Visualization (Analytics)
-- **Recharts** or **Apache ECharts** - Interactive charts and graphs
-- **React Map GL** or **Leaflet** - Geographic visualizations
-- **D3.js** - Custom data visualizations
+- **Recharts** - Composable chart library built on React
+- **React Leaflet** - Interactive map components for geographic visualization
+- **D3.js** (optional) - Advanced custom visualizations
 
 ### Real-time Features
 - **Socket.io Client** - WebSocket connections for live updates
-- **Server-Sent Events (SSE)** - Streaming responses from API
+- **EventSource / SSE** - Server-Sent Events for AI response streaming
 
 ### Forms & Validation
-- **React Hook Form** - Performant form handling
+- **React Hook Form** - Performant, flexible forms with minimal re-renders
 - **Zod** - TypeScript-first schema validation
-
-### File Handling
 - **React Dropzone** - Drag-and-drop file uploads
-- **PDF.js** - PDF rendering and viewing
 
-### Authentication
-- **NextAuth.js** or **Clerk** - Secure authentication flows
-- **JWT** - Token-based authentication
+### Routing
+- **React Router v6** - Declarative routing for React
+  - Nested routes
+  - Protected routes
+  - Code splitting per route
 
-### Testing
-- **Vitest** - Unit and integration testing
-- **React Testing Library** - Component testing
-- **Playwright** or **Cypress** - E2E testing
+### Authentication & API Integration
+- **Firebase SDK** - Firebase Authentication integration
+- **Axios** - HTTP client for API requests
+- **Firebase Storage** - File upload and storage
+
+### Rich Text Editor
+- **TipTap** or **Lexical** - Modern rich text editor for article creation
+
+### Date & Time
+- **date-fns** - Modern date utility library (lightweight alternative to Moment.js)
+
+### Utilities
+- **clsx** / **classnames** - Conditional className utility
+- **React Hot Toast** - Lightweight notification system
+- **React Use** - Collection of essential React hooks
 
 ### Development Tools
-- **ESLint** - Code linting
+- **TypeScript** - Type safety and better DX
+- **ESLint** - Code linting with React and TypeScript rules
 - **Prettier** - Code formatting
-- **Husky** - Git hooks for code quality
-- **TypeScript** - Type safety
+- **Husky** - Git hooks for pre-commit checks
+- **lint-staged** - Run linters on staged files
+
+### Testing
+- **Vitest** - Fast unit testing framework
+- **React Testing Library** - Component testing utilities
+- **Testing Library User Event** - User interaction simulation
+- **MSW (Mock Service Worker)** - API mocking for tests
+- **Playwright** - End-to-end testing
 
 ## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18+ or higher
+- npm, yarn, or pnpm package manager
+- Firebase project setup
+- Backend API running (legalhub-backend)
+
+### Installation
 
 ```bash
 # Clone the repository
@@ -204,8 +238,8 @@ yarn install
 pnpm install
 
 # Set up environment variables
-cp .env.example .env.local
-# Edit .env.local with your configuration
+cp .env.example .env
+# Edit .env with your configuration
 
 # Run development server
 npm run dev
@@ -214,13 +248,48 @@ yarn dev
 # or
 pnpm dev
 
-# Application will be available at http://localhost:3000
+# Application will be available at http://localhost:5173
+```
 
-# Build for production
+### Build for Production
+
+```bash
+# Create optimized production build
 npm run build
 
-# Start production server
+# Preview production build locally
+npm run preview
+
+# Run production build with Node server (if using SSR)
 npm run start
+```
+
+## 📋 Environment Variables
+
+```env
+# API Configuration
+VITE_API_URL=http://localhost:8000
+VITE_WS_URL=ws://localhost:8000
+
+# Firebase Configuration
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your-project-id
+VITE_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=123456789
+VITE_FIREBASE_APP_ID=1:123456789:web:abcdef
+VITE_FIREBASE_MEASUREMENT_ID=G-XXXXXXXXXX
+
+# Features
+VITE_ENABLE_VOICE=true
+VITE_ENABLE_ANALYTICS=true
+VITE_ENABLE_DARK_MODE=true
+
+# Analytics (Optional)
+VITE_GA_TRACKING_ID=G-XXXXXXXXXX
+
+# Payment (Optional)
+VITE_STRIPE_PUBLIC_KEY=pk_test_xxxxx
 ```
 
 ## 📁 Project Structure
@@ -230,228 +299,369 @@ legalhub-frontend/
 ├── public/                 # Static assets
 │   ├── images/
 │   ├── fonts/
-│   └── icons/
+│   └── favicon.ico
 ├── src/
-│   ├── app/               # Next.js app directory (if using Next.js)
-│   │   ├── (auth)/        # Authentication pages
-│   │   ├── (dashboard)/   # Dashboard pages
-│   │   ├── chat/          # Main chat interface
-│   │   ├── lawyers/       # Lawyer directory & profiles
-│   │   ├── articles/      # Article pages
-│   │   ├── cases/         # Case reporting
-│   │   └── analytics/     # Analytics dashboard
+│   ├── main.tsx           # Application entry point
+│   ├── App.tsx            # Root component
+│   ├── vite-env.d.ts      # Vite type declarations
+│   │
 │   ├── components/        # Reusable UI components
-│   │   ├── ui/           # Base UI components
+│   │   ├── ui/           # Shadcn/ui components
+│   │   │   ├── button.tsx
+│   │   │   ├── input.tsx
+│   │   │   ├── card.tsx
+│   │   │   └── ...
 │   │   ├── chat/         # Chat-specific components
+│   │   │   ├── ChatMessage.tsx
+│   │   │   ├── ChatInput.tsx
+│   │   │   ├── ChatHistory.tsx
+│   │   │   └── MessageBubble.tsx
 │   │   ├── forms/        # Form components
 │   │   ├── layouts/      # Layout components
+│   │   │   ├── MainLayout.tsx
+│   │   │   ├── ChatLayout.tsx
+│   │   │   └── DashboardLayout.tsx
 │   │   └── shared/       # Shared components
-│   ├── features/         # Feature-specific modules
-│   │   ├── chat/         # Chat feature logic
-│   │   ├── lawyers/      # Lawyer feature logic
-│   │   ├── articles/     # Articles feature logic
-│   │   ├── cases/        # Case reporting logic
-│   │   └── analytics/    # Analytics logic
+│   │       ├── Header.tsx
+│   │       ├── Sidebar.tsx
+│   │       └── Footer.tsx
+│   │
+│   ├── pages/            # Page components (routes)
+│   │   ├── Home.tsx
+│   │   ├── Chat.tsx
+│   │   ├── Lawyers.tsx
+│   │   ├── LawyerProfile.tsx
+│   │   ├── Articles.tsx
+│   │   ├── ArticleEditor.tsx
+│   │   ├── CaseReport.tsx
+│   │   ├── Dashboard.tsx
+│   │   ├── Analytics.tsx
+│   │   ├── Login.tsx
+│   │   └── Register.tsx
+│   │
+│   ├── features/         # Feature-specific logic
+│   │   ├── chat/
+│   │   │   ├── api/
+│   │   │   ├── hooks/
+│   │   │   ├── store/
+│   │   │   └── utils/
+│   │   ├── lawyers/
+│   │   ├── articles/
+│   │   ├── cases/
+│   │   └── analytics/
+│   │
 │   ├── hooks/            # Custom React hooks
 │   │   ├── useChat.ts
 │   │   ├── useAuth.ts
-│   │   └── useWebSocket.ts
+│   │   ├── useWebSocket.ts
+│   │   ├── useLocalStorage.ts
+│   │   └── useDebounce.ts
+│   │
 │   ├── lib/              # Utility libraries
-│   │   ├── api/          # API client setup
-│   │   ├── utils/        # Helper functions
-│   │   └── constants/    # App constants
-│   ├── store/            # State management
-│   │   ├── slices/       # Redux slices or Zustand stores
+│   │   ├── api.ts        # API client (Axios setup)
+│   │   ├── firebase.ts   # Firebase configuration
+│   │   ├── utils.ts      # Helper functions
+│   │   └── constants.ts  # App constants
+│   │
+│   ├── store/            # Zustand stores
+│   │   ├── authStore.ts
+│   │   ├── chatStore.ts
+│   │   ├── themeStore.ts
 │   │   └── index.ts
+│   │
 │   ├── types/            # TypeScript type definitions
+│   │   ├── chat.ts
+│   │   ├── user.ts
+│   │   ├── lawyer.ts
+│   │   ├── article.ts
+│   │   └── index.ts
+│   │
 │   ├── styles/           # Global styles
-│   │   ├── globals.css
-│   │   └── themes/
+│   │   ├── index.css     # Main stylesheet with Tailwind
+│   │   └── themes.css    # Theme variables
+│   │
+│   ├── routes/           # Route configuration
+│   │   ├── index.tsx
+│   │   ├── ProtectedRoute.tsx
+│   │   └── routes.ts
+│   │
 │   └── config/           # Configuration files
+│       └── site.ts
+│
 ├── tests/                # Test files
 │   ├── unit/
 │   ├── integration/
 │   └── e2e/
+│
 ├── .env.example          # Environment variables template
-├── .eslintrc.js         # ESLint configuration
+├── .eslintrc.cjs        # ESLint configuration
 ├── .prettierrc          # Prettier configuration
-├── next.config.js       # Next.js configuration
 ├── tailwind.config.js   # Tailwind CSS configuration
 ├── tsconfig.json        # TypeScript configuration
+├── vite.config.ts       # Vite configuration
+├── postcss.config.js    # PostCSS configuration
 └── package.json
 ```
 
 ## 🎨 Design System
 
 ### Visual Design
-- **Typography**: Clean, readable font hierarchy (Inter, SF Pro, or similar)
+- **Typography**: Inter or SF Pro Display font family
 - **Color Palette**: 
-  - Primary: Professional blue/teal
-  - Secondary: Accent colors for CTAs
-  - Neutral: Grayscale for text and backgrounds
-  - Semantic: Success, warning, error, info colors
-- **Spacing**: Consistent 8px grid system
-- **Border Radius**: Soft corners for modern feel
-- **Shadows**: Subtle elevation for depth
+  - Primary: Professional blue (#3B82F6)
+  - Secondary: Teal accent (#14B8A6)
+  - Neutral: Tailwind gray scale
+  - Semantic: Success, warning, error, info colors from Tailwind
+- **Spacing**: Tailwind's 4px base spacing system
+- **Border Radius**: Soft corners (rounded-lg, rounded-xl)
+- **Shadows**: Subtle elevation using Tailwind shadow utilities
 
-### Component Library
-- Buttons (primary, secondary, ghost, icon)
-- Input fields and text areas
-- Select dropdowns and multi-select
-- Modal dialogs and drawers
-- Toast notifications
-- Loading states and skeletons
-- Cards and panels
-- Tabs and accordions
-- Tables and data grids
-- Progress indicators
+### Key Component Examples
 
-### Chat-Specific Design
-- Message bubbles (user vs AI)
-- Code blocks with copy button
-- Markdown rendering
-- File attachments display
-- Reaction emojis
-- Timestamp formatting
-- Read receipts
+```tsx
+// Button Component (Shadcn/ui)
+import { Button } from "@/components/ui/button"
+
+<Button variant="default" size="lg">Send Message</Button>
+<Button variant="outline">Cancel</Button>
+<Button variant="ghost" size="icon"><IconName /></Button>
+
+// Chat Message Component
+<ChatMessage 
+  message={message}
+  isUser={message.role === 'user'}
+  isStreaming={isStreaming}
+/>
+
+// Card Component
+<Card>
+  <CardHeader>
+    <CardTitle>Lawyer Profile</CardTitle>
+  </CardHeader>
+  <CardContent>
+    {/* Content */}
+  </CardContent>
+</Card>
+```
 
 ## 🌐 Internationalization (i18n)
 
-```javascript
+```typescript
+// Using react-i18next
+import { useTranslation } from 'react-i18next';
+
+const { t, i18n } = useTranslation();
+
 // Supported languages
 const languages = [
   { code: 'en', name: 'English' },
   { code: 'fr', name: 'Français' },
   { code: 'es', name: 'Español' },
-  // Add more languages as needed
 ];
+
+// Change language
+i18n.changeLanguage('fr');
 ```
 
-- Multi-language chat interface
-- Translated UI elements
-- Language-specific legal content
-- RTL language support
-- Auto-detect user language
-- Easy language switching
+## 🔒 Security Best Practices
 
-## 🔒 Security & Privacy
-
-- **Authentication**: Secure login with JWT/session tokens
-- **Authorization**: Role-based access control (RBAC)
-- **Data Encryption**: End-to-end encryption for sensitive data
-- **Input Sanitization**: XSS and injection protection
-- **HTTPS Only**: Secure communication
-- **CSRF Protection**: Token-based CSRF prevention
-- **Rate Limiting**: Prevent abuse and DoS attacks
-- **Anonymous Mode**: No tracking for anonymous case reports
-- **Privacy Controls**: Granular user data permissions
-- **Audit Logs**: Track sensitive operations
+- **Environment Variables**: Never commit `.env` files
+- **API Keys**: Use environment variables for sensitive keys
+- **Authentication**: Store JWT tokens securely (httpOnly cookies preferred)
+- **Input Sanitization**: Validate all user inputs with Zod
+- **XSS Prevention**: React automatically escapes JSX content
+- **CSRF Protection**: Include CSRF tokens for state-changing requests
+- **Content Security Policy**: Configure CSP headers
+- **HTTPS Only**: Enforce secure connections in production
 
 ## ♿ Accessibility (WCAG 2.1 AA)
 
-- Keyboard navigation throughout
-- Screen reader compatibility
-- Focus management and visual indicators
-- ARIA labels and landmarks
-- Color contrast compliance
-- Alternative text for images
-- Accessible forms with proper labels
-- Skip navigation links
-- Resize text without breaking layout
-- No flashing content
+```tsx
+// Example: Accessible button
+<button
+  aria-label="Send message"
+  aria-disabled={isDisabled}
+  onClick={handleClick}
+>
+  <SendIcon aria-hidden="true" />
+  Send
+</button>
+
+// Example: Accessible form
+<label htmlFor="email">Email Address</label>
+<input
+  id="email"
+  type="email"
+  aria-required="true"
+  aria-invalid={hasError}
+  aria-describedby={hasError ? "email-error" : undefined}
+/>
+{hasError && <p id="email-error" role="alert">{errorMessage}</p>}
+```
 
 ## 📊 Performance Optimization
 
-- **Code Splitting**: Load only necessary code
-- **Lazy Loading**: Components and routes on demand
-- **Image Optimization**: Next.js Image or responsive images
-- **Bundle Analysis**: Keep bundle sizes minimal
-- **Caching Strategy**: Browser and API caching
-- **CDN**: Serve static assets from CDN
-- **Lighthouse Score**: Target 90+ across all metrics
-- **Core Web Vitals**: Optimize LCP, FID, CLS
+### Code Splitting
 
-## 🧪 Testing Strategy
+```tsx
+// Lazy load routes
+const Chat = lazy(() => import('./pages/Chat'));
+const Analytics = lazy(() => import('./pages/Analytics'));
 
-```bash
-# Unit tests
-npm run test
-
-# Integration tests
-npm run test:integration
-
-# E2E tests
-npm run test:e2e
-
-# Coverage report
-npm run test:coverage
+// Use Suspense
+<Suspense fallback={<LoadingSpinner />}>
+  <Chat />
+</Suspense>
 ```
 
-- Unit tests for utilities and hooks
-- Component tests with React Testing Library
-- Integration tests for features
-- E2E tests for critical user flows
-- Accessibility testing with axe
-- Visual regression testing
+### Image Optimization
+
+```tsx
+// Use modern image formats and lazy loading
+<img 
+  src="lawyer.webp" 
+  alt="Lawyer profile"
+  loading="lazy"
+  width={300}
+  height={300}
+/>
+```
+
+### Bundle Analysis
+
+```bash
+# Analyze bundle size
+npm run build -- --analyze
+```
+
+## 🧪 Testing
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm test -- --watch
+
+# Run tests with coverage
+npm test -- --coverage
+
+# Run E2E tests
+npm run test:e2e
+
+# Run specific test file
+npm test -- ChatMessage.test.tsx
+```
+
+### Example Test
+
+```tsx
+import { render, screen } from '@testing-library/react';
+import { ChatMessage } from './ChatMessage';
+
+describe('ChatMessage', () => {
+  it('renders user message correctly', () => {
+    render(
+      <ChatMessage 
+        message={{ role: 'user', content: 'Hello!' }}
+        isUser={true}
+      />
+    );
+    
+    expect(screen.getByText('Hello!')).toBeInTheDocument();
+  });
+});
+```
 
 ## 📦 Deployment
 
-### Recommended Platforms
-- **Vercel** (optimal for Next.js)
-- **Netlify**
-- **AWS Amplify**
-- **Cloudflare Pages**
-- **Docker + Custom VPS**
+### Build and Deploy
 
-### Environment Variables
-```env
-# API Configuration
-NEXT_PUBLIC_API_URL=https://api.legalhub.com
-NEXT_PUBLIC_WS_URL=wss://api.legalhub.com
+```bash
+# Build for production
+npm run build
 
-# Authentication
-NEXT_PUBLIC_AUTH_DOMAIN=auth.legalhub.com
-AUTH_SECRET=your-secret-key
-
-# Analytics
-NEXT_PUBLIC_ANALYTICS_ID=your-analytics-id
-
-# Feature Flags
-NEXT_PUBLIC_ENABLE_VOICE=true
-NEXT_PUBLIC_ENABLE_DARK_MODE=true
+# Output will be in /dist directory
 ```
 
-### CI/CD Pipeline
-- Automated testing on pull requests
-- Preview deployments for branches
-- Production deployment on merge to main
-- Automated rollback capabilities
+### Recommended Hosting Platforms
+
+1. **Vercel** (recommended)
+   ```bash
+   npm install -g vercel
+   vercel
+   ```
+
+2. **Netlify**
+   ```bash
+   npm install -g netlify-cli
+   netlify deploy --prod
+   ```
+
+3. **Firebase Hosting**
+   ```bash
+   firebase init hosting
+   firebase deploy
+   ```
+
+4. **AWS S3 + CloudFront**
+5. **Cloudflare Pages**
+
+### Environment-specific Builds
+
+```bash
+# Development
+npm run dev
+
+# Staging
+npm run build -- --mode staging
+
+# Production
+npm run build -- --mode production
+```
 
 ## 🤝 Contributing
 
 We welcome contributions! Please follow these guidelines:
 
+### Development Workflow
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+3. Make your changes
+4. Run tests (`npm test`)
+5. Run linting (`npm run lint`)
+6. Format code (`npm run format`)
+7. Commit your changes (`git commit -m 'Add amazing feature'`)
+8. Push to the branch (`git push origin feature/amazing-feature`)
+9. Open a Pull Request
 
-### Development Standards
-- Write TypeScript with proper typing
-- Follow ESLint and Prettier rules
-- Write tests for new features
-- Update documentation
-- Keep components small and focused
-- Use semantic commit messages
+### Code Style
+- Use TypeScript for type safety
+- Follow React best practices and hooks guidelines
+- Use functional components with hooks
+- Keep components small and focused (< 200 lines)
+- Write meaningful variable and function names
+- Add JSDoc comments for complex logic
+- Use semantic HTML elements
+
+### Commit Messages
+Follow conventional commits:
+```
+feat: Add lawyer search filters
+fix: Resolve chat message streaming issue
+docs: Update README with deployment instructions
+style: Format code with Prettier
+refactor: Simplify chat state management
+test: Add tests for ChatMessage component
+```
 
 ## 🔗 Related Repositories
 
-- [LegalHub Backend](https://github.com/sangwajesly/legalhub-backend) - API and server-side logic
+- [LegalHub Backend](https://github.com/sangwajesly/legalhub-backend) - FastAPI backend with Firebase and Gemini
 
 ## 📄 License
 
-_[Add your license information]_
+[Add your license information]
 
 ## 📞 Contact & Support
 
@@ -463,11 +673,13 @@ For questions, suggestions, or support:
 
 ## 🙏 Acknowledgments
 
-- Anthropic Claude for AI capabilities
-- OpenAI for ChatGPT inspiration
-- React and Next.js communities
-- Open source contributors
+- React team for the amazing framework
+- Vite team for the blazing-fast build tool
+- Shadcn for the beautiful component library
+- Tailwind CSS for the utility-first approach
+- Firebase for backend services
+- Open source community
 
 ---
 
-**Mission**: Delivering an intuitive, ChatGPT-like experience that makes legal knowledge and services accessible to everyone, everywhere.
+**Mission**: Delivering an intuitive, ChatGPT-like React experience that makes legal knowledge and services accessible to everyone, everywhere.
