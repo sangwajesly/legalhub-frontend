@@ -1,0 +1,8 @@
+// Export all home page components
+export { Hero } from './Hero';
+export { TrustSignals } from './TrustSignals';
+export { ServiceSegmentation } from './ServiceSegmentation';
+export { HowItWorks } from './HowItWorks';
+export { Features } from './Features';
+export { FinalCTA } from './FinalCTA';
+export { Footer } from './Footer';

@@ -1,104 +1,104 @@
 # LegalHub Frontend
 
 **LegalHub** is a modern web application that democratizes access to legal services through an intuitive ChatGPT-like interface. This repository contains the React-based frontend application that delivers a seamless, conversational user experience for legal assistance, lawyer booking, and case management.
+# LegalHub Frontend (Next.js)
 
-## 🌟 Overview
+**LegalHub** is a web platform that connects citizens with legal information and professionals via an AI-assisted conversational interface. This repository now contains a Next.js-based frontend application in the `nextjs-app/` folder. The backend referenced in `BackendREADME.md` provides API context only — this repo's focus is the frontend.
 
-LegalHub is a comprehensive legal technology web platform featuring a **ChatGPT-style conversational interface** as its core experience. Built with React, the application provides users with an AI-powered legal assistant through a modern chat interface, while also accessing additional features like lawyer booking, article creation, and case reporting - all within a unified, responsive web application.
+**This README** documents the current Next.js frontend structure, stack, and how to run the app locally for development.
 
-## 💬 ChatGPT-Like Interface
+**Status:** Minimum Viable Frontend implemented (Chat interface, Lawyer discovery & booking, Bookings dashboard). Work is in progress for Articles, Case Reporting, and Analytics.
 
-The centerpiece of LegalHub is its **conversational AI interface** that mirrors the user experience of ChatGPT:
+**Project Layout (top-level)**
+- `BackendREADME.md` : Backend architecture & API reference (context only)
+- `README.md` : This file
+- `nextjs-app/` : Next.js application (source code, see below)
 
-### Chat Interface Features
-- **Modern Chat UI**: Clean, intuitive chat interface similar to ChatGPT with message bubbles, smooth animations, and real-time responses
-- **Streaming Responses**: Token-by-token response streaming for a natural conversation flow
-- **Conversation History**: Sidebar with saved chat sessions that users can revisit anytime
-- **Message Actions**: Copy, share, regenerate responses, and provide feedback on answers
-- **Rich Formatting**: Markdown support with code syntax highlighting, tables, lists, and formatted text
-- **Follow-up Questions**: Context-aware suggested follow-ups based on conversation
-- **Conversation Management**: 
-  - Create new chat sessions
-  - Rename conversations
-  - Delete chat history
-  - Search through past conversations
-  - Pin important conversations
-- **Multi-turn Conversations**: Maintain context across multiple exchanges for natural dialogue
-- **Typing Indicators**: Real-time typing animations when AI is generating responses
-- **Error Handling**: Graceful error messages with retry options
+**Next.js App – Key Locations**
+- `nextjs-app/app/` : App router pages (home, `/chat`, `/lawyers`, `/bookings`)
+- `nextjs-app/components/` : Reusable React components (chat, lawyers, UI)
+- `nextjs-app/lib/` : Utilities and API client (`api-client.ts`) and stores
+- `nextjs-app/types/` : TypeScript types for models (Message, Lawyer, Booking, etc.)
+- `nextjs-app/styles/` : Global CSS & Tailwind setup
+- `nextjs-app/public/` : Static assets
+- `nextjs-app/package.json` : Frontend dependencies and scripts
 
-### Chat Experience Design
-- **Split-screen Layout**: Chat interface on the left, additional features accessible via sidebar/menu
-- **Distraction-free Mode**: Full-screen chat option for focused conversations
-- **Mobile-optimized**: Touch-friendly interface with swipe gestures
-- **Dark/Light Themes**: Theme toggle for comfortable viewing in any lighting
-- **Accessibility**: Keyboard shortcuts, screen reader support, and WCAG compliance
+**Implemented Features**
+- Chat UI (ChatGPT-like experience)
+  - Streaming-style responses, markdown rendering, conversation history, regenerate & feedback
+- Lawyer Discovery & Booking
+  - Directory, filters (specialization, location, rating, price), profile modal, booking modal
+- Bookings Dashboard
+  - View/manage user bookings with status badges and actions
 
-## 🎯 Core Features & Pages
+**Tech Stack & Tools**
+- Framework: `Next.js 14` (App Router)
+- Language: `TypeScript`
+- Styling: `Tailwind CSS`
+- State: `zustand`
+- HTTP: `axios` (centralized `api-client.ts`)
+- Markdown & Code: `react-markdown`, `react-syntax-highlighter`
+- Notifications: `react-hot-toast`
+- UI animations: `framer-motion`
+- Charts (planned): `recharts`
 
-### 1. **AI Legal Assistant (Main Chat Interface)**
-- **Home/Landing Page**: Welcome screen with sample prompts and feature highlights
-- **Chat Interface**: Primary interaction point - ChatGPT-like conversational UI
-- **Plain Language Mode**: Automatic simplification of legal jargon
-- **Language Selection**: Multi-language support with language switcher in chat
-- **Voice Input/Output**: Speak questions and hear responses (optional)
-- **Document Analysis**: Upload legal documents for AI analysis and explanation
-- **Citation & Sources**: Linked references to laws and legal precedents
-- **Export Conversations**: Download chat history as PDF or text
+**Local Development (quick start)**
 
-### 2. **Lawyer Discovery & Booking**
-- **Lawyer Directory**: Browse and search verified legal professionals
-- **Advanced Filters**: Filter by specialization, location, experience, rating, and availability
-- **Lawyer Profiles**: Comprehensive profiles with credentials, reviews, and success rates
-- **Consultation Booking**: 
-  - Interactive calendar view
-  - Time slot selection
-  - Video or in-person consultation options
-  - Instant or scheduled bookings
-- **Booking Dashboard**: Manage upcoming and past consultations
-- **Integrated Messaging**: Communicate with lawyers through the platform
-- **Payment Integration**: Secure payment processing for consultations
+Prerequisites
+- Node 18+ (use `nvm`, `nvm-windows`, or `Volta` to manage versions)
+- npm (or `pnpm`/`yarn` if preferred)
 
-### 3. **Legal Knowledge Hub**
-- **Article Feed**: Browse legal articles, guides, and insights
-- **Read & Write**: 
-  - Citizens can share experiences and tips
-  - Lawyers can publish professional articles and legal updates
-- **Rich Text Editor**: Format articles with images, videos, and embedded content
-- **Categories & Topics**: Browse by legal domains (family law, criminal law, business law, etc.)
-- **Search & Discovery**: Full-text search with filters
-- **Engagement**: Like, comment, bookmark, and share articles
-- **Author Profiles**: Follow favorite lawyers and contributors
-- **Recommended Reading**: Personalized article suggestions
+Commands (run from the repository root or from `nextjs-app`):
 
-### 4. **Anonymous Case Reporting**
-- **Flexible Reporting Options**:
-  - **Anonymous Mode**: Report sensitive cases without revealing identity
-  - **Identified Mode**: Report with full credentials for legal action
-- **Guided Reporting Form**: Step-by-step wizard for case submission
-- **Evidence Upload**: Attach documents, images, and supporting files
-- **Case Categorization**: Select case type, severity, and jurisdiction
-- **Location Services**: Manual or GPS-based location input
-- **Case Tracking Dashboard**: Monitor case status and updates
-- **Secure Communication**: Encrypted messaging about case details
-- **Privacy Controls**: Granular control over data sharing and visibility
+1. Change into the Next app folder
 
-### 5. **Analytics Dashboard (NGO/Government)**
-- **Data Visualization**: Interactive charts, graphs, and heat maps
-- **Case Overview**:
-  - Cases by category, location, and timeline
-  - Demographic analysis
-  - Severity distribution
-  - Resolution rates and timelines
-- **Geographic Insights**: Map-based visualization of case concentration
-- **Trend Analysis**: Identify emerging legal issues and patterns
-- **Community Profiles**: Analyze legal challenges by demographics
-- **Campaign Planning**: Data-driven insights for sensitization campaigns
-- **Custom Reports**: Generate and export detailed reports
-- **Real-time Monitoring**: Live data updates and alerts
-- **Comparative Analysis**: Compare metrics across regions and time periods
-- **Impact Measurement**: Track outcomes of interventions and programs
+```bash
+cd /c/Users/DESTO/Desktop/legalhub-frontend/nextjs-app
+```
 
+2. (Optional) Pin Node version locally
+
+```bash
+echo "18" > .nvmrc
+```
+
+3. Install dependencies
+
+```bash
+npm install
+# or: pnpm install
+```
+
+4. Copy environment example and edit if needed
+
+```bash
+cp .env.example .env.local
+# Edit .env.local to configure NEXT_PUBLIC_API_BASE_URL and any keys
+```
+
+5. Start development server
+
+```bash
+npm run dev
+# Visit http://localhost:3000
+```
+
+Notes on backend integration
+- The frontend expects a backend API (see `BackendREADME.md`) at `NEXT_PUBLIC_API_BASE_URL` (default: `http://localhost:5000/api`). If your backend isn't running, UI interactions that call APIs will show errors but components (modals, filters, forms) can still be exercised in the browser.
+
+Testing and quick mocks
+- To test UI flows without a backend you can:
+  - Temporarily mock `lib/api-client.ts` to return stubbed data, or
+  - Run the frontend and use browser devtools to intercept/fake network responses.
+
+What to do next
+- Run the dev server and confirm the following pages:
+  - `/chat` : Chat interface
+  - `/lawyers` : Lawyer listing and booking
+  - `/bookings` : User bookings dashboard
+- I can add a small mock server to simulate backend endpoints if you want to test end-to-end interactions without the real backend.
+
+If you'd like, I can also add an updated `nextjs-app/README.md` with these steps and a short development checklist.
 ## 👥 User Roles & Dashboards
 
 ### Citizens/Users
