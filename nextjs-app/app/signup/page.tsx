@@ -2,11 +2,10 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-// import { apiClient } from '@/lib/api-client';
-// import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 const SignupPage: React.FC = () => {
-  // const router = useRouter();
+  const { signUp, signInWithGoogle } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,13 +22,15 @@ const SignupPage: React.FC = () => {
       return;
     }
 
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long.');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      // await apiClient.signup({ name, email, password });
-      // router.push('/login?signup=success');
-      console.log('Signing up with:', { name, email, password });
-      alert('Signup successful! (This is a placeholder)');
+      await signUp(email, password, name);
     } catch (err: any) {
       setError(err.message || 'Failed to sign up. Please try again.');
     } finally {
@@ -37,11 +38,16 @@ const SignupPage: React.FC = () => {
     }
   };
   
-  const handleGoogleSignup = () => {
-    // This would typically redirect to a Google OAuth flow
-    // window.location.href = apiClient.getGoogleAuthUrl();
-    console.log('Redirecting to Google signup...');
-    alert('Redirecting to Google signup... (This is a placeholder)');
+  const handleGoogleSignup = async () => {
+    setError(null);
+    setIsSubmitting(true);
+    try {
+      await signInWithGoogle();
+    } catch (err: any) {
+      setError(err.message || 'Failed to sign up with Google.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

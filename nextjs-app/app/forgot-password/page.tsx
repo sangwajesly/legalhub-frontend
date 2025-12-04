@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-// import { apiClient } from '@/lib/api-client';
+import { useAuth } from '@/contexts/AuthContext';
 
 const ForgotPasswordPage: React.FC = () => {
+  const { resetPassword } = useAuth();
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -16,8 +17,7 @@ const ForgotPasswordPage: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // await apiClient.forgotPassword({ email });
-      console.log('Requesting password reset for:', email);
+      await resetPassword(email);
       setSuccess(true);
     } catch (err: any) {
       setError(err.message || 'Failed to send reset email. Please try again.');

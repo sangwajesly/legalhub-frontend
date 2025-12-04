@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
 import '../styles/globals.css';
+import Navigation from '@/components/shared/Navigation';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { Toaster } from 'react-hot-toast';
 
 export const metadata: Metadata = {
   title: 'LegalHub - Legal Assistance Made Simple',
@@ -24,7 +27,11 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>
-        {children}
+        <AuthProvider>
+          <Navigation />
+          {children}
+          <Toaster position="top-right" />
+        </AuthProvider>
       </body>
     </html>
   );

@@ -2,12 +2,10 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-// Assuming apiClient is set up for auth endpoints
-// import { apiClient } from '@/lib/api-client';
-// import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 const LoginPage: React.FC = () => {
-  // const router = useRouter();
+  const { signIn, signInWithGoogle } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -19,10 +17,7 @@ const LoginPage: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // await apiClient.login({ email, password });
-      // router.push('/dashboard'); // Or wherever you want to redirect after login
-      console.log('Logging in with:', { email, password });
-      alert('Login successful! (This is a placeholder)');
+      await signIn(email, password);
     } catch (err: any) {
       setError(err.message || 'Failed to login. Please check your credentials.');
     } finally {
@@ -30,11 +25,16 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
-    // This would typically redirect to a Google OAuth flow
-    // window.location.href = apiClient.getGoogleAuthUrl();
-    console.log('Redirecting to Google login...');
-    alert('Redirecting to Google login... (This is a placeholder)');
+  const handleGoogleLogin = async () => {
+    setError(null);
+    setIsSubmitting(true);
+    try {
+      await signInWithGoogle();
+    } catch (err: any) {
+      setError(err.message || 'Failed to sign in with Google.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

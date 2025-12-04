@@ -19,7 +19,7 @@ class ApiClient {
   private baseURL: string;
 
   constructor() {
-    this.baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000/api';
+    this.baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://legalhub-xwht.onrender.com/api';
     this.client = axios.create({
       baseURL: this.baseURL,
       headers: {
@@ -27,14 +27,32 @@ class ApiClient {
       },
     });
 
+    // Note: Auth token is set via setAuthToken method called from AuthContext
+    // This ensures tokens are always fresh when making requests
+
     // Add response interceptor for error handling
     this.client.interceptors.response.use(
       (response) => response,
       (error) => {
         console.error('API Error:', error.response?.data || error.message);
+        if (error.response?.status === 401) {
+          // Handle unauthorized - could redirect to login
+          if (typeof window !== 'undefined') {
+            console.warn('Unauthorized request - user may need to re-authenticate');
+          }
+        }
         return Promise.reject(error);
       }
     );
+  }
+
+  // Method to manually set auth token (for server-side or special cases)
+  setAuthToken(token: string | null) {
+    if (token) {
+      this.client.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    } else {
+      delete this.client.defaults.headers.common['Authorization'];
+    }
   }
 
   // ============ CHAT ENDPOINTS ============
