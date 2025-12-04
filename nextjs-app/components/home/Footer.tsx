@@ -7,21 +7,21 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900 text-gray-100">
+    <footer className="bg-white border-t border-border">
       {/* Main Footer Content */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-12">
           {/* Column 1: Brand & Mission */}
           <div>
             <div className="mb-6">
-              <h3 className="text-2xl font-bold text-white mb-2">LegalHub</h3>
-              <p className="text-gray-400 text-sm leading-relaxed">
+              <h3 className="text-xl font-semibold text-primary mb-2">LegalHub</h3>
+              <p className="text-secondary text-sm leading-relaxed">
                 Making legal help accessible and affordable for everyone.
               </p>
             </div>
 
             {/* Social Links */}
-            <div className="flex gap-4 mb-6">
+            <div className="flex gap-3 mb-6">
               {[
                 { icon: '📘', label: 'Facebook', href: '#' },
                 { icon: '𝕏', label: 'Twitter', href: '#' },
@@ -31,7 +31,7 @@ export function Footer() {
                 <a
                   key={social.label}
                   href={social.href}
-                  className="text-gray-400 hover:text-white transition-colors text-lg"
+                  className="text-muted hover:text-primary transition-colors text-base"
                   aria-label={social.label}
                   title={social.label}
                 >
@@ -41,17 +41,17 @@ export function Footer() {
             </div>
 
             {/* Email Signup */}
-            <div className="bg-gray-800 rounded-lg p-4">
-              <p className="text-sm text-gray-300 mb-2 font-semibold">Subscribe for updates</p>
+            <div className="bg-light rounded-lg p-4 border border-border">
+              <p className="text-sm text-primary mb-2 font-medium">Subscribe for updates</p>
               <form className="flex">
                 <input
                   type="email"
                   placeholder="Your email"
-                  className="flex-1 px-3 py-2 bg-gray-700 text-white text-sm rounded-l placeholder-gray-500 focus:outline-none"
+                  className="flex-1 px-3 py-2 bg-white border border-border text-primary text-sm rounded-l-lg placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 />
                 <button
                   type="submit"
-                  className="px-3 py-2 bg-blue-600 text-white text-sm font-semibold rounded-r hover:bg-blue-700 transition-colors"
+                  className="px-4 py-2 bg-primary text-white text-sm font-medium rounded-r-lg hover:bg-primary/90 transition-colors"
                 >
                   Join
                 </button>
@@ -61,8 +61,8 @@ export function Footer() {
 
           {/* Column 2: Products */}
           <div>
-            <h4 className="text-lg font-bold text-white mb-6">Our Services</h4>
-            <ul className="space-y-4">
+            <h4 className="text-base font-semibold text-primary mb-4">Our Services</h4>
+            <ul className="space-y-3">
               {[
                 { label: 'Start Chat', href: '/chat' },
                 { label: 'Find a Lawyer', href: '/lawyers' },
@@ -73,7 +73,7 @@ export function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="text-secondary hover:text-primary transition-colors text-sm"
                   >
                     {link.label}
                   </Link>
@@ -84,8 +84,8 @@ export function Footer() {
 
           {/* Column 3: Support */}
           <div>
-            <h4 className="text-lg font-bold text-white mb-6">Help & Support</h4>
-            <ul className="space-y-4">
+            <h4 className="text-base font-semibold text-primary mb-4">Help & Support</h4>
+            <ul className="space-y-3">
               {[
                 { label: 'FAQ', href: '#' },
                 { label: 'Contact Us', href: '#' },
@@ -96,7 +96,7 @@ export function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="text-secondary hover:text-primary transition-colors text-sm"
                   >
                     {link.label}
                   </Link>
@@ -107,8 +107,8 @@ export function Footer() {
 
           {/* Column 4: Legal */}
           <div>
-            <h4 className="text-lg font-bold text-white mb-6">Legal</h4>
-            <ul className="space-y-4">
+            <h4 className="text-base font-semibold text-primary mb-4">Legal</h4>
+            <ul className="space-y-3">
               {[
                 { label: 'Privacy Policy', href: '#' },
                 { label: 'Terms of Service', href: '#' },
@@ -119,7 +119,7 @@ export function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="text-secondary hover:text-primary transition-colors text-sm"
                   >
                     {link.label}
                   </Link>
@@ -130,8 +130,8 @@ export function Footer() {
 
           {/* Column 5: Company */}
           <div>
-            <h4 className="text-lg font-bold text-white mb-6">About Us</h4>
-            <ul className="space-y-4">
+            <h4 className="text-base font-semibold text-primary mb-4">About Us</h4>
+            <ul className="space-y-3">
               {[
                 { label: 'About LegalHub', href: '#' },
                 { label: 'Our Mission', href: '#' },
@@ -142,7 +142,7 @@ export function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="text-secondary hover:text-primary transition-colors text-sm"
                   >
                     {link.label}
                   </Link>
@@ -153,24 +153,24 @@ export function Footer() {
         </div>
 
         {/* Divider */}
-        <div className="border-t border-gray-800"></div>
+        <div className="border-t border-border"></div>
 
         {/* Footer Bottom Bar */}
         <div className="pt-8">
           {/* Copyright & Compliance */}
           <div className="mb-6">
-            <p className="text-gray-400 text-sm">
+            <p className="text-muted text-sm">
               © {currentYear} LegalHub. All rights reserved. | Made with ♥ for legal access
             </p>
           </div>
 
           {/* Legal Disclaimer */}
-          <div className="bg-gray-800 rounded-lg p-6 border-l-4 border-amber-500">
-            <p className="text-sm text-gray-300 leading-relaxed">
-              <span className="font-semibold text-amber-400">⚖️ Important Disclaimer:</span> LegalHub provides general legal information and AI-powered guidance. 
+          <div className="bg-light rounded-lg p-6 border-l-2 border-primary">
+            <p className="text-sm text-secondary leading-relaxed">
+              <span className="font-semibold text-primary">⚖️ Important Disclaimer:</span> LegalHub provides general legal information and AI-powered guidance. 
               This does not constitute legal advice. For specific legal counsel on your situation, consult a qualified attorney in your jurisdiction. 
               LegalHub and its partners are not liable for misuse, misinterpretation, or reliance on information provided. 
-              <Link href="#" className="text-blue-400 hover:text-blue-300 ml-1">
+              <Link href="#" className="text-primary hover:text-primary/80 ml-1 transition-colors">
                 View full disclaimer →
               </Link>
             </p>
@@ -179,19 +179,19 @@ export function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-gray-800 bg-gray-950 py-6">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
+      <div className="border-t border-border bg-light py-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted">
           <div>
-            Made with legal tech innovation by <span className="text-blue-400 font-semibold">LegalHub Team</span>
+            Made with legal tech innovation by <span className="text-primary font-medium">LegalHub Team</span>
           </div>
           <div className="flex gap-6">
-            <Link href="#" className="hover:text-gray-300 transition-colors">
+            <Link href="#" className="hover:text-primary transition-colors">
               Status
             </Link>
-            <Link href="#" className="hover:text-gray-300 transition-colors">
+            <Link href="#" className="hover:text-primary transition-colors">
               System Status
             </Link>
-            <Link href="#" className="hover:text-gray-300 transition-colors">
+            <Link href="#" className="hover:text-primary transition-colors">
               API Docs
             </Link>
           </div>

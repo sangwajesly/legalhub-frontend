@@ -4,9 +4,11 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api-client';
 import { CaseSubmission } from '@/types';
+import { useAuth } from '@/contexts/AuthContext';
 
 const CaseReportPage: React.FC = () => {
   const router = useRouter();
+  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);

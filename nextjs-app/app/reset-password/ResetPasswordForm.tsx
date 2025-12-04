@@ -2,12 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-// import { apiClient } from '@/lib/api-client';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { auth } from '@/lib/firebase';
+import { confirmPasswordReset } from 'firebase/auth';
 
 const ResetPasswordForm: React.FC = () => {
   const searchParams = useSearchParams();
-  const [token, setToken] = useState<string | null>(null);
+  const router = useRouter();
+  const [oobCode, setOobCode] = useState<string | null>(null);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -15,11 +18,12 @@ const ResetPasswordForm: React.FC = () => {
   const [success, setSuccess] = useState(false);
   
   useEffect(() => {
-    const tokenFromUrl = searchParams.get('token');
-    if (tokenFromUrl) {
-      setToken(tokenFromUrl);
+    // Firebase sends the code as 'oobCode' in the URL
+    const codeFromUrl = searchParams.get('oobCode') || searchParams.get('token');
+    if (codeFromUrl) {
+      setOobCode(codeFromUrl);
     } else {
-      setError('Invalid or missing password reset token.');
+      setError('Invalid or missing password reset code. Please request a new password reset link.');
     }
   }, [searchParams]);
 
@@ -27,8 +31,13 @@ const ResetPasswordForm: React.FC = () => {
     e.preventDefault();
     setError(null);
 
-    if (!token) {
-      setError('Invalid or missing password reset token.');
+    if (!oobCode) {
+      setError('Invalid or missing password reset code.');
+      return;
+    }
+    
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long.');
       return;
     }
     
@@ -40,11 +49,19 @@ const ResetPasswordForm: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // await apiClient.resetPassword({ token, password });
-      console.log('Resetting password with token:', token);
+      await confirmPasswordReset(auth, oobCode, password);
       setSuccess(true);
+      setTimeout(() => {
+        router.push('/login');
+      }, 2000);
     } catch (err: any) {
-      setError(err.message || 'Failed to reset password. The token may be invalid or expired.');
+      let errorMessage = 'Failed to reset password. The link may be invalid or expired.';
+      if (err.code === 'auth/invalid-action-code') {
+        errorMessage = 'This password reset link has expired or is invalid. Please request a new one.';
+      } else if (err.code === 'auth/weak-password') {
+        errorMessage = 'Password is too weak. Please choose a stronger password.';
+      }
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -98,7 +115,7 @@ const ResetPasswordForm: React.FC = () => {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                disabled={isSubmitting || !token}
+                disabled={isSubmitting || !oobCode}
                 className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
               />
             </div>
@@ -118,7 +135,7 @@ const ResetPasswordForm: React.FC = () => {
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                disabled={isSubmitting || !token}
+                disabled={isSubmitting || !oobCode}
                 className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
               />
             </div>
@@ -126,7 +143,7 @@ const ResetPasswordForm: React.FC = () => {
             <div>
               <button
                 type="submit"
-                disabled={isSubmitting || !token}
+                disabled={isSubmitting || !oobCode}
                 className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition disabled:bg-gray-300"
               >
                 {isSubmitting ? 'Resetting...' : 'Reset Password'}

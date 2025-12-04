@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { apiClient } from '@/lib/api-client';
 import { AnalyticsData } from '@/types';
+import ProtectedRoute from '@/components/shared/ProtectedRoute';
 
 const DashboardPage: React.FC = () => {
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
@@ -84,7 +85,8 @@ const DashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <ProtectedRoute>
+      <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4">
         <h1 className="text-3xl font-bold text-gray-900 mb-6">NGO-GO Analytics Dashboard</h1>
 
@@ -178,6 +180,7 @@ const DashboardPage: React.FC = () => {
         </div>
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 

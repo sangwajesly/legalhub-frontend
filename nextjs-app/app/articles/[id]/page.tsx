@@ -31,20 +31,20 @@ const ArticleDetailPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin inline-flex items-center justify-center w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full"></div>
-        <p className="ml-4 text-gray-600">Loading article...</p>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="animate-spin inline-flex items-center justify-center w-8 h-8 border-2 border-primary border-t-transparent rounded-full"></div>
+        <p className="ml-4 text-secondary">Loading article...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
-          <p>{error}</p>
-          <Link href="/articles" className="text-blue-600 hover:underline mt-2 block">
-            Back to Articles
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="p-6 bg-red-50 border border-red-200 rounded-xl text-red-800 max-w-md">
+          <p className="mb-3">{error}</p>
+          <Link href="/articles" className="text-primary hover:text-primary/80 transition-colors text-sm font-medium">
+            ← Back to Articles
           </Link>
         </div>
       </div>
@@ -53,11 +53,11 @@ const ArticleDetailPage: React.FC = () => {
 
   if (!article) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800">
-          <p>Article not found.</p>
-          <Link href="/articles" className="text-blue-600 hover:underline mt-2 block">
-            Back to Articles
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="p-6 bg-yellow-50 border border-yellow-200 rounded-xl text-yellow-800 max-w-md">
+          <p className="mb-3">Article not found.</p>
+          <Link href="/articles" className="text-primary hover:text-primary/80 transition-colors text-sm font-medium">
+            ← Back to Articles
           </Link>
         </div>
       </div>
@@ -65,24 +65,30 @@ const ArticleDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-3xl mx-auto px-4 bg-white rounded-lg shadow-md p-6">
-        <Link href="/articles" className="text-blue-600 hover:underline mb-4 inline-block">
-          &larr; Back to Articles
+    <div className="min-h-screen bg-white py-12">
+      <div className="max-w-3xl mx-auto px-4">
+        <Link 
+          href="/articles" 
+          className="text-secondary hover:text-primary transition-colors mb-6 inline-flex items-center gap-2 text-sm font-medium"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to Articles
         </Link>
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">{article.title}</h1>
-        <div className="flex items-center text-sm text-gray-500 mb-6">
-          <span>By {article.author.name}</span>
-          <span className="mx-2">•</span>
-          <span>{new Date(article.createdAt).toLocaleDateString()}</span>
-          <span className="mx-2">•</span>
-          <span>{article.likes} Likes</span>
-        </div>
-        <div className="prose prose-blue max-w-none text-gray-800 leading-relaxed">
-          {/* Assuming article.content is markdown or plain text that can be rendered directly */}
-          <p>{article.content}</p>
-        </div>
-        {/* Potentially add comments section, like button, etc. here */}
+        <article className="bg-white rounded-xl border border-border p-8">
+          <h1 className="text-4xl font-semibold text-primary mb-4 leading-tight">{article.title}</h1>
+          <div className="flex items-center text-sm text-muted mb-8 pb-6 border-b border-border">
+            <span>By {article.author.name}</span>
+            <span className="mx-2">•</span>
+            <span>{new Date(article.createdAt).toLocaleDateString()}</span>
+            <span className="mx-2">•</span>
+            <span>{article.likes} Likes</span>
+          </div>
+          <div className="prose prose-lg max-w-none text-secondary leading-relaxed">
+            <div className="whitespace-pre-wrap">{article.content}</div>
+          </div>
+        </article>
       </div>
     </div>
   );

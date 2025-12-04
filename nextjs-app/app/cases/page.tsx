@@ -5,6 +5,7 @@ import { apiClient } from '@/lib/api-client';
 import { Case } from '@/types';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
+import ProtectedRoute from '@/components/shared/ProtectedRoute';
 
 const CasesPage: React.FC = () => {
   const { user } = useAuth();
@@ -82,7 +83,8 @@ const CasesPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <ProtectedRoute>
+      <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-900">My Cases</h1>
@@ -168,6 +170,7 @@ const CasesPage: React.FC = () => {
         )}
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 

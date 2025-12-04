@@ -38,24 +38,24 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center py-12">
-      <div className="max-w-md w-full mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
-          <p className="text-gray-600">Sign in to access your account</p>
+    <div className="min-h-screen bg-white flex flex-col justify-center items-center py-12 sm:py-16 px-4">
+      <div className="w-full max-w-md mx-auto">
+        <div className="text-center mb-8 sm:mb-10">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-primary mb-2 sm:mb-3">Welcome Back</h1>
+          <p className="text-sm sm:text-base text-secondary">Sign in to access your account</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-8">
+        <div className="bg-white rounded-xl border border-border p-6 sm:p-8">
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm">
               {error}
             </div>
           )}
-          <form onSubmit={handleLogin} className="space-y-6">
+          <form onSubmit={handleLogin} className="space-y-5">
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-semibold text-gray-700"
+                className="block text-sm font-medium text-primary mb-2"
               >
                 Email Address
               </label>
@@ -68,14 +68,15 @@ const LoginPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isSubmitting}
-                className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+                className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white text-primary placeholder:text-muted disabled:bg-light disabled:text-muted transition-colors text-sm sm:text-base"
+                placeholder="you@example.com"
               />
             </div>
 
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-semibold text-gray-700"
+                className="block text-sm font-medium text-primary mb-2"
               >
                 Password
               </label>
@@ -88,33 +89,34 @@ const LoginPage: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isSubmitting}
-                className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+                className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white text-primary placeholder:text-muted disabled:bg-light disabled:text-muted transition-colors text-sm sm:text-base"
+                placeholder="Enter your password"
               />
             </div>
             
-            <div className="text-sm text-right">
-              <Link href="/forgot-password" className="font-medium text-blue-600 hover:text-blue-500">
+            <div className="text-sm text-right -mt-1">
+              <Link href="/forgot-password" className="font-medium text-primary hover:text-primary/80 transition-colors">
                 Forgot your password?
               </Link>
             </div>
 
-            <div>
+            <div className="pt-2">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition disabled:bg-gray-300"
+                className="w-full py-3 px-4 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg transition-colors disabled:bg-muted disabled:text-secondary disabled:cursor-not-allowed text-sm sm:text-base"
               >
                 {isSubmitting ? 'Signing In...' : 'Sign In'}
               </button>
             </div>
           </form>
 
-          <div className="mt-6 relative">
+          <div className="mt-6 sm:mt-8 relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
+              <div className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or continue with</span>
+              <span className="px-3 bg-white text-muted">Or continue with</span>
             </div>
           </div>
 
@@ -122,7 +124,7 @@ const LoginPage: React.FC = () => {
             <button
               onClick={handleGoogleLogin}
               disabled={isSubmitting}
-              className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition"
+              className="w-full inline-flex justify-center items-center py-2.5 px-4 border border-border rounded-lg bg-white text-sm font-medium text-secondary hover:text-primary hover:bg-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span className="sr-only">Sign in with Google</span>
               {/* Add Google Icon SVG here */}
@@ -132,10 +134,10 @@ const LoginPage: React.FC = () => {
             </button>
           </div>
           
-          <div className="mt-6 text-center text-sm">
-            <p className="text-gray-600">
+          <div className="mt-6 sm:mt-8 text-center text-sm">
+            <p className="text-secondary">
               Don't have an account?{' '}
-              <Link href="/signup" className="font-medium text-blue-600 hover:text-blue-500">
+              <Link href="/signup" className="font-medium text-primary hover:text-primary/80 transition-colors">
                 Sign up
               </Link>
             </p>

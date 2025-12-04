@@ -2,16 +2,19 @@
 
 import React, { useEffect } from 'react';
 import { useLawyerStore } from '@/lib/store/lawyer-store';
-
+import { useAuth } from '@/contexts/AuthContext';
+import ProtectedRoute from '@/components/shared/ProtectedRoute';
 
 const BookingsPage: React.FC = () => {
+  const { user } = useAuth();
   const { bookings, fetchUserBookings, cancelBooking, isLoading, error, clearError } =
     useLawyerStore();
 
   useEffect(() => {
-    // Replace with actual user ID from auth
-    fetchUserBookings('user-id');
-  }, [fetchUserBookings]);
+    if (user) {
+      fetchUserBookings(user.uid);
+    }
+  }, [fetchUserBookings, user]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -35,7 +38,8 @@ const BookingsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <ProtectedRoute>
+      <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white py-8">
         <div className="max-w-7xl mx-auto px-4">
@@ -175,6 +179,7 @@ const BookingsPage: React.FC = () => {
         )}
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 

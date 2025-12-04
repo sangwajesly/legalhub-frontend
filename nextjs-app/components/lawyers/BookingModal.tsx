@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { Lawyer, Booking } from '@/types';
 import { useLawyerStore } from '@/lib/store/lawyer-store';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 interface BookingModalProps {
   lawyer: Lawyer;
@@ -15,6 +17,8 @@ const BookingModal: React.FC<BookingModalProps> = ({
   onClose,
   onBookingComplete,
 }) => {
+  const { user } = useAuth();
+  const router = useRouter();
   const { createBooking } = useLawyerStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,6 +45,12 @@ const BookingModal: React.FC<BookingModalProps> = ({
     e.preventDefault();
     setError(null);
 
+    if (!user) {
+      setError('Please log in to book a consultation');
+      setTimeout(() => router.push('/login'), 2000);
+      return;
+    }
+
     if (!formData.scheduledAt) {
       setError('Please select a date and time');
       return;
@@ -50,7 +60,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
       setIsSubmitting(true);
       const bookingData: Omit<Booking, 'id' | 'createdAt'> = {
         lawyerId: lawyer.id,
-        userId: 'user-id', // Replace with actual user ID from auth
+        userId: user.uid,
         scheduledAt: new Date(formData.scheduledAt).toISOString(),
         duration: formData.duration,
         type: formData.type,

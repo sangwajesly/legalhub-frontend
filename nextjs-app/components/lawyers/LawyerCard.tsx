@@ -11,75 +11,77 @@ interface LawyerCardProps {
 
 const LawyerCard: React.FC<LawyerCardProps> = ({ lawyer, onSelectLawyer }) => {
   return (
-    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition p-4 border border-gray-200">
-      <div className="flex gap-4">
+    <div className="bg-white rounded-xl border border-border hover:border-primary/20 p-5 sm:p-6 transition-all duration-200 hover:shadow-sm">
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-5">
         {/* Avatar */}
         <div className="flex-shrink-0">
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-primary rounded-full flex items-center justify-center text-white font-semibold text-base sm:text-lg border border-border">
             {lawyer.name.charAt(0)}
           </div>
         </div>
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-2">
-            <div>
-              <h3 className="font-bold text-lg text-gray-900">{lawyer.name}</h3>
-              <p className="text-sm text-gray-600">{lawyer.specialization.join(', ')}</p>
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-3 mb-3 sm:mb-4">
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-base sm:text-lg text-primary mb-1 leading-tight">{lawyer.name}</h3>
+              <p className="text-xs sm:text-sm text-secondary">{lawyer.specialization.join(', ')}</p>
             </div>
             {lawyer.verified && (
-              <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-light text-primary text-xs font-medium rounded-full border border-border self-start sm:self-auto">
                 ✓ Verified
               </span>
             )}
           </div>
 
           {/* Stats */}
-          <div className="mt-2 flex flex-wrap gap-3 text-sm">
-            <div className="flex items-center gap-1">
-              <span className="text-yellow-500">⭐</span>
-              <span className="font-semibold">{lawyer.rating.toFixed(1)}</span>
-              <span className="text-gray-600">({lawyer.reviewCount} reviews)</span>
+          <div className="flex flex-wrap gap-3 sm:gap-4 text-xs sm:text-sm mb-3 sm:mb-4">
+            <div className="flex items-center gap-1.5">
+              <span className="text-primary">⭐</span>
+              <span className="font-medium text-primary">{lawyer.rating.toFixed(1)}</span>
+              <span className="text-muted">({lawyer.reviewCount})</span>
             </div>
-            <div className="flex items-center gap-1">
-              <span>📍</span>
-              <span className="text-gray-600">{lawyer.location}</span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-muted">📍</span>
+              <span className="text-secondary">{lawyer.location}</span>
             </div>
-            <div className="flex items-center gap-1">
-              <span>⏰</span>
-              <span className="text-gray-600">{lawyer.yearsOfExperience} yrs exp.</span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-muted">⏰</span>
+              <span className="text-secondary">{lawyer.yearsOfExperience} yrs</span>
             </div>
           </div>
 
           {/* Rate and Availability */}
-          <div className="mt-3 flex items-center justify-between">
-            <div className="text-lg font-bold text-blue-600">
-              ${lawyer.hourlyRate}/hr
+          <div className="flex items-center justify-between mb-3 sm:mb-4 pb-3 sm:pb-4 border-b border-border">
+            <div className="text-lg sm:text-xl font-semibold text-primary">
+              ${lawyer.hourlyRate}<span className="text-xs sm:text-sm font-normal text-muted">/hr</span>
             </div>
             <div className="flex items-center gap-2">
               {lawyer.availability ? (
-                <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded">
-                  ● Available
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-light text-primary text-xs font-medium rounded-full border border-border">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
+                  Available
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-800 text-xs font-semibold rounded">
-                  ● Unavailable
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-light text-muted text-xs font-medium rounded-full border border-border">
+                  <span className="w-1.5 h-1.5 bg-muted rounded-full"></span>
+                  Unavailable
                 </span>
               )}
             </div>
           </div>
 
           {/* Bio */}
-          <p className="mt-3 text-sm text-gray-600 line-clamp-2">{lawyer.bio}</p>
+          <p className="text-xs sm:text-sm text-secondary line-clamp-2 mb-4 sm:mb-5 leading-relaxed">{lawyer.bio}</p>
 
           {/* Action Button */}
           <button
             onClick={() => onSelectLawyer(lawyer)}
             disabled={!lawyer.availability}
-            className={`mt-4 w-full py-2 rounded-lg font-semibold transition ${
+            className={`w-full py-2.5 sm:py-3 rounded-lg font-medium transition-colors text-sm sm:text-base ${
               lawyer.availability
-                ? 'bg-blue-500 hover:bg-blue-600 text-white cursor-pointer'
-                : 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                ? 'bg-primary hover:bg-primary/90 text-white cursor-pointer'
+                : 'bg-light text-muted cursor-not-allowed border border-border'
             }`}
           >
             {lawyer.availability ? 'View & Book' : 'Unavailable'}

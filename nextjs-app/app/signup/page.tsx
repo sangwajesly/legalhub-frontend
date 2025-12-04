@@ -51,14 +51,14 @@ const SignupPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center py-12">
+    <div className="min-h-screen bg-white flex flex-col justify-center items-center py-12 px-4">
       <div className="max-w-md w-full mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Create an Account</h1>
-          <p className="text-gray-600">Join LegalHub today to get started</p>
+        <div className="text-center mb-10">
+          <h1 className="text-3xl font-semibold text-primary mb-2">Create an Account</h1>
+          <p className="text-secondary">Join LegalHub today to get started</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-8">
+        <div className="bg-white rounded-xl border border-border p-8">
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm">
               {error}
@@ -68,7 +68,7 @@ const SignupPage: React.FC = () => {
             <div>
               <label
                 htmlFor="name"
-                className="block text-sm font-semibold text-gray-700"
+                className="block text-sm font-medium text-primary mb-1.5"
               >
                 Full Name
               </label>
@@ -81,14 +81,15 @@ const SignupPage: React.FC = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 disabled={isSubmitting}
-                className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+                className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white text-primary placeholder:text-muted disabled:bg-light disabled:text-muted transition-colors"
+                placeholder="John Doe"
               />
             </div>
             
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-semibold text-gray-700"
+                className="block text-sm font-medium text-primary mb-1.5"
               >
                 Email Address
               </label>
@@ -101,14 +102,15 @@ const SignupPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isSubmitting}
-                className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+                className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white text-primary placeholder:text-muted disabled:bg-light disabled:text-muted transition-colors"
+                placeholder="you@example.com"
               />
             </div>
 
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-semibold text-gray-700"
+                className="block text-sm font-medium text-primary mb-1.5"
               >
                 Password
               </label>
@@ -121,14 +123,15 @@ const SignupPage: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isSubmitting}
-                className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+                className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white text-primary placeholder:text-muted disabled:bg-light disabled:text-muted transition-colors"
+                placeholder="Create a password"
               />
             </div>
 
             <div>
               <label
                 htmlFor="confirm-password"
-                className="block text-sm font-semibold text-gray-700"
+                className="block text-sm font-medium text-primary mb-1.5"
               >
                 Confirm Password
               </label>
@@ -141,7 +144,8 @@ const SignupPage: React.FC = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 disabled={isSubmitting}
-                className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+                className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white text-primary placeholder:text-muted disabled:bg-light disabled:text-muted transition-colors"
+                placeholder="Confirm your password"
               />
             </div>
 
@@ -149,7 +153,7 @@ const SignupPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition disabled:bg-gray-300"
+                className="w-full py-3 px-4 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg transition-colors disabled:bg-muted disabled:text-secondary disabled:cursor-not-allowed"
               >
                 {isSubmitting ? 'Creating Account...' : 'Create Account'}
               </button>
@@ -158,10 +162,10 @@ const SignupPage: React.FC = () => {
           
           <div className="mt-6 relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
+              <div className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or sign up with</span>
+              <span className="px-3 bg-white text-muted">Or sign up with</span>
             </div>
           </div>
 
@@ -169,7 +173,7 @@ const SignupPage: React.FC = () => {
             <button
               onClick={handleGoogleSignup}
               disabled={isSubmitting}
-              className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition"
+              className="w-full inline-flex justify-center items-center py-2.5 px-4 border border-border rounded-lg bg-white text-sm font-medium text-secondary hover:text-primary hover:bg-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span className="sr-only">Sign up with Google</span>
               <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
@@ -179,9 +183,9 @@ const SignupPage: React.FC = () => {
           </div>
 
           <div className="mt-6 text-center text-sm">
-            <p className="text-gray-600">
+            <p className="text-secondary">
               Already have an account?{' '}
-              <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
+              <Link href="/login" className="font-medium text-primary hover:text-primary/80 transition-colors">
                 Sign in
               </Link>
             </p>
