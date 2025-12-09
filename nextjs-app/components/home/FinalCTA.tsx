@@ -5,7 +5,7 @@ import { ArrowRight } from 'lucide-react';
 
 export function FinalCTA() {
   return (
-    <section className="py-20 bg-gradient-to-r from-blue-600 via-blue-700 to-teal-600">
+    <section className="py-20 bg-gradient-to-r from-blue-600 via-blue-700 to-teal-600 dark:from-teal-600 dark:via-emerald-600 dark:to-cyan-700">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Background glow effect */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -19,9 +19,9 @@ export function FinalCTA() {
           </h2>
 
           {/* Subheading */}
-          <p className="text-xl text-blue-100 max-w-3xl mx-auto mb-8 leading-relaxed">
-            Join 50,000+ citizens who've found clarity and confidence. Your first question is completely free. 
-            No credit card required. No obligations.
+          <p className="text-xl text-blue-100 dark:text-teal-100 max-w-3xl mx-auto mb-8 leading-relaxed">
+            Join 50,000+ Africans who've found clarity and confidence. Your first question is completely free.
+            No payment required. No obligations.
           </p>
 
           {/* CTA Buttons */}
@@ -29,9 +29,9 @@ export function FinalCTA() {
             {/* Primary CTA */}
             <Link
               href="/chat"
-              className="group inline-flex items-center justify-center px-10 py-4 bg-white text-blue-600 font-bold rounded-lg hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              className="group inline-flex items-center justify-center px-10 py-4 bg-white text-blue-600 dark:text-teal-600 font-bold rounded-lg hover:bg-blue-50 dark:hover:bg-teal-50 transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
-              Ask a Legal Question Now
+              Ask Your Legal Question Now
               <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={24} />
             </Link>
 
@@ -46,11 +46,11 @@ export function FinalCTA() {
           </div>
 
           {/* Trust Line */}
-          <p className="mt-10 text-blue-100">
+          <p className="mt-10 text-blue-100 dark:text-teal-100">
             <span className="inline-block mr-2">✓</span>
-            100% Private & Secure  |  
+            100% Private & Secure  |
             <span className="inline-block mx-2">✓</span>
-            45 Second Average Response
+            Available Across West Africa
           </p>
         </div>
       </div>

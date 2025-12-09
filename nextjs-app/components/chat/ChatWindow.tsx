@@ -3,13 +3,19 @@
 import React, { useRef, useEffect } from 'react';
 import { Message } from '@/types';
 import MessageBubble from './MessageBubble';
+import { Scale, Menu, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import { UserNav } from '@/components/shared/UserNav';
 
 interface ChatWindowProps {
   messages: Message[];
   isLoading: boolean;
+  onToggleSidebar: () => void;
+  onSendMessage: (message: string) => Promise<void>;
+  isSidebarOpen: boolean;
 }
 
-const ChatWindow: React.FC<ChatWindowProps> = ({ messages, isLoading }) => {
+const ChatWindow: React.FC<ChatWindowProps> = ({ messages, isLoading, onToggleSidebar, onSendMessage, isSidebarOpen }) => {
   const endOfMessagesRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -20,112 +26,108 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ messages, isLoading }) => {
     scrollToBottom();
   }, [messages, isLoading]);
 
-  const quickActions = [
-    {
-      icon: '📋',
-      title: 'Explain NDA basics',
-      description: 'Learn about non-disclosure agreements',
-    },
-    {
-      icon: '❓',
-      title: 'How to register a trademark?',
-      description: 'Guide to trademark registration process',
-    },
-    {
-      icon: '📝',
-      title: 'Draft a simple contract',
-      description: 'Create a basic contract template',
-    },
-  ];
-
   if (isLoading && messages.length === 0) {
     return (
-      <div className="flex-1 flex items-center justify-center">
-        <div className="animate-spin inline-flex items-center justify-center w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full"></div>
-        <p className="ml-4 text-gray-600">Loading session...</p>
+      <div className="flex-1 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950">
+        <div className="w-12 h-12 rounded-full border-4 border-blue-500 dark:border-teal-500 border-t-transparent animate-spin mb-4"></div>
+        <p className="text-slate-500 dark:text-slate-400 font-medium">Initializing AI Assistant...</p>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 flex flex-col bg-white">
-      {/* Header */}
-      <div className="border-b border-gray-200 px-8 py-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">LegalHub AI</h1>
-            <p className="text-sm text-gray-500 flex items-center gap-2">
-              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-              Online
-            </p>
-          </div>
+    <div className="flex-1 flex flex-col bg-white dark:bg-slate-950 overflow-hidden">
+      {/* Minimal Header */}
+      <div className="border-b border-slate-200 dark:border-slate-800 px-4 py-2 flex items-center justify-between">
+        <div className={`flex items-center gap-3 transition-all duration-300 ${isSidebarOpen ? 'max-w-3xl mx-auto' : 'max-w-full'}`}>
+          {/* Hamburger Menu - Only show when sidebar is CLOSED (to open it) */}
+          {!isSidebarOpen && (
+            <button
+              onClick={onToggleSidebar}
+              className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors"
+              aria-label="Open sidebar"
+            >
+              <Menu className="h-5 w-5 text-slate-700 dark:text-slate-300" />
+            </button>
+          )}
+
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-teal-400 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span className="text-sm font-semibold">Back to Home</span>
+          </Link>
+        </div>
+
+        {/* Right Side: User Profile */}
+        <div>
+          <UserNav />
         </div>
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto px-8 py-6">
+      <div className="flex-1 overflow-y-auto px-4 py-6 scroll-smooth bg-white dark:bg-slate-950">
         {messages.length === 0 && !isLoading ? (
-          <div className="flex flex-col items-center justify-center h-full">
-            {/* Welcome Screen */}
-            <div className="text-center mb-12 mt-8">
-              <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">
-                ⚖️
-              </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                How can I help you today?
-              </h2>
+          <div className="flex flex-col items-center justify-center h-full max-w-2xl mx-auto text-center pt-20">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-teal-500 dark:from-teal-500 dark:to-emerald-500 rounded-xl flex items-center justify-center mb-8">
+              <Scale className="h-7 w-7 text-white" />
             </div>
+            <h2 className="text-4xl font-medium text-slate-900 dark:text-white mb-16">
+              How can I help you today?
+            </h2>
 
-            {/* Quick Action Buttons */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl w-full">
-              {quickActions.map((action, idx) => (
-                <button
-                  key={idx}
-                  className="p-4 text-left border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 group"
-                >
-                  <div className="text-2xl mb-2">{action.icon}</div>
-                  <p className="font-semibold text-gray-900 text-sm group-hover:text-blue-900">
-                    {action.title}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">{action.description}</p>
-                </button>
-              ))}
+            {/* Quick Action Chips */}
+            <div className="flex flex-wrap gap-2 justify-center mb-8">
+              <button
+                onClick={() => onSendMessage("Explain the basics of non-disclosure agreements (NDAs)")}
+                className="px-4 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-full text-sm text-slate-700 dark:text-slate-300 transition-colors"
+              >
+                📜 Explain NDA basics
+              </button>
+              <button
+                onClick={() => onSendMessage("Guide me through the trademark registration process")}
+                className="px-4 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-full text-sm text-slate-700 dark:text-slate-300 transition-colors"
+              >
+                ™️ Trademark process
+              </button>
+              <button
+                onClick={() => onSendMessage("Help me draft a basic contract template")}
+                className="px-4 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-full text-sm text-slate-700 dark:text-slate-300 transition-colors"
+              >
+                📄 Draft a contract
+              </button>
+              <button
+                onClick={() => onSendMessage("What are my legal rights as a tenant?")}
+                className="px-4 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-full text-sm text-slate-700 dark:text-slate-300 transition-colors"
+              >
+                ⚖️ Legal rights guide
+              </button>
             </div>
           </div>
         ) : (
-          <>
-            <div className="space-y-4">
-              {messages.map((message, index) => (
-                <MessageBubble
-                  key={index}
-                  message={message}
-                  index={index}
-                />
-              ))}
-            </div>
+          <div className="space-y-6 max-w-3xl mx-auto">
+            {messages.map((message, index) => (
+              <MessageBubble
+                key={index}
+                message={message}
+                index={index}
+              />
+            ))}
 
             {isLoading && (
-              <div className="flex justify-start mt-4">
-                <div className="flex gap-2">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></div>
+              <div className="flex justify-start">
+                <div className="bg-slate-100 dark:bg-slate-800 rounded-2xl rounded-tl-none px-4 py-3 flex gap-1">
+                  <div className="w-2 h-2 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce delay-100"></div>
+                  <div className="w-2 h-2 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce delay-200"></div>
                 </div>
               </div>
             )}
             <div ref={endOfMessagesRef} />
-          </>
+          </div>
         )}
       </div>
-
-      {/* Disclaimer */}
-      {messages.length === 0 && !isLoading && (
-        <div className="border-t border-gray-200 px-8 py-4">
-          <p className="text-xs text-gray-500 text-center">
-            Disclaimer: This is an AI assistant and not a substitute for professional legal advice.
-          </p>
-        </div>
-      )}
     </div>
   );
 };

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLawyerStore } from '@/lib/store/lawyer-store';
 import BookingModal from './BookingModal';
+import { X, Star, MapPin, Clock, CheckCircle, Calendar, DollarSign, Globe, Scale } from 'lucide-react';
 
 interface LawyerProfileProps {
   lawyerId: string;
@@ -17,143 +18,188 @@ const LawyerProfile: React.FC<LawyerProfileProps> = ({ lawyerId, onClose }) => {
     selectLawyer(lawyerId);
   }, [lawyerId, selectLawyer]);
 
-  if (isLoading) {
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-8 text-center">
-          <div className="animate-spin inline-flex items-center justify-center w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full"></div>
-          <p className="mt-4 text-gray-600">Loading profile...</p>
-        </div>
-      </div>
-    );
-  }
+  const getCurrency = (location: string) => {
+    if (location.includes('Nigeria')) return '₦';
+    if (location.includes('Ghana')) return 'GH₵';
+    return 'CFA';
+  };
 
-  if (!selectedLawyer) {
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-8 text-center max-w-md">
-          <p className="text-red-600 font-semibold mb-4">{error || 'Failed to load profile'}</p>
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    );
-  }
+  if (isLoading) return null;
+
+  if (!selectedLawyer) return null;
 
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
-        <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full m-4 relative">
-          {/* Close Button */}
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl font-bold z-10"
-          >
-            ✕
-          </button>
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden animate-fade-in">
 
-          {/* Header with Avatar */}
-          <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-8">
-            <div className="flex items-end gap-4">
-              <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center text-blue-600 font-bold text-4xl border-4 border-white">
-                {selectedLawyer.name.charAt(0)}
+          {/* Header - Fixed & Compact */}
+          <div className="flex-none bg-gradient-to-r from-blue-600 to-teal-600 dark:from-teal-600 dark:to-emerald-600 text-white px-5 py-4 flex items-center justify-between">
+            <h2 className="text-lg font-bold">Lawyer Profile</h2>
+            <button
+              onClick={onClose}
+              className="bg-white/10 hover:bg-white/20 rounded-full p-1.5 transition-all text-white"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          {/* Scrollable Content Body */}
+          <div className="flex-1 overflow-y-auto p-5">
+            <div className="grid md:grid-cols-3 gap-6">
+
+              {/* Left Column: Image & Quick Stats */}
+              <div className="md:col-span-1 space-y-4">
+                {/* Profile Image Card */}
+                <div className="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700 text-center">
+                  <div className="relative w-32 h-32 mx-auto mb-3">
+                    <img
+                      src={selectedLawyer.avatar}
+                      alt={selectedLawyer.name}
+                      className="w-full h-full object-cover rounded-full border-4 border-white dark:border-slate-800 shadow-lg"
+                    />
+                    {selectedLawyer.verified && (
+                      <div className="absolute bottom-1 right-1 bg-blue-500 text-white p-1 rounded-full border-2 border-white dark:border-slate-800" title="Verified Lawyer">
+                        <CheckCircle className="h-4 w-4" />
+                      </div>
+                    )}
+                  </div>
+
+                  <h1 className="text-xl font-bold text-slate-900 dark:text-white leading-tight mb-1">
+                    {selectedLawyer.name}
+                  </h1>
+                  <p className="text-sm font-semibold text-blue-600 dark:text-teal-400 mb-3">
+                    {selectedLawyer.specialization[0]}
+                  </p>
+
+                  {/* Availability Badge */}
+                  <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${selectedLawyer.availability
+                      ? 'bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300 border border-teal-200 dark:border-teal-800'
+                      : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                    }`}>
+                    <span className={`w-2 h-2 rounded-full ${selectedLawyer.availability ? 'bg-teal-500 animate-pulse' : 'bg-slate-400'}`}></span>
+                    {selectedLawyer.availability ? 'Available Now' : 'Busy'}
+                  </div>
+                </div>
+
+                {/* Vertical Key Info */}
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700">
+                    <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full text-blue-600 dark:text-blue-400">
+                      <Star className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Rating</p>
+                      <p className="font-bold text-slate-900 dark:text-white text-sm">
+                        {selectedLawyer.rating.toFixed(1)} <span className="text-slate-400 fw-normal text-xs">({selectedLawyer.reviewCount})</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700">
+                    <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-full text-purple-600 dark:text-purple-400">
+                      <Clock className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Experience</p>
+                      <p className="font-bold text-slate-900 dark:text-white text-sm">
+                        {selectedLawyer.yearsOfExperience}+ Years
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700">
+                    <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400">
+                      <MapPin className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Location</p>
+                      <p className="font-bold text-slate-900 dark:text-white text-sm max-w-[120px] truncate" title={selectedLawyer.location}>
+                        {selectedLawyer.location}
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="pb-2">
-                <h1 className="text-3xl font-bold text-white">{selectedLawyer.name}</h1>
-                <p className="text-blue-100">{selectedLawyer.specialization.join(', ')}</p>
+
+              {/* Right Column: Bio & Details */}
+              <div className="md:col-span-2 space-y-5">
+                {/* Bio Section */}
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-2 flex items-center gap-2">
+                    <Scale className="h-4 w-4 text-slate-400" />
+                    About Lawyer
+                  </h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-900/30 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+                    {selectedLawyer.bio}
+                  </p>
+                </div>
+
+                {/* Expertise Badges */}
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-2 flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-slate-400" />
+                    Areas of Expertise
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedLawyer.specialization.map((spec, i) => (
+                      <span key={i} className="px-3 py-1.5 bg-blue-50 dark:bg-teal-900/20 text-blue-700 dark:text-teal-300 text-xs font-semibold rounded-lg border border-blue-100 dark:border-teal-800">
+                        {spec}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Languages (Mocked for now) */}
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-2">Languages</h3>
+                  <div className="flex gap-4 text-sm text-slate-600 dark:text-slate-400">
+                    <span className="flex items-center gap-1.5">🇬🇧 English (Fluent)</span>
+                    <span className="flex items-center gap-1.5">🇫🇷 French (Professional)</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Content */}
-          <div className="p-6">
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-gray-600 text-sm font-semibold">Rating</p>
-                <p className="text-2xl font-bold text-yellow-500 mt-1">
-                  ⭐ {selectedLawyer.rating.toFixed(1)}
-                </p>
-                <p className="text-xs text-gray-600 mt-1">{selectedLawyer.reviewCount} reviews</p>
+          {/* Sticky Footer Action Bar */}
+          <div className="flex-none p-4 bg-white dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center">
+                <DollarSign className="h-5 w-5 text-slate-600 dark:text-slate-300" />
               </div>
-
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-gray-600 text-sm font-semibold">Experience</p>
-                <p className="text-2xl font-bold text-blue-600 mt-1">
-                  {selectedLawyer.yearsOfExperience}+
+              <div>
+                <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold">Hourly Rate</p>
+                <p className="text-xl font-bold text-slate-900 dark:text-white leading-none">
+                  {selectedLawyer.hourlyRate} <span className="text-sm text-slate-500">{getCurrency(selectedLawyer.location)}</span>
                 </p>
-                <p className="text-xs text-gray-600 mt-1">Years</p>
-              </div>
-
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-gray-600 text-sm font-semibold">Hourly Rate</p>
-                <p className="text-2xl font-bold text-green-600 mt-1">
-                  ${selectedLawyer.hourlyRate}
-                </p>
-                <p className="text-xs text-gray-600 mt-1">Per hour</p>
-              </div>
-
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-gray-600 text-sm font-semibold">Location</p>
-                <p className="text-lg font-bold text-gray-900 mt-1">📍</p>
-                <p className="text-xs text-gray-600 mt-1">{selectedLawyer.location}</p>
               </div>
             </div>
 
-            {/* Bio */}
-            <div className="mb-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-2">About</h3>
-              <p className="text-gray-700 leading-relaxed">{selectedLawyer.bio}</p>
-            </div>
-
-            {/* Availability */}
-            <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <div className="flex items-center gap-2">
-                <div className={`w-3 h-3 rounded-full ${selectedLawyer.availability ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                <span className="font-semibold text-gray-900">
-                  {selectedLawyer.availability ? '✓ Available for consultation' : '✕ Not available right now'}
-                </span>
-              </div>
-            </div>
-
-            {/* Verified Badge */}
-            {selectedLawyer.verified && (
-              <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
-                <p className="text-sm text-green-800">
-                  <span className="font-semibold">✓ Verified Lawyer</span> - Credentials verified by LegalHub
-                </p>
-              </div>
-            )}
-
-            {/* Action Buttons */}
             <div className="flex gap-3">
               <button
-                onClick={() => setShowBookingModal(true)}
-                disabled={!selectedLawyer.availability}
-                className={`flex-1 py-3 rounded-lg font-semibold transition ${
-                  selectedLawyer.availability
-                    ? 'bg-blue-500 hover:bg-blue-600 text-white cursor-pointer'
-                    : 'bg-gray-300 text-gray-600 cursor-not-allowed'
-                }`}
-              >
-                📅 Book Consultation
-              </button>
-              <button
                 onClick={onClose}
-                className="px-6 py-3 border-2 border-gray-300 rounded-lg font-semibold text-gray-900 hover:bg-gray-50 transition"
+                className="px-5 py-2.5 border-2 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-semibold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-sm"
               >
                 Close
               </button>
+              <button
+                onClick={() => setShowBookingModal(true)}
+                disabled={!selectedLawyer.availability}
+                className={`px-6 py-2.5 rounded-xl font-bold text-white shadow-lg text-sm flex items-center gap-2 ${selectedLawyer.availability
+                    ? 'bg-gradient-to-r from-blue-600 to-teal-600 dark:from-teal-600 dark:to-emerald-600 hover:scale-105 transition-transform'
+                    : 'bg-slate-300 cursor-not-allowed'
+                  }`}
+              >
+                <Calendar className="h-4 w-4" />
+                {selectedLawyer.availability ? 'Book Consultation' : 'Unavailable'}
+              </button>
             </div>
           </div>
+
         </div>
       </div>
 
-      {/* Booking Modal */}
       {showBookingModal && (
         <BookingModal
           lawyer={selectedLawyer}

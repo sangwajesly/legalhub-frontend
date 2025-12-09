@@ -3,10 +3,10 @@
 export function TrustSignals() {
   const logoPartners = [
     { name: 'Legal Aid', icon: '⚖️' },
-    { name: 'Tech Alliance', icon: '💼' },
-    { name: 'BBC', icon: '📺' },
-    { name: 'Reuters', icon: '📰' },
-    { name: 'Justice Dept', icon: '🏛️' },
+    { name: 'ECOWAS', icon: '🌍' },
+    { name: 'African Bar', icon: '🏛️' },
+    { name: 'Tech Hubs', icon: '💼' },
+    { name: 'NGO Network', icon: '🤝' },
     { name: 'Law Firms', icon: '🏢' },
   ];
 
@@ -19,26 +19,26 @@ export function TrustSignals() {
 
   const testimonials = [
     {
-      author: 'Rajesh K.',
-      role: 'Property Owner, Delhi',
-      quote: 'I was worried about tenant disputes. The AI explained my rights clearly. Saved me months of stress.',
+      author: 'Kwame A.',
+      role: 'Business Owner, Accra',
+      quote: 'LegalHub helped me register my startup in Ghana within days. The AI answered all my questions, and I found an excellent lawyer for the paperwork.',
       avatar: '👨',
     },
     {
-      author: 'Neha S.',
-      role: 'E-commerce Business Owner',
-      quote: 'Found a contract lawyer in 10 minutes. Professional, affordable, exactly what my startup needed.',
+      author: 'Aisha M.',
+      role: 'Tenant, Lagos',
+      quote: 'I was facing eviction without proper notice. LegalHub connected me with a lawyer who protected my rights. Forever grateful!',
       avatar: '👩',
     },
   ];
 
   return (
-    <section className="py-20 bg-gray-50 border-t border-b border-gray-200">
+    <section className="py-20 bg-gray-50 dark:bg-slate-900 border-t border-b border-gray-200 dark:border-slate-800">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Partner Logos */}
         <div className="mb-20">
-          <p className="text-center text-gray-600 text-sm font-semibold uppercase tracking-wider mb-8">
-            Featured & Trusted By
+          <p className="text-center text-gray-600 dark:text-slate-400 text-sm font-semibold uppercase tracking-wider mb-8">
+            Trusted Across West Africa
           </p>
           <div className="flex flex-wrap justify-center items-center gap-12 md:gap-16">
             {logoPartners.map((partner) => (
@@ -47,7 +47,7 @@ export function TrustSignals() {
                 className="flex flex-col items-center gap-2 opacity-70 hover:opacity-100 transition-opacity duration-300"
               >
                 <div className="text-4xl">{partner.icon}</div>
-                <span className="text-gray-600 text-sm font-medium text-center">{partner.name}</span>
+                <span className="text-gray-600 dark:text-slate-400 text-sm font-medium text-center">{partner.name}</span>
               </div>
             ))}
           </div>
@@ -58,11 +58,11 @@ export function TrustSignals() {
           {stats.map((stat, idx) => (
             <div
               key={idx}
-              className="bg-white rounded-2xl p-8 text-center hover:shadow-lg transition-shadow duration-300 border border-gray-100"
+              className="bg-white dark:bg-slate-800/50 rounded-2xl p-8 text-center hover:shadow-lg transition-shadow duration-300 border border-gray-100 dark:border-slate-700"
             >
               <div className="text-5xl mb-4 text-center">{stat.icon}</div>
-              <div className="text-4xl md:text-5xl font-bold text-blue-600 mb-2">{stat.number}</div>
-              <p className="text-gray-600 text-sm md:text-base">{stat.label}</p>
+              <div className="text-4xl md:text-5xl font-bold text-blue-600 dark:text-teal-400 mb-2">{stat.number}</div>
+              <p className="text-gray-600 dark:text-slate-300 text-sm md:text-base">{stat.label}</p>
             </div>
           ))}
         </div>
@@ -72,21 +72,21 @@ export function TrustSignals() {
           {testimonials.map((testimonial, idx) => (
             <div
               key={idx}
-              className="bg-white rounded-2xl p-8 border-l-4 border-amber-400 hover:shadow-lg transition-shadow duration-300"
+              className="bg-white dark:bg-slate-800/50 rounded-2xl p-8 border-l-4 border-amber-400 dark:border-amber-500 hover:shadow-lg transition-shadow duration-300"
             >
               <div className="flex items-start gap-4 mb-4">
                 <div className="text-5xl">{testimonial.avatar}</div>
                 <div>
-                  <p className="font-semibold text-gray-900">{testimonial.author}</p>
-                  <p className="text-gray-600 text-sm">{testimonial.role}</p>
+                  <p className="font-semibold text-gray-900 dark:text-white">{testimonial.author}</p>
+                  <p className="text-gray-600 dark:text-slate-400 text-sm">{testimonial.role}</p>
                 </div>
               </div>
               <div className="flex gap-1 mb-3">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <span key={i} className="text-amber-400 text-lg">★</span>
+                  <span key={i} className="text-amber-400 dark:text-amber-500 text-lg">★</span>
                 ))}
               </div>
-              <p className="text-gray-700 italic leading-relaxed">"{testimonial.quote}"</p>
+              <p className="text-gray-700 dark:text-slate-300 italic leading-relaxed">"{testimonial.quote}"</p>
             </div>
           ))}
         </div>

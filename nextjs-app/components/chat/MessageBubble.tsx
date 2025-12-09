@@ -18,19 +18,17 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, index }) => {
 
   return (
     <div
-      className={`flex message-animate mb-4 ${
-        isUser ? 'justify-end' : 'justify-start'
-      }`}
+      className={`flex message-animate mb-4 ${isUser ? 'justify-end' : 'justify-start'
+        }`}
     >
       <div
-        className={`max-w-md lg:max-w-2xl px-4 py-3 rounded-lg ${
-          isUser
+        className={`max-w-md lg:max-w-2xl px-4 py-3 rounded-lg break-words ${isUser
             ? 'bg-blue-500 text-white rounded-br-none'
             : 'bg-gray-200 text-gray-900 rounded-bl-none'
-        }`}
+          }`}
       >
         {isUser ? (
-          <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+          <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
         ) : (
           <div className="text-sm prose prose-sm max-w-none dark:prose-invert">
             <ReactMarkdown

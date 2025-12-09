@@ -154,3 +154,22 @@ export interface PaginatedResponse<T> {
     totalPages: number;
   };
 }
+
+// Auth types
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface RegisterData {
+  name: string;
+  email: string;
+  password: string;
+  role: 'citizen' | 'lawyer' | 'ngo' | 'government';
+}
+
+export interface AuthResponse {
+  token: string;
+  refreshToken: string;
+  user: User;
+}
