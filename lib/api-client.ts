@@ -68,7 +68,7 @@ class ApiClient {
   // Auth endpoints use /api/auth (no version prefix)
 
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    const response = await this.client.post('/api/auth/login', credentials);
+    const response = await this.client.post('/api/v1/auth/login', credentials);
 
     // Handle nested response structure from backend
     const data = response.data;
@@ -86,7 +86,7 @@ class ApiClient {
   }
 
   async loginWithGoogle(idToken: string): Promise<AuthResponse> {
-    const response = await this.client.post('/api/auth/google', { idToken });
+    const response = await this.client.post('/api/v1/auth/google', { idToken });
 
     const data = response.data;
     const authData: AuthResponse = {
@@ -103,7 +103,7 @@ class ApiClient {
   }
 
   async register(data: RegisterData): Promise<AuthResponse> {
-    const response = await this.client.post('/api/auth/register', data);
+    const response = await this.client.post('/api/v1/auth/register', data);
 
     const authData: AuthResponse = {
       user: response.data.user,
@@ -120,7 +120,7 @@ class ApiClient {
 
   async logout(): Promise<void> {
     try {
-      await this.client.post('/api/auth/logout');
+      await this.client.post('/api/v1/auth/logout');
     } finally {
       localStorage.removeItem('auth_token');
     }
@@ -128,7 +128,7 @@ class ApiClient {
 
   async refreshToken(refreshToken: string): Promise<{ token: string }> {
     // FIX: Changed from /auth/refresh-token to /auth/refresh
-    const response = await this.client.post('/api/auth/refresh', {
+    const response = await this.client.post('/api/v1/auth/refresh', {
       refresh_token: refreshToken
     });
 
@@ -142,20 +142,20 @@ class ApiClient {
 
   async getProfile(): Promise<User> {
     // FIX: Changed from /auth/profile to /auth/me
-    const response = await this.client.get<User>('/api/auth/me');
+    const response = await this.client.get<User>('/api/v1/auth/me');
     return response.data;
   }
 
   async updateProfile(data: Partial<User>): Promise<User> {
     // This endpoint may need to be added to backend or use /auth/me with PATCH
-    const response = await this.client.patch<User>('/api/auth/profile', data);
+    const response = await this.client.patch<User>('/api/v1/auth/profile', data);
     return response.data;
   }
 
   async uploadAvatar(file: File): Promise<{ url: string }> {
     const formData = new FormData();
     formData.append('avatar', file);
-    const response = await this.client.post<{ url: string }>('/api/auth/profile/avatar', formData, {
+    const response = await this.client.post<{ url: string }>('/api/v1/auth/profile/avatar', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data;
@@ -379,3 +379,4 @@ class ApiClient {
 // Export singleton instance
 export const apiClient = new ApiClient();
 export default apiClient;
+
