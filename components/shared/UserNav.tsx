@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { Bell, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -40,12 +41,16 @@ export function UserNav() {
                     <DropdownMenuContent align="end" className="w-56 dark:bg-slate-900 dark:border-slate-800">
                         <DropdownMenuLabel className="dark:text-slate-100">My Account</DropdownMenuLabel>
                         <DropdownMenuSeparator className="dark:bg-slate-800" />
-                        <DropdownMenuItem className="cursor-pointer dark:text-slate-300 dark:focus:bg-slate-800 dark:focus:text-white">
-                            <span>Profile</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="cursor-pointer dark:text-slate-300 dark:focus:bg-slate-800 dark:focus:text-white">
-                            <span>Settings</span>
-                        </DropdownMenuItem>
+                        <Link href="/profile">
+                            <DropdownMenuItem className="cursor-pointer dark:text-slate-300 dark:focus:bg-slate-800 dark:focus:text-white">
+                                <span>Profile</span>
+                            </DropdownMenuItem>
+                        </Link>
+                        <Link href="/settings">
+                            <DropdownMenuItem className="cursor-pointer dark:text-slate-300 dark:focus:bg-slate-800 dark:focus:text-white">
+                                <span>Settings</span>
+                            </DropdownMenuItem>
+                        </Link>
                         <DropdownMenuItem className="cursor-pointer dark:text-slate-300 dark:focus:bg-slate-800 dark:focus:text-white">
                             <span>Billing</span>
                         </DropdownMenuItem>

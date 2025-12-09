@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -55,9 +56,15 @@ export default function SettingsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <nav className="space-y-1">
+                    <Link href="/profile">
+                        <Button variant="ghost" className="w-full justify-start text-slate-600 dark:text-slate-400 hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-400">
+                            <User className="mr-2 h-4 w-4" />
+                            Profile
+                        </Button>
+                    </Link>
                     <Button variant="ghost" className="w-full justify-start bg-blue-50 text-blue-700 font-semibold dark:bg-blue-900/20 dark:text-blue-400">
-                        <User className="mr-2 h-4 w-4" />
-                        Profile
+                        <Shield className="mr-2 h-4 w-4" />
+                        Settings
                     </Button>
                     <Button variant="ghost" className="w-full justify-start text-slate-600 dark:text-slate-400">
                         <Shield className="mr-2 h-4 w-4" />
@@ -99,7 +106,7 @@ export default function SettingsPage() {
                                     className="dark:bg-slate-800 dark:border-slate-700 dark:text-white opacity-60 cursor-not-allowed"
                                 />
                             </div>
-                         {/* Bio input removed or kept as placeholder if needed, but not functional for now as per type constraint */}
+                            {/* Bio input removed or kept as placeholder if needed, but not functional for now as per type constraint */}
                         </CardContent>
                         <CardFooter>
                             <Button onClick={handleSave} disabled={isSaving}>

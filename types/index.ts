@@ -133,7 +133,31 @@ export interface User {
   email: string;
   avatar?: string;
   role: 'citizen' | 'lawyer' | 'ngo' | 'government';
+  bio?: string;
+  phone?: string;
+  location?: string;
+  website?: string;
+  socialLinks?: {
+    twitter?: string;
+    linkedin?: string;
+    facebook?: string;
+  };
+  preferences?: {
+    emailNotifications: boolean;
+    smsNotifications: boolean;
+    language: string;
+  };
   createdAt: string;
+  updatedAt?: string;
+}
+
+export interface UserProfile extends User {
+  stats?: {
+    totalBookings: number;
+    totalCases: number;
+    articlesRead: number;
+    articlesWritten: number;
+  };
 }
 
 // API Response types
