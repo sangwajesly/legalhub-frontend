@@ -34,9 +34,9 @@ const ArticlesPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen animate-fade-in bg-gradient-to-br from-blue-50 via-white to-teal-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+    <div className="animate-fade-in bg-gradient-to-br from-blue-50 via-white to-teal-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       {/* Header */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 to-teal-600 dark:from-teal-600 dark:via-emerald-600 dark:to-cyan-700 text-white py-12 px-4 rounded-xl mb-8 shadow-lg">
+      <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 to-teal-600 dark:from-teal-600 dark:via-emerald-600 dark:to-cyan-700 text-white py-8 px-4 rounded-xl mb-8 shadow-lg">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-white rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-white rounded-full blur-3xl"></div>
@@ -45,15 +45,15 @@ const ArticlesPage: React.FC = () => {
           <div className="inline-flex items-center justify-center p-3 bg-white/10 rounded-full mb-4 backdrop-blur-sm">
             <BookOpen className="h-6 w-6 text-blue-300 dark:text-emerald-300" />
           </div>
-          <h1 className="text-4xl font-bold mb-4 tracking-tight">Legal Insights & Resources</h1>
-          <p className="text-blue-50 text-lg max-w-2xl mx-auto">
+          <h1 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">Legal Insights & Resources</h1>
+          <p className="text-blue-50 text-base max-w-2xl mx-auto">
             Stay informed with the latest legal news, guides, and expert analysis.
             Empower yourself with knowledge.
           </p>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 pb-12">
+      <div className="max-w-4xl mx-auto px-4 pb-12">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar Filters */}
           <div className="lg:col-span-1">
