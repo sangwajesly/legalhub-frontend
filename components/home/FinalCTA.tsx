@@ -5,7 +5,7 @@ import { ArrowRight } from 'lucide-react';
 
 export function FinalCTA() {
   return (
-    <section className="py-20 bg-gradient-to-r from-blue-600 via-blue-700 to-teal-600 dark:from-teal-600 dark:via-emerald-600 dark:to-cyan-700">
+    <section className="py-16 bg-gradient-to-r from-blue-600 via-blue-700 to-teal-600 dark:from-teal-600 dark:via-emerald-600 dark:to-cyan-700">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Background glow effect */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -14,12 +14,12 @@ export function FinalCTA() {
 
         <div className="relative z-10">
           {/* Headline */}
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Start Getting Legal Answers Today
           </h2>
 
           {/* Subheading */}
-          <p className="text-xl text-blue-100 dark:text-teal-100 max-w-3xl mx-auto mb-8 leading-relaxed">
+          <p className="text-lg text-blue-100 dark:text-teal-100 max-w-3xl mx-auto mb-8 leading-relaxed">
             Join 50,000+ Africans who've found clarity and confidence. Your first question is completely free.
             No payment required. No obligations.
           </p>
@@ -29,24 +29,24 @@ export function FinalCTA() {
             {/* Primary CTA */}
             <Link
               href="/chat"
-              className="group inline-flex items-center justify-center px-10 py-4 bg-white text-blue-600 dark:text-teal-600 font-bold rounded-lg hover:bg-blue-50 dark:hover:bg-teal-50 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              className="group inline-flex items-center justify-center px-8 py-3 bg-white text-blue-600 dark:text-teal-600 font-bold rounded-lg hover:bg-blue-50 dark:hover:bg-teal-50 transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
               Ask Your Legal Question Now
-              <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={24} />
+              <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
             </Link>
 
             {/* Secondary CTA */}
             <Link
               href="/lawyers"
-              className="group inline-flex items-center justify-center px-10 py-4 border-2 border-white text-white font-bold rounded-lg hover:bg-white/10 transition-all duration-300"
+              className="group inline-flex items-center justify-center px-8 py-3 border-2 border-white text-white font-bold rounded-lg hover:bg-white/10 transition-all duration-300"
             >
               Browse Lawyers Instead
-              <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={24} />
+              <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
             </Link>
           </div>
 
           {/* Trust Line */}
-          <p className="mt-10 text-blue-100 dark:text-teal-100">
+          <p className="mt-8 text-sm text-blue-100 dark:text-teal-100">
             <span className="inline-block mr-2">✓</span>
             100% Private & Secure  |
             <span className="inline-block mx-2">✓</span>

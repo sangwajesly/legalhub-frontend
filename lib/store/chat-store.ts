@@ -56,7 +56,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         isLoading: false,
       }));
     } catch (error: any) {
-      set({ error: error.message || 'Failed to create session', isLoading: false });
+      set({ error: `Failed to create session: ${error.message}`, isLoading: false });
     }
   },
 
