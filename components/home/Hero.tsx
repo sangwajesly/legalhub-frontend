@@ -35,7 +35,7 @@ export function Hero() {
             </p>
 
             {/* Description */}
-            <p className="text-gray-700 dark:text-slate-300 text-sm md:text-base leading-relaxed max-w-lg">
+            <p className="text-sm text-gray-700 dark:text-slate-300 leading-relaxed max-w-lg">
               Get AI-powered legal answers in seconds, or connect with verified lawyers across West Africa.
               LegalHub makes legal help accessible and affordable for every African.
             </p>
