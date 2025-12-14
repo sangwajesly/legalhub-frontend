@@ -3,7 +3,7 @@
 import { Plus, Trash2, MessageSquare, Menu, Settings, Home } from 'lucide-react';
 import { useChatStore } from '@/lib/store/chat-store';
 import React, { useEffect } from 'react';
-import { groupSessionsByDate, getSessionPreview } from '@/lib/utils/chat-utils';
+import { groupSessionsByDate } from '@/lib/utils/chat-utils'; // Removed getSessionPreview
 import Link from 'next/link';
 
 interface ChatSidebarProps {
@@ -13,14 +13,14 @@ interface ChatSidebarProps {
 }
 
 export function ChatSidebar({ isOpen, onClose, onToggle }: ChatSidebarProps) {
-  const { sessions, currentSessionId, selectSession, createNewSession, deleteSession, fetchSessions, isLoading } =
+  const { allSessions, currentSessionId, setCurrentSession, createSession, deleteChatSession, fetchAllSessions, isLoading, error } =
     useChatStore();
 
   useEffect(() => {
-    fetchSessions();
-  }, [fetchSessions]);
+    fetchAllSessions();
+  }, [fetchAllSessions]);
 
-  const groupedSessions = groupSessionsByDate(sessions);
+  const groupedSessions = groupSessionsByDate(allSessions);
 
   return (
     <>
@@ -59,7 +59,7 @@ export function ChatSidebar({ isOpen, onClose, onToggle }: ChatSidebarProps) {
             </div>
 
             <button
-              onClick={createNewSession}
+              onClick={() => createSession({ title: 'New Chat' })}
               disabled={isLoading}
               className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors disabled:opacity-50"
               title="New chat"
@@ -69,9 +69,15 @@ export function ChatSidebar({ isOpen, onClose, onToggle }: ChatSidebarProps) {
           </div>
         </div>
 
+        {error && (
+          <div className="p-2 mx-2 text-red-700 bg-red-100 dark:bg-red-900 dark:text-red-200 rounded-lg text-xs">
+            <p>{error}</p>
+          </div>
+        )}
+
         {/* Sessions List - Scrollable */}
         <div className="flex-1 overflow-y-auto py-2 px-2">
-          {sessions.length === 0 ? (
+          {allSessions.length === 0 ? (
             <div className="p-4 text-center">
               <p className="text-slate-400 dark:text-slate-500 text-xs">No conversations</p>
             </div>
@@ -91,7 +97,7 @@ export function ChatSidebar({ isOpen, onClose, onToggle }: ChatSidebarProps) {
                           : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'
                           } ${isLoading ? 'pointer-events-none opacity-50' : ''}`}
                         onClick={() => {
-                          selectSession(session.id);
+                          setCurrentSession(session.id);
                           if (window.innerWidth < 768) onClose();
                         }}
                       >
@@ -103,7 +109,7 @@ export function ChatSidebar({ isOpen, onClose, onToggle }: ChatSidebarProps) {
                           />
                           <div className="flex-1 min-w-0">
                             <p className="text-xs truncate text-slate-700 dark:text-slate-300">
-                              {session.title || getSessionPreview(session.messages, 30)}
+                              {session.title || `Chat ${session.id.substring(0, 8)}`}
                             </p>
                           </div>
                         </div>
@@ -112,7 +118,7 @@ export function ChatSidebar({ isOpen, onClose, onToggle }: ChatSidebarProps) {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            deleteSession(session.id);
+                            deleteChatSession(session.id);
                           }}
                           disabled={isLoading}
                           className="absolute right-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400"
@@ -151,3 +157,4 @@ export function ChatSidebar({ isOpen, onClose, onToggle }: ChatSidebarProps) {
     </>
   );
 }
+

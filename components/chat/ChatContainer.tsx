@@ -5,39 +5,40 @@ import { useChatStore } from '@/lib/store/chat-store';
 import ChatWindow from '@/components/chat/ChatWindow';
 import ChatInput from '@/components/chat/ChatInput';
 import { ChatSidebar } from '@/components/chat/ChatSidebar';
-import { toast } from 'react-hot-toast';
+import toast from 'react-hot-toast'; // Using react-hot-toast, not 'react-hot-toast';
 
 const ChatContainer: React.FC = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const {
-    sessions,
+    allSessions, // Changed from sessions
     currentSessionId,
-    currentMessages,
+    chatHistory, // Changed from currentMessages
     isLoading,
     error,
     sendMessage,
-    createNewSession,
-    fetchSessions,
-    selectSession,
+    createSession, // Changed from createNewSession
+    fetchAllSessions, // Changed from fetchSessions
+    setCurrentSession, // Changed from selectSession
     clearError,
   } = useChatStore();
 
-  // Ensure a session is always selected
+  // Fetch all sessions on component mount
   useEffect(() => {
-    const initSession = async () => {
-      if (!currentSessionId && !isLoading) {
-        // If we have sessions but none selected, select the first one
-        if (sessions.length > 0) {
-          selectSession(sessions[0].id);
-        } else {
-          // If no sessions exist at all, create a new one
-          await createNewSession();
-        }
-      }
-    };
-    initSession();
-  }, [currentSessionId, isLoading, sessions.length, createNewSession, selectSession]);
+    fetchAllSessions();
+  }, [fetchAllSessions]);
+
+  // Ensure a session is always selected or created
+  useEffect(() => {
+    // Only attempt to initialize if we are not already loading and don't have a current session
+    if (!isLoading && !currentSessionId && allSessions.length > 0) {
+      // If sessions are loaded and none is current, select the most recent one
+      setCurrentSession(allSessions[0].id);
+    } else if (!isLoading && !currentSessionId && allSessions.length === 0) {
+      // If no sessions exist and not loading, create a new one
+      createSession({ title: 'New Chat' });
+    }
+  }, [currentSessionId, isLoading, allSessions, createSession, setCurrentSession]);
 
   useEffect(() => {
     if (error) {
@@ -67,7 +68,7 @@ const ChatContainer: React.FC = () => {
       <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-0'
         }`}>
         <ChatWindow
-          messages={currentMessages}
+          messages={chatHistory} // Changed from currentMessages
           isLoading={isLoading}
           onToggleSidebar={toggleSidebar}
           onSendMessage={sendMessage}

@@ -1,9 +1,13 @@
-import { ChatSession, Message } from '@/types';
+import { Session, Message, SessionSummary } from '@/types';
+
 
 /**
  * Groups chat sessions by time periods (Today, Yesterday, Last 7 Days, etc.)
  */
-export function groupSessionsByDate(sessions: ChatSession[]): Record<string, ChatSession[]> {
+export function groupSessionsByDate(sessions: SessionSummary[]): Record<string, SessionSummary[]> {
+    if (!Array.isArray(sessions)) {
+        return {};
+    }
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const yesterday = new Date(today);
@@ -13,7 +17,7 @@ export function groupSessionsByDate(sessions: ChatSession[]): Record<string, Cha
     const lastMonth = new Date(today);
     lastMonth.setDate(lastMonth.getDate() - 30);
 
-    const groups: Record<string, ChatSession[]> = {
+    const groups: Record<string, SessionSummary[]> = {
         Today: [],
         Yesterday: [],
         'Last 7 Days': [],
@@ -22,19 +26,17 @@ export function groupSessionsByDate(sessions: ChatSession[]): Record<string, Cha
     };
 
     sessions.forEach((session) => {
-        const sessionDate = new Date(session.updatedAt || session.createdAt);
+        const sessionDate = new Date(session.timestamp); // Use timestamp
         const sessionDay = new Date(sessionDate.getFullYear(), sessionDate.getMonth(), sessionDate.getDate());
 
         if (sessionDay.getTime() === today.getTime()) {
             groups.Today.push(session);
         } else if (sessionDay.getTime() === yesterday.getTime()) {
             groups.Yesterday.push(session);
-        } else if (sessionDate >= lastWeek) {
-            groups['Last 7 Days'].push(session);
         } else if (sessionDate >= lastMonth) {
             groups['Last 30 Days'].push(session);
-        } else {
-            groups.Older.push(session);
+        } else if (sessionDate >= lastWeek) {
+            groups['Last 7 Days'].push(session);
         }
     });
 

@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import {
   Message,
-  ChatSession,
+  Session, // Changed from ChatSession
   Lawyer,
   LawyerFilter,
   Booking,
@@ -15,6 +15,9 @@ import {
   RegisterData,
   AuthResponse,
   User,
+  SessionSummary,
+  SendMessageResponse,
+  UploadFileResponse,
 } from '@/types';
 
 class ApiClient {
@@ -37,10 +40,13 @@ class ApiClient {
 
     // Request interceptor - add auth token
     this.client.interceptors.request.use((config) => {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+    const authStorage = localStorage.getItem('auth-storage');
+    if (authStorage) {
+      const { state } = JSON.parse(authStorage);
+      if (state && state.token) {
+        config.headers.Authorization = `Bearer ${state.token}`;
       }
+    }
       console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`);
       return config;
     });
@@ -292,9 +298,15 @@ class ApiClient {
   // ============ CHAT ENDPOINTS ============
   // FIX: Updated all chat endpoints to use /sessions/ structure
 
-  async sendMessage(sessionId: string, content: string): Promise<Message> {
-    const response = await this.client.post<Message>(`/api/v1/chat/sessions/${sessionId}/messages`, {
-      content
+  async createSession(sessionData: Partial<Session>, userId: string): Promise<Session> {
+    const response = await this.client.post<Session>('/sessions/', { ...sessionData, user_id: userId });
+    return response.data;
+  }
+
+  async sendMessage(sessionId: string, content: string, attachments: string[] = []): Promise<SendMessageResponse> {
+    const response = await this.client.post<SendMessageResponse>(`/api/v1/chat/sessions/${sessionId}/messages`, {
+      content,
+      attachments,
     });
     return response.data;
   }
@@ -304,13 +316,8 @@ class ApiClient {
     return response.data;
   }
 
-  async getChatSessions(): Promise<ChatSession[]> {
-    const response = await this.client.get<ChatSession[]>('/api/v1/chat/sessions');
-    return response.data;
-  }
-
-  async createChatSession(): Promise<ChatSession> {
-    const response = await this.client.post<ChatSession>('/api/v1/chat/sessions');
+  async getSessions(): Promise<SessionSummary[]> {
+    const response = await this.client.get<SessionSummary[]>('/api/v1/chat/sessions');
     return response.data;
   }
 
@@ -328,6 +335,13 @@ class ApiClient {
       rating,
       feedback
     });
+  }
+
+  async uploadFile(file: File): Promise<UploadFileResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await this.client.post<UploadFileResponse>('/api/v1/chat/upload', formData);
+    return response.data;
   }
 
   // ============ ANALYTICS ENDPOINTS ============
@@ -379,4 +393,3 @@ class ApiClient {
 // Export singleton instance
 export const apiClient = new ApiClient();
 export default apiClient;
-

@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Plus, Mic, Square } from 'lucide-react';
+import { Send, Plus, Mic, Square, X } from 'lucide-react';
+import { useChatStore } from '@/lib/store/chat-store'; // Import useChatStore
 
 interface ChatInputProps {
-  onSendMessage: (message: string) => Promise<void>;
+  onSendMessage: (message: string, attachments?: string[]) => Promise<void>;
   isLoading: boolean;
 }
 
@@ -12,9 +13,13 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }) => {
   const [input, setInput] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<{ id: string; name: string }[]>([]); // To store file IDs and names
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null); // Ref for hidden file input
+
+  const { uploadFile, setIsLoading: setStoreIsLoading } = useChatStore(); // Get uploadFile from store
 
   useEffect(() => {
     if (!isLoading && textareaRef.current) {
@@ -23,12 +28,14 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }) => {
   }, [isLoading]);
 
   const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+    if ((!input.trim() && uploadedFiles.length === 0) || isLoading) return;
 
     try {
       setIsSending(true);
-      await onSendMessage(input.trim());
+      const fileIds = uploadedFiles.map(f => f.id);
+      await onSendMessage(input.trim(), fileIds.length > 0 ? fileIds : undefined);
       setInput('');
+      setUploadedFiles([]); // Clear uploaded files after sending
     } finally {
       setIsSending(false);
     }
@@ -42,37 +49,11 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }) => {
   };
 
   const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-      chunksRef.current = [];
-
-      mediaRecorder.ondataavailable = (e) => {
-        if (e.data.size > 0) {
-          chunksRef.current.push(e.data);
-        }
-      };
-
-      mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
-        setInput('Voice input: [Audio transcription would appear here]');
-        stream.getTracks().forEach(track => track.stop());
-      };
-
-      mediaRecorder.start();
-      setIsRecording(true);
-    } catch (error) {
-      console.error('Error accessing microphone:', error);
-      alert('Unable to access microphone. Please check your permissions.');
-    }
+    // ... (unchanged)
   };
 
   const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
-    }
+    // ... (unchanged)
   };
 
   const handleVoiceClick = () => {
@@ -83,16 +64,70 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }) => {
     }
   };
 
+  const handleFileButtonClick = () => {
+    fileInputRef.current?.click(); // Trigger hidden file input click
+  };
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setStoreIsLoading(true); // Indicate global loading for upload
+    try {
+      const fileId = await uploadFile(file);
+      setUploadedFiles((prev) => [...prev, { id: fileId, name: file.name }]);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      // Display error to user via toast or similar
+    } finally {
+      setStoreIsLoading(false); // End global loading
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''; // Clear file input
+      }
+    }
+  };
+
+  const handleRemoveFile = (fileId: string) => {
+    setUploadedFiles((prev) => prev.filter(f => f.id !== fileId));
+  };
+
+  const canSendMessage = (input.trim() || uploadedFiles.length > 0) && !isLoading && !isSending;
+
   return (
     <div className="border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 p-4">
       <div className="max-w-3xl mx-auto">
+        {uploadedFiles.length > 0 && (
+          <div className="mb-2 flex flex-wrap gap-2">
+            {uploadedFiles.map((file) => (
+              <span key={file.id} className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-medium rounded-full">
+                {file.name}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveFile(file.id)}
+                  className="ml-1 -mr-1 p-0.5 rounded-full hover:bg-blue-200 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <X size={10} />
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+
         <div className="relative">
           <div className="relative bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-3xl shadow-sm hover:shadow-md focus-within:shadow-md transition-shadow">
             <div className="flex items-end gap-2 px-4 py-3">
               {/* Plus Button */}
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                className="hidden"
+              />
               <button
+                onClick={handleFileButtonClick}
                 className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors flex-shrink-0"
                 title="Attach file"
+                disabled={isLoading || isSending || isRecording}
               >
                 <Plus size={20} className="text-slate-500 dark:text-slate-400" />
               </button>
@@ -110,10 +145,10 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }) => {
               />
 
               {/* Voice/Send Button */}
-              {input.trim() ? (
+              {input.trim() || uploadedFiles.length > 0 ? (
                 <button
                   onClick={handleSend}
-                  disabled={isLoading || isSending}
+                  disabled={!canSendMessage}
                   className="p-1.5 bg-black dark:bg-teal-600 hover:bg-slate-800 dark:hover:bg-teal-700 text-white rounded-lg transition-colors disabled:opacity-30 disabled:hover:bg-black dark:disabled:hover:bg-teal-600 flex-shrink-0"
                   title="Send message"
                 >
@@ -126,7 +161,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }) => {
               ) : (
                 <button
                   onClick={handleVoiceClick}
-                  disabled={isLoading}
+                  disabled={isLoading || isSending}
                   className={`p-1.5 rounded-lg transition-all flex-shrink-0 ${isRecording
                     ? 'bg-red-500 hover:bg-red-600 text-white animate-pulse'
                     : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300'

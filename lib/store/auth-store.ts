@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 import { User, LoginCredentials, RegisterData } from '@/types';
 import apiClient from '@/lib/api-client';
 import { auth, googleProvider } from '@/lib/firebase';
-import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { signInWithPopup } from 'firebase/auth';
 
 interface AuthState {
     user: User | null;

@@ -107,7 +107,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ messages, isLoading, onToggleSi
           </div>
         ) : (
           <div className="space-y-6 max-w-3xl mx-auto">
-            {messages.map((message, index) => (
+            {Array.isArray(messages) && messages.map((message, index) => (
               <MessageBubble
                 key={index}
                 message={message}

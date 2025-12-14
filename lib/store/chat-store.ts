@@ -1,58 +1,83 @@
 import { create } from 'zustand';
-import { Message, ChatSession } from '@/types';
-import { apiClient } from '@/lib/api-client';
+import { Message, Session, SessionSummary } from '@/types';
+import { chatApi } from '@/lib/chat-api';
+import { useAuthStore } from './auth-store';
 
 interface ChatStore {
-  sessions: ChatSession[];
+  allSessions: SessionSummary[];
   currentSessionId: string | null;
-  currentMessages: Message[];
+  chatHistory: Message[];
   isLoading: boolean;
   error: string | null;
 
   // Session management
-  fetchSessions: () => Promise<void>;
-  createNewSession: () => Promise<void>;
-  selectSession: (sessionId: string) => Promise<void>;
-  deleteSession: (sessionId: string) => Promise<void>;
-  renameSession: (sessionId: string, newTitle: string) => void;
+  fetchAllSessions: () => Promise<void>;
+  setAllSessions: (sessions: SessionSummary[]) => void;
+
+  createSession: (sessionData: Partial<Session>) => Promise<void>;
+
+  setCurrentSession: (sessionId: string | null) => void;
+  fetchChatHistory: (sessionId: string) => Promise<void>;
+
+  deleteChatSession: (sessionId: string) => Promise<void>;
+  removeSession: (sessionId: string) => void;
 
   // Message management
   addMessage: (message: Message) => void;
-  sendMessage: (content: string) => Promise<void>;
+  sendMessage: (content: string, attachments?: string[]) => Promise<void>;
   setIsLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   clearError: () => void;
+  setChatHistory: (messages: Message[]) => void;
+  clearChatHistory: () => void;
 
   // Conversation actions
-  regenerateResponse: (messageIndex: number) => Promise<void>;
   submitFeedback: (messageId: string, rating: number, feedback?: string) => Promise<void>;
+  uploadFile: (file: File) => Promise<string>;
 }
 
 export const useChatStore = create<ChatStore>((set, get) => ({
-  sessions: [],
+  allSessions: [],
   currentSessionId: null,
-  currentMessages: [],
+  chatHistory: [],
   isLoading: false,
   error: null,
 
-  fetchSessions: async () => {
+  fetchAllSessions: async () => {
+    set({ isLoading: true, error: null });
     try {
-      set({ isLoading: true, error: null });
-      const sessions = await apiClient.getChatSessions();
-      set({ sessions, isLoading: false });
+      const response = await chatApi.getSessions();
+      set({ allSessions: response.sessions, isLoading: false });
     } catch (error: any) {
       set({ error: error.message || 'Failed to fetch sessions', isLoading: false });
     }
   },
 
-  createNewSession: async () => {
+  setAllSessions: (sessions: SessionSummary[]) => {
+    set({ allSessions: sessions });
+  },
+
+  createSession: async (sessionData: Partial<Session>) => {
+    set({ isLoading: true, error: null });
+    const userId = useAuthStore.getState().user?.id;
+    if (!userId) {
+      set({ error: 'User not authenticated', isLoading: false });
+      return;
+    }
     try {
-      set({ isLoading: true, error: null });
-      const newSession = await apiClient.createChatSession();
+      const newSession = await chatApi.createSession(sessionData, userId);
+      
+      const newSessionSummary: SessionSummary = {
+        id: newSession.id,
+        title: newSession.title,
+        lastMessage: '',
+        timestamp: new Date().toISOString(),
+      };
+
       set((state) => ({
-        sessions: [newSession, ...state.sessions],
+        allSessions: [newSessionSummary, ...state.allSessions], // Add to the beginning
         currentSessionId: newSession.id,
-        currentMessages: [],
+        chatHistory: [],
         isLoading: false,
       }));
     } catch (error: any) {
@@ -60,113 +85,89 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     }
   },
 
-  selectSession: async (sessionId: string) => {
-    try {
-      set({ isLoading: true, error: null });
-      const messages = await apiClient.getChatHistory(sessionId);
-      set({
-        currentSessionId: sessionId,
-        currentMessages: messages,
-        isLoading: false,
-      });
-    } catch (error: any) {
-      set({ error: error.message || 'Failed to load session', isLoading: false });
+  setCurrentSession: (sessionId: string | null) => {
+    set({ currentSessionId: sessionId });
+    if (sessionId) {
+      get().fetchChatHistory(sessionId);
+    } else {
+      set({ currentSessionId: null, chatHistory: [] }); // Explicitly set currentSessionId to null
     }
   },
 
-  deleteSession: async (sessionId: string) => {
+  fetchChatHistory: async (sessionId: string) => {
+    set({ isLoading: true, error: null });
     try {
-      set({ isLoading: true, error: null });
-      await apiClient.deleteChatSession(sessionId);
-      set((state) => ({
-        sessions: state.sessions.filter((s) => s.id !== sessionId),
-        currentSessionId:
-          state.currentSessionId === sessionId ? null : state.currentSessionId,
-        currentMessages:
-          state.currentSessionId === sessionId ? [] : state.currentMessages,
-        isLoading: false,
-      }));
+      const response = await chatApi.getChatHistory(sessionId);
+      set({ chatHistory: response.messages, isLoading: false });
+    } catch (error: any) {
+      set({ error: error.message || 'Failed to load chat history', isLoading: false });
+    }
+  },
+
+  deleteChatSession: async (sessionId: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      await chatApi.deleteChatSession(sessionId);
+      get().removeSession(sessionId);
+      if (get().currentSessionId === sessionId) {
+        set({ currentSessionId: null, chatHistory: [] });
+      }
+      set({ isLoading: false });
     } catch (error: any) {
       set({ error: error.message || 'Failed to delete session', isLoading: false });
     }
   },
 
-  renameSession: (sessionId: string, newTitle: string) => {
+  removeSession: (sessionId: string) => {
     set((state) => ({
-      sessions: state.sessions.map((s) =>
-        s.id === sessionId ? { ...s, title: newTitle } : s
-      ),
+      allSessions: state.allSessions.filter((session) => session.id !== sessionId),
     }));
   },
 
   addMessage: (message: Message) => {
     set((state) => ({
-      currentMessages: [...state.currentMessages, message],
+      chatHistory: [...state.chatHistory, message],
     }));
   },
 
-  sendMessage: async (content: string) => {
-    console.log('sendMessage called with content:', content);
-    const state = get();
-    if (!state.currentSessionId) {
-      set({ error: 'No session selected' });
+  sendMessage: async (content: string, attachments: string[] = []) => {
+    const { currentSessionId } = get();
+    if (!currentSessionId) {
+      set({ error: 'No session selected to send message' });
       return;
     }
 
-    // Add user message immediately
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: `temp-user-${Date.now()}`,
       content,
       role: 'user',
       timestamp: new Date().toISOString(),
     };
-        set((state) => ({
-          currentMessages: [...state.currentMessages, userMessage],
-        }));
-    
-        // Add a placeholder for the AI response
-        const assistantMessageId = (Date.now() + 1).toString();
-        const assistantPlaceholder: Message = {
-          id: assistantMessageId,
-          content: '...',
-          role: 'assistant',
-          timestamp: new Date().toISOString(),
-          isStreaming: true,
-        };
-        set((state) => ({
-          currentMessages: [...state.currentMessages, assistantPlaceholder],
-          isLoading: true,
-          error: null,
-        }));
-    
-        try {
-          // Get AI response
-          const response = await apiClient.sendMessage(state.currentSessionId, content);
-    
-          // Replace the placeholder with the actual response
-          set((state) => ({
-            currentMessages: state.currentMessages.map((message) =>
-              message.id === assistantMessageId ? { ...response, isStreaming: false } : message
-            ),
-            isLoading: false,
-          }));
-        } catch (error: any) {
-          // Update the placeholder with an error message
-          set((state) => ({
-            currentMessages: state.currentMessages.map((message) =>
-              message.id === assistantMessageId
-                ? {
-                    ...assistantPlaceholder,
-                    content: 'Sorry, I encountered an error. Please try again.',
-                    isStreaming: false,
-                  }
-                : message
-            ),
-            error: error.message || 'Failed to send message',
-            isLoading: false,
-          }));
-        }
-      },
+    get().addMessage(userMessage);
+
+    set({ isLoading: true, error: null });
+
+    try {
+      const response = await chatApi.sendMessage(currentSessionId, content, attachments);
+      const aiMessage: Message = {
+        id: `ai-${Date.now()}`,
+        content: response.reply,
+        role: 'assistant',
+        timestamp: new Date().toISOString(),
+      };
+      get().addMessage(aiMessage);
+    } catch (error: any) {
+      get().addMessage({
+        id: `error-${Date.now()}`,
+        content: `Error: ${error.message || 'Could not get a response.'}`,
+        role: 'system',
+        timestamp: new Date().toISOString(),
+      });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
   setIsLoading: (loading: boolean) => {
     set({ isLoading: loading });
   },
@@ -179,59 +180,36 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     set({ error: null });
   },
 
-  regenerateResponse: async (messageIndex: number) => {
-    const state = get();
-    const messages = state.currentMessages;
+  setChatHistory: (messages: Message[]) => {
+    set({ chatHistory: messages });
+  },
 
-    if (messageIndex < 0 || messageIndex >= messages.length) {
-      set({ error: 'Invalid message index' });
-      return;
-    }
-
-    // Find the last user message before this index
-    const userMessageIndex = messageIndex - 1;
-    if (userMessageIndex < 0 || messages[userMessageIndex].role !== 'user') {
-      set({ error: 'Cannot regenerate without a user message' });
-      return;
-    }
-
-    try {
-      set({ isLoading: true, error: null });
-      const userContent = messages[userMessageIndex].content;
-      const response = await apiClient.sendMessage(
-        state.currentSessionId!,
-        userContent
-      );
-
-      // Replace the old response with new one
-      set((state) => ({
-        currentMessages: [
-          ...state.currentMessages.slice(0, messageIndex),
-          response,
-        ],
-        isLoading: false,
-      }));
-    } catch (error: any) {
-      set({ error: error.message || 'Failed to regenerate response', isLoading: false });
-    }
+  clearChatHistory: () => {
+    set({ chatHistory: [] });
   },
 
   submitFeedback: async (messageId: string, rating: number, feedback?: string) => {
-    const state = get();
-    if (!state.currentSessionId) {
-      set({ error: 'No session selected' });
+    const { currentSessionId } = get();
+    if (!currentSessionId) {
+      set({ error: 'No session selected for feedback' });
       return;
     }
-
     try {
-      await apiClient.submitFeedback(
-        state.currentSessionId,
-        messageId,
-        rating,
-        feedback
-      );
+      await chatApi.submitFeedback(currentSessionId, messageId, rating, feedback);
     } catch (error: any) {
       set({ error: error.message || 'Failed to submit feedback' });
     }
   },
+
+  uploadFile: async (file: File): Promise<string> => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await chatApi.uploadFile(file);
+      set({ isLoading: false });
+      return response.fileId;
+    } catch (error: any) {
+      set({ error: error.message || 'Failed to upload file', isLoading: false });
+      throw error;
+    }
+  }
 }));

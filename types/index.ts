@@ -2,17 +2,26 @@
 export interface Message {
   id: string;
   content: string;
-  role: 'user' | 'assistant';
+  role: 'user' | 'assistant' | 'system';
   timestamp: string;
   isStreaming?: boolean;
 }
 
-export interface ChatSession {
+export interface Session {
   id: string;
   title: string;
+  user_id: string; // Link to the user
   messages: Message[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface SessionSummary {
+  id:string;
+  title: string;
+  lastMessage: string;
+  timestamp: string;
+  status?: 'online' | 'offline';
 }
 
 // Lawyer types
@@ -196,4 +205,13 @@ export interface AuthResponse {
   token: string;
   refreshToken: string;
   user: User;
+}
+
+export interface SendMessageResponse {
+  reply: string;
+  sessionId: string;
+}
+
+export interface UploadFileResponse {
+  fileId: string;
 }
