@@ -192,7 +192,7 @@ class ApiClient {
     const response = await this.client.get<PaginatedResponse<Lawyer>>('/api/v1/lawyers', {
       params: { q: query, page: 1, limit: 20 }
     });
-    return response.data.lawyers || [];
+    return response.data.data || [];
   }
 
   // ============ BOOKING ENDPOINTS ============
