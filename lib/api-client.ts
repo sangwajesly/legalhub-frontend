@@ -153,15 +153,15 @@ class ApiClient {
   }
 
   async updateProfile(data: Partial<User>): Promise<User> {
-    // This endpoint may need to be added to backend or use /auth/me with PATCH
-    const response = await this.client.patch<User>('/api/v1/auth/profile', data);
+    // Using users endpoint for profile updates
+    const response = await this.client.patch<User>('/api/v1/users/profile', data);
     return response.data;
   }
 
   async uploadAvatar(file: File): Promise<{ url: string }> {
     const formData = new FormData();
     formData.append('avatar', file);
-    const response = await this.client.post<{ url: string }>('/api/v1/auth/profile/avatar', formData, {
+    const response = await this.client.post<{ url: string }>('/api/v1/users/profile/avatar', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data;
@@ -188,10 +188,11 @@ class ApiClient {
   }
 
   async searchLawyers(query: string): Promise<Lawyer[]> {
-    const response = await this.client.get<Lawyer[]>('/api/v1/lawyers/search', {
-      params: { q: query }
+    // FIX: Use regular lawyers endpoint with query params instead of /search
+    const response = await this.client.get<PaginatedResponse<Lawyer>>('/api/v1/lawyers', {
+      params: { q: query, page: 1, limit: 20 }
     });
-    return response.data;
+    return response.data.lawyers || [];
   }
 
   // ============ BOOKING ENDPOINTS ============
@@ -210,12 +211,14 @@ class ApiClient {
   }
 
   async updateBooking(id: string, updates: Partial<Booking>): Promise<Booking> {
-    const response = await this.client.patch<Booking>(`/api/v1/bookings/${id}`, updates);
+    // FIX: Changed from PATCH to PUT to match backend
+    const response = await this.client.put<Booking>(`/api/v1/bookings/${id}`, updates);
     return response.data;
   }
 
-  async cancelBooking(id: string): Promise<void> {
-    await this.client.post(`/api/v1/bookings/${id}/cancel`);
+  async cancelBooking(id: string, reason?: string): Promise<void> {
+    // FIX: Changed from POST to PUT to match backend
+    await this.client.put(`/api/v1/bookings/${id}/cancel`, { reason });
   }
 
   // ============ ARTICLE ENDPOINTS ============
@@ -299,13 +302,13 @@ class ApiClient {
   // FIX: Updated all chat endpoints to use /sessions/ structure
 
   async createSession(sessionData: Partial<Session>, userId: string): Promise<Session> {
-    const response = await this.client.post<Session>('/sessions/', { ...sessionData, user_id: userId });
+    const response = await this.client.post<Session>('/api/v1/chat/sessions', { ...sessionData, user_id: userId });
     return response.data;
   }
 
   async sendMessage(sessionId: string, content: string, attachments: string[] = []): Promise<SendMessageResponse> {
     const response = await this.client.post<SendMessageResponse>(`/api/v1/chat/sessions/${sessionId}/messages`, {
-      content,
+      message: content, // Changed from content to message to match backend schema preference observed in conflicts
       attachments,
     });
     return response.data;
