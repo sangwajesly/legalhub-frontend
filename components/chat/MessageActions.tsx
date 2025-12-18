@@ -1,123 +1,87 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useChatStore } from '@/lib/store/chat-store';
-import toast from 'react-hot-toast'; // Assuming toast for notifications
+import { ThumbsUp, ThumbsDown, Copy, Check, Share2, MoreHorizontal } from 'lucide-react';
+import { showToast } from '@/components/ui/Toast';
 
 interface MessageActionsProps {
-  messageId: string;
-  messageIndex: number; // messageIndex might not be needed after removing regenerateResponse
+  messageContent: string;
+  messageIndex?: number;
 }
 
-const MessageActions: React.FC<MessageActionsProps> = ({
-  messageId,
+export const MessageActions: React.FC<MessageActionsProps> = ({
+  messageContent,
   messageIndex,
 }) => {
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [rating, setRating] = useState<number>(0);
-  const [feedback, setFeedback] = useState('');
   const [copied, setCopied] = useState(false);
-  const [feedbackGiven, setFeedbackGiven] = useState(false); // New state to track if feedback is given
+  const [feedback, setFeedback] = useState<'up' | 'down' | null>(null);
 
-  const { submitFeedback } = useChatStore();
-
-  const handleCopy = () => {
-    const messageElement = document.querySelector(
-      `[data-message-id="${messageId}"]`
-    );
-    if (messageElement && messageElement.textContent) {
-      navigator.clipboard.writeText(messageElement.textContent);
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(messageContent);
       setCopied(true);
+      showToast({ message: 'Message copied to clipboard', type: 'success' });
       setTimeout(() => setCopied(false), 2000);
-    } else {
-      // Fallback for cases where messageId doesn't directly map to a selectable element
-      // For now, let's assume message content is available via props if needed, or handle differently.
-      // For this change, I'll rely on the existing DOM query which might need refinement depending on actual rendering.
-      const messageContent = document.getElementById(`message-content-${messageId}`)?.textContent;
-      if (messageContent) {
-        navigator.clipboard.writeText(messageContent);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      } else {
-        toast.error("Failed to copy message content.");
-      }
+    } catch (err) {
+      showToast({ message: 'Failed to copy message', type: 'error' });
     }
   };
 
-  const handleSubmitFeedback = async () => {
-    if (rating === 0) {
-      toast.error('Please select a rating');
-      return;
-    }
-    try {
-      await submitFeedback(messageId, rating, feedback || undefined);
-      setFeedbackGiven(true); // Set feedbackGiven to true on successful submission
-      setShowFeedback(false);
-      toast.success('Feedback submitted!');
-    } catch (error) {
-      toast.error('Failed to submit feedback.');
-      console.error('Feedback submission error:', error);
-    }
+  const handleFeedback = (type: 'up' | 'down') => {
+    setFeedback(type);
+    showToast({ 
+      message: type === 'up' ? 'Feedback received! Glad we could help.' : 'Feedback received. We will strive to improve.', 
+      type: 'info' 
+    });
   };
 
   return (
-    <div className="mt-2 flex gap-2">
+    <div className="flex items-center gap-1.5 p-1 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
       <button
         onClick={handleCopy}
-        className="text-xs px-2 py-1 bg-gray-600 hover:bg-gray-700 rounded transition"
+        className={`p-1.5 rounded-lg transition-all ${
+          copied ? 'text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/20' : 'text-slate-400 hover:text-blue-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+        }`}
         title="Copy message"
       >
-        {copied ? '✓ Copied' : 'Copy'}
+        {copied ? <Check size={14} /> : <Copy size={14} />}
       </button>
 
-      {/* Conditional rendering for Feedback button */}
-      {!feedbackGiven ? (
-        <button
-          onClick={() => setShowFeedback(!showFeedback)}
-          className="text-xs px-2 py-1 bg-gray-600 hover:bg-gray-700 rounded transition"
-          title="Give feedback"
-        >
-          👍 Feedback
-        </button>
-      ) : (
-        <span className="text-xs px-2 py-1 bg-green-600 text-white rounded">
-          Feedback Submitted
-        </span>
-      )}
+      <button
+        onClick={() => handleFeedback('up')}
+        className={`p-1.5 rounded-lg transition-all ${
+          feedback === 'up' ? 'text-blue-600 dark:text-teal-400 bg-blue-50 dark:bg-teal-900/20' : 'text-slate-400 hover:text-blue-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+        }`}
+        title="Helpful"
+      >
+        <ThumbsUp size={14} fill={feedback === 'up' ? 'currentColor' : 'none'} />
+      </button>
 
+      <button
+        onClick={() => handleFeedback('down')}
+        className={`p-1.5 rounded-lg transition-all ${
+          feedback === 'down' ? 'text-red-600 bg-red-50 dark:bg-red-900/20' : 'text-slate-400 hover:text-red-500 hover:bg-slate-100 dark:hover:bg-slate-800'
+        }`}
+        title="Not helpful"
+      >
+        <ThumbsDown size={14} fill={feedback === 'down' ? 'currentColor' : 'none'} />
+      </button>
 
-      {showFeedback && !feedbackGiven && ( // Only show form if not feedbackGiven
-        <div className="mt-2 p-2 bg-gray-700 rounded text-white text-xs">
-          <div className="flex gap-1 mb-2">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button
-                key={star}
-                onClick={() => setRating(star)}
-                className={`px-2 py-1 rounded ${
-                  rating >= star ? 'bg-yellow-500' : 'bg-gray-600'
-                }`}
-              >
-                ★
-              </button>
-            ))}
-          </div>
-          <textarea
-            value={feedback}
-            onChange={(e) => setFeedback(e.target.value)}
-            placeholder="Optional feedback..."
-            className="w-full px-2 py-1 bg-gray-600 text-white rounded text-xs mb-2"
-            rows={2}
-          />
-          <button
-            onClick={handleSubmitFeedback}
-            className="px-2 py-1 bg-blue-500 hover:bg-blue-600 rounded transition"
-          >
-            Submit
-          </button>
-        </div>
-      )}
+      <div className="w-[1px] h-4 bg-slate-200 dark:bg-slate-800 mx-0.5" />
+
+      <button
+        className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+        title="Share"
+      >
+        <Share2 size={14} />
+      </button>
+
+      <button
+        className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+        title="More"
+      >
+        <MoreHorizontal size={14} />
+      </button>
     </div>
   );
 };
-
-export default MessageActions;

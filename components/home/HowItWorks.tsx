@@ -1,22 +1,24 @@
 'use client';
 
+import { MessageSquare, Zap, CheckCircle } from 'lucide-react';
+
 export function HowItWorks() {
   const steps = [
     {
       number: '1',
-      icon: '💬',
+      icon: <MessageSquare className="w-12 h-12 text-blue-500 dark:text-teal-400" />,
       title: 'Ask Your Question',
       description: 'Type any legal question in plain English. No jargon. No sign-up required for first question.',
     },
     {
       number: '2',
-      icon: '⚡',
+      icon: <Zap className="w-12 h-12 text-blue-500 dark:text-teal-400" />,
       title: 'Get Instant Guidance',
       description: 'Our AI legal advisor provides clear, actionable answers within seconds.',
     },
     {
       number: '3',
-      icon: '✅',
+      icon: <CheckCircle className="w-12 h-12 text-blue-500 dark:text-teal-400" />,
       title: 'Take Action',
       description: 'Find and book a verified lawyer for deeper support. No obligation.',
     },
@@ -52,7 +54,7 @@ export function HowItWorks() {
                   </div>
 
                   {/* Icon */}
-                  <div className="text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <div className="mb-4 group-hover:scale-110 transition-transform duration-300">
                     {step.icon}
                   </div>
 

@@ -1,135 +1,99 @@
 'use client';
 
 import React, { useRef, useEffect } from 'react';
-import { Message } from '@/types';
-import MessageBubble from './MessageBubble';
-import { Scale, Menu, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import { MessageBubble } from './MessageBubble';
+import { Bot } from 'lucide-react';
 import { UserNav } from '@/components/shared/UserNav';
 
 interface ChatWindowProps {
-  messages: Message[];
-  isLoading: boolean;
-  onToggleSidebar: () => void;
-  onSendMessage: (message: string) => Promise<void>;
-  isSidebarOpen: boolean;
+  messages: Array<{
+    id: string;
+    content: string;
+    role: 'user' | 'assistant';
+    timestamp: string;
+  }>;
 }
 
-const ChatWindow: React.FC<ChatWindowProps> = ({ messages, isLoading, onToggleSidebar, onSendMessage, isSidebarOpen }) => {
-  const endOfMessagesRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = () => {
-    endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+export const ChatWindow: React.FC<ChatWindowProps> = ({ messages }) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, isLoading]);
-
-  if (isLoading && messages.length === 0) {
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950">
-        <div className="w-12 h-12 rounded-full border-4 border-blue-500 dark:border-teal-500 border-t-transparent animate-spin mb-4"></div>
-        <p className="text-slate-500 dark:text-slate-400 font-medium">Initializing AI Assistant...</p>
-      </div>
-    );
-  }
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   return (
-    <div className="flex-1 flex flex-col bg-white dark:bg-slate-950 overflow-hidden">
-      {/* Minimal Header */}
-      <div className="border-b border-slate-200 dark:border-slate-800 px-4 py-2 flex items-center justify-between">
-        <div className={`flex items-center gap-3 transition-all duration-300 ${isSidebarOpen ? 'max-w-3xl mx-auto' : 'max-w-full'}`}>
-          {/* Hamburger Menu - Only show when sidebar is CLOSED (to open it) */}
-          {!isSidebarOpen && (
-            <button
-              onClick={onToggleSidebar}
-              className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors"
-              aria-label="Open sidebar"
-            >
-              <Menu className="h-5 w-5 text-slate-700 dark:text-slate-300" />
-            </button>
-          )}
-
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-teal-400 transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span className="text-sm font-semibold">Back to Home</span>
-          </Link>
+    <div className="flex-1 flex flex-col h-full bg-slate-50 dark:bg-slate-950 relative">
+      {/* Header */}
+      <header className="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl sticky top-0 z-20">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-blue-100 dark:bg-teal-900/30 rounded-lg flex items-center justify-center text-blue-600 dark:text-teal-400">
+            <Bot size={20} />
+          </div>
+          <div>
+            <h2 className="text-sm font-bold text-slate-900 dark:text-white leading-tight">Legal Assistant</h2>
+            <p className="text-[10px] text-teal-600 dark:text-teal-400 font-bold uppercase tracking-widest flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 bg-teal-500 rounded-full animate-pulse"></span>
+              Online
+            </p>
+          </div>
         </div>
 
-        {/* Right Side: User Profile */}
-        <div>
-          <UserNav />
+        {/* User Navigation */}
+        <div className="flex items-center gap-4">
+           <UserNav />
         </div>
-      </div>
+      </header>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 scroll-smooth bg-white dark:bg-slate-950">
-        {messages.length === 0 && !isLoading ? (
-          <div className="flex flex-col items-center justify-center h-full max-w-2xl mx-auto text-center pt-20">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-teal-500 dark:from-teal-500 dark:to-emerald-500 rounded-xl flex items-center justify-center mb-8">
-              <Scale className="h-7 w-7 text-white" />
-            </div>
-            <h2 className="text-4xl font-medium text-slate-900 dark:text-white mb-16">
-              How can I help you today?
-            </h2>
-
-            {/* Quick Action Chips */}
-            <div className="flex flex-wrap gap-2 justify-center mb-8">
-              <button
-                onClick={() => onSendMessage("Explain the basics of non-disclosure agreements (NDAs)")}
-                className="px-4 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-full text-sm text-slate-700 dark:text-slate-300 transition-colors"
-              >
-                📜 Explain NDA basics
-              </button>
-              <button
-                onClick={() => onSendMessage("Guide me through the trademark registration process")}
-                className="px-4 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-full text-sm text-slate-700 dark:text-slate-300 transition-colors"
-              >
-                ™️ Trademark process
-              </button>
-              <button
-                onClick={() => onSendMessage("Help me draft a basic contract template")}
-                className="px-4 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-full text-sm text-slate-700 dark:text-slate-300 transition-colors"
-              >
-                📄 Draft a contract
-              </button>
-              <button
-                onClick={() => onSendMessage("What are my legal rights as a tenant?")}
-                className="px-4 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-full text-sm text-slate-700 dark:text-slate-300 transition-colors"
-              >
-                ⚖️ Legal rights guide
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-6 max-w-3xl mx-auto">
-            {Array.isArray(messages) && messages.map((message, index) => (
-              <MessageBubble
-                key={index}
-                message={message}
-                index={index}
-              />
-            ))}
-
-            {isLoading && (
-              <div className="flex justify-start">
-                <div className="bg-slate-100 dark:bg-slate-800 rounded-2xl rounded-tl-none px-4 py-3 flex gap-1">
-                  <div className="w-2 h-2 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce delay-100"></div>
-                  <div className="w-2 h-2 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce delay-200"></div>
-                </div>
+      <div 
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto px-4 md:px-8 py-10 scroll-smooth custom-scrollbar"
+      >
+        <div className="max-w-4xl mx-auto">
+          {messages.length === 0 ? (
+            <div className="h-full flex flex-col items-center justify-center text-center mt-20 animate-fade-in">
+              <div className="w-20 h-20 bg-blue-50 dark:bg-blue-900/10 rounded-3xl flex items-center justify-center text-blue-600 dark:text-teal-400 mb-8 shadow-inner">
+                <Bot size={40} />
               </div>
-            )}
-            <div ref={endOfMessagesRef} />
-          </div>
-        )}
+              <h3 className="text-2xl md:text-3xl font-bold font-display text-slate-900 dark:text-white mb-4">
+                How can I help you today?
+              </h3>
+              <p className="text-slate-500 dark:text-slate-400 max-w-sm mb-12 leading-relaxed">
+                Ask me anything about land disputes, contract reviews, or general legal guidance in West Africa.
+              </p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-2xl px-4">
+                {[
+                  'How do I register a business in Ghana?',
+                  'What are my rights as a tenant in Lagos?',
+                  'Help me review a employment contract',
+                  'Explain land ownership laws'
+                ].map((suggestion, i) => (
+                  <button
+                    key={i}
+                    className="p-4 text-left text-sm font-medium bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl hover:border-blue-400 dark:hover:border-teal-500 hover:shadow-lg transition-all text-slate-700 dark:text-slate-300 group"
+                  >
+                    "{suggestion}"
+                    <span className="block mt-2 text-[10px] text-blue-600 dark:text-teal-400 opacity-0 group-hover:opacity-100 transition-opacity">Try this →</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            messages.map((msg, idx) => (
+              <MessageBubble
+                key={msg.id}
+                role={msg.role}
+                content={msg.content}
+                timestamp={msg.timestamp}
+                messageIndex={idx}
+              />
+            ))
+          )}
+        </div>
       </div>
     </div>
   );
 };
-
-export default ChatWindow;
