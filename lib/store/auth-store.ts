@@ -35,8 +35,9 @@ export const useAuthStore = create<AuthState>()(
                 set({ isLoading: true, error: null });
                 try {
                     const response = await apiClient.login(credentials);
+                    const user = await apiClient.getProfile();
                     set({
-                        user: response.user,
+                        user,
                         token: response.token,
                         isAuthenticated: true,
                         isLoading: false
@@ -63,8 +64,9 @@ export const useAuthStore = create<AuthState>()(
                     const idToken = await user.getIdToken();
 
                     const response = await apiClient.loginWithGoogle(idToken);
+                    const profile = await apiClient.getProfile();
                     set({
-                        user: response.user,
+                        user: profile,
                         token: response.token,
                         isAuthenticated: true,
                         isLoading: false
@@ -82,8 +84,9 @@ export const useAuthStore = create<AuthState>()(
                 set({ isLoading: true, error: null });
                 try {
                     const response = await apiClient.register(data);
+                    const user = await apiClient.getProfile();
                     set({
-                        user: response.user,
+                        user,
                         token: response.token,
                         isAuthenticated: true,
                         isLoading: false
