@@ -24,6 +24,7 @@ import Link from 'next/link';
 import { apiClient } from '@/lib/api-client';
 import { AnalyticsData } from '@/types';
 import { useAuthStore } from '@/lib/store/auth-store';
+import { NGODashboard } from '@/components/dashboard/NGODashboard';
 
 export default function Dashboard() {
   const { user } = useAuthStore();
@@ -50,14 +51,28 @@ export default function Dashboard() {
 
   const displayStats = stats || {
     totalCases: 3,
-    casesByCategory: {},
-    casesByLocation: {},
-    casesBySeverity: {},
+    casesByCategory: { 'Property': 1, 'Employment': 1, 'Trademark': 1 },
+    casesByLocation: { 'Nairobi': 2, 'Mombasa': 1 },
+    casesBySeverity: { 'high': 1, 'medium': 1, 'low': 1 },
     resolutionRate: 0.85,
-    averageResolutionTime: 0,
-    trends: []
+    averageResolutionTime: 12,
+    trends: [
+      { date: '2023-10-01', count: 2, category: 'General' },
+      { date: '2023-11-01', count: 5, category: 'General' },
+      { date: '2023-12-01', count: 3, category: 'General' },
+    ]
   };
 
+  // If user is NGO or Government, show the specialized analytics dashboard
+  if (user?.role === 'ngo' || user?.role === 'government') {
+    return (
+      <div className="pb-12">
+        <NGODashboard data={displayStats} isLoading={isLoading} />
+      </div>
+    );
+  }
+
+  // Default Dashboard for Citizens and Lawyers/Advocates
   return (
     <div className="space-y-10 animate-fade-in pb-12">
       {/* Upper Section: Welcome & Actions */}
@@ -67,7 +82,7 @@ export default function Dashboard() {
               <Avatar className="h-20 w-20 ring-4 ring-blue-50 dark:ring-slate-900 shadow-xl">
                 <AvatarImage src={user?.avatar} />
                 <AvatarFallback className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white text-2xl font-black">
-                  {user?.name?.charAt(0) || 'A'}
+                  {user?.displayName?.charAt(0) || 'A'}
                 </AvatarFallback>
               </Avatar>
               <div className="absolute bottom-0 right-0 h-6 w-6 bg-green-500 border-4 border-white dark:border-slate-950 rounded-full"></div>
@@ -75,9 +90,11 @@ export default function Dashboard() {
            <div>
               <div className="flex items-center gap-3">
                 <h1 className="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-                    Jambo, {user?.name?.split(' ')[0] || 'Advocate'}
+                    Jambo, {user?.displayName?.split(' ')[0] || (user?.role === 'lawyer' ? 'Advocate' : 'Citizen')}
                 </h1>
-                <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 border-none font-bold">PRO MEMBER</Badge>
+                <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 border-none font-bold">
+                   {user?.role?.toUpperCase() || 'MEMBER'}
+                </Badge>
               </div>
               <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium italic">Empowering your pursuit of justice today.</p>
            </div>
@@ -112,9 +129,9 @@ export default function Dashboard() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { label: 'Active Cases', value: '3', trend: '+1 this week', icon: Gavel, color: 'text-blue-600', bg: 'bg-blue-50/50 dark:bg-blue-900/10' },
+          { label: 'Active Cases', value: displayStats.totalCases.toString(), trend: '+1 this week', icon: Gavel, color: 'text-blue-600', bg: 'bg-blue-50/50 dark:bg-blue-900/10' },
           { label: 'Expert Bookings', value: '2', trend: 'Next: Friday', icon: Calendar, color: 'text-purple-600', bg: 'bg-purple-50/50 dark:bg-purple-900/10' },
-          { label: 'AI Resolution Rate', value: '94%', trend: 'Top 5% user', icon: Zap, color: 'text-amber-600', bg: 'bg-amber-50/50 dark:bg-amber-900/10' },
+          { label: 'AI Resolution Rate', value: `${(displayStats.resolutionRate * 100).toFixed(0)}%`, trend: 'Top 5% user', icon: Zap, color: 'text-amber-600', bg: 'bg-amber-50/50 dark:bg-amber-900/10' },
           { label: 'Unread Intel', value: '12', trend: 'Law updates', icon: FileText, color: 'text-teal-600', bg: 'bg-teal-50/50 dark:bg-teal-900/10' },
         ].map((stat, index) => (
           <Card key={index} className="border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-300 bg-white dark:bg-slate-900 group rounded-[2.5rem] overflow-hidden">

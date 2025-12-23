@@ -2,6 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { useChatStore } from '@/lib/store/chat-store';
+import { useAuthStore } from '@/lib/store/auth-store';
 import ChatWindow from '@/components/chat/ChatWindow';
 import ChatInput from '@/components/chat/ChatInput';
 import { ChatSidebar } from '@/components/chat/ChatSidebar';
@@ -18,27 +19,50 @@ const ChatContainer: React.FC = () => {
     createSession,
     fetchAllSessions,
     setCurrentSession,
-    clearError,
   } = useChatStore();
 
-  useEffect(() => {
-    fetchAllSessions();
-  }, [fetchAllSessions]);
+  const { isAuthenticated, user } = useAuthStore();
 
   useEffect(() => {
-    if (!isLoading && !currentSessionId && allSessions.length > 0) {
-      setCurrentSession(allSessions[0].id);
-    } else if (!isLoading && !currentSessionId && allSessions.length === 0) {
-      createSession({ title: 'New Chat' });
+    if (isAuthenticated) {
+      fetchAllSessions();
     }
-  }, [currentSessionId, isLoading, allSessions, createSession, setCurrentSession]);
+  }, [isAuthenticated, fetchAllSessions]);
+
+  useEffect(() => {
+    // Wait for user to be available before auto-creating
+    if (isAuthenticated && user && !isLoading && !currentSessionId && allSessions.length === 0 && !error) {
+       // Only auto-create if no error implies we haven't failed recently
+      createSession({ title: 'New Chat' });
+    } else if (isAuthenticated && !isLoading && !currentSessionId && allSessions.length > 0) {
+       setCurrentSession(allSessions[0].id);
+    }
+  }, [isAuthenticated, user, currentSessionId, isLoading, allSessions, createSession, setCurrentSession, error]);
 
   useEffect(() => {
     if (error) {
       toast.error(error);
-      clearError();
+      // Do not clear error automatically, or we risk infinite loops if the error
+      // causes a state (like no sessions) that triggers a retry (like createSession).
+      // clearError(); 
     }
-  }, [error, clearError]);
+  }, [error]);
+
+  const handleSendMessage = async (content: string, files?: File[]) => {
+    let attachmentUrls: string[] = [];
+    if (files && files.length > 0) {
+      // Upload files first
+      const uploadPromises = files.map(file => useChatStore.getState().uploadFile(file));
+      try {
+        attachmentUrls = await Promise.all(uploadPromises);
+      } catch (error) {
+        console.error("Failed to upload files", error);
+        toast.error("Failed to upload attachments");
+        return;
+      }
+    }
+    await sendMessage(content, attachmentUrls);
+  };
 
   return (
     <div className="flex h-screen overflow-hidden bg-white dark:bg-slate-950">
@@ -46,11 +70,14 @@ const ChatContainer: React.FC = () => {
       <main className="flex-1 flex flex-col relative overflow-hidden">
         <div className="flex-1 flex flex-col w-full max-w-4xl mx-auto overflow-hidden">
           <ChatWindow
-            messages={chatHistory}
+            messages={chatHistory.map(m => ({
+              ...m,
+              role: m.role as 'user' | 'assistant' // Cast to expected role type
+            }))}
             isLoading={isLoading}
-            onSendMessage={sendMessage}
+            onSendMessage={handleSendMessage}
           />
-          <ChatInput onSendMessage={sendMessage} isLoading={isLoading} />
+          <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
         </div>
       </main>
     </div>

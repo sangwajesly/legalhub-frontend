@@ -54,17 +54,17 @@ export const useAuthStore = create<AuthState>()(
             loginWithGoogle: async () => {
                 set({ isLoading: true, error: null });
                 try {
+                    console.log('[AuthStore] Starting Google Popup Sign-in...');
                     const result = await signInWithPopup(auth, googleProvider);
-                    // This gives you a Google Access Token. You can use it to access the Google API.
-                    // const credential = GoogleAuthProvider.credentialFromResult(result);
-                    // const token = credential?.accessToken;
-
-                    // The signed-in user info.
                     const user = result.user;
                     const idToken = await user.getIdToken();
 
+                    console.log('[AuthStore] Google Sign-in successful. Calling backend...');
                     const response = await apiClient.loginWithGoogle(idToken);
+                    console.log('[AuthStore] Backend login successful. Fetching profile...');
                     const profile = await apiClient.getProfile();
+                    
+                    console.log('[AuthStore] Profile fetched. Setting final state in Zustand store.');
                     set({
                         user: profile,
                         token: response.token,
@@ -72,6 +72,7 @@ export const useAuthStore = create<AuthState>()(
                         isLoading: false
                     });
                 } catch (error: any) {
+                    console.error('[AuthStore] Error during Google login:', error);
                     set({
                         error: error.message || 'Google Login failed',
                         isLoading: false
@@ -136,6 +137,7 @@ export const useAuthStore = create<AuthState>()(
 
                 try {
                     const user = await apiClient.getProfile();
+                    // apiClient.getProfile already normalizes _id to id
                     set({ user, isAuthenticated: true });
                 } catch (error) {
                     // If profile fetch fails, token might be invalid

@@ -24,39 +24,54 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
   return (
     <div className={`flex w-full ${isUser ? 'justify-end' : 'justify-start'} mb-8 animate-fade-in group`}>
-      <div className={`flex items-start max-w-[85%] md:max-w-[75%] gap-4 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
+      <div className={`flex items-start max-w-[90%] md:max-w-[85%] gap-3 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
         {/* Avatar */}
-        <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center border ${
+        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center border ${
           isUser 
-            ? 'bg-blue-600 dark:bg-teal-600 border-blue-500 dark:border-teal-500 text-white shadow-lg' 
+            ? 'bg-blue-600 dark:bg-teal-600 border-blue-500 dark:border-teal-500 text-white shadow-md' 
             : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-teal-400'
         }`}>
-          {isUser ? <User size={20} /> : <Bot size={20} />}
+          {isUser ? <User size={16} /> : <Bot size={16} />}
         </div>
 
         {/* Message Content */}
-        <div className="flex flex-col gap-1.5">
-          <div className={`px-5 py-3.5 rounded-2xl text-sm leading-relaxed shadow-sm ${
+        <div className="flex flex-col gap-1">
+          <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
             isUser
-              ? 'bg-blue-600 dark:bg-teal-600 text-white rounded-tr-none'
+              ? 'bg-blue-600 dark:bg-teal-600 text-white rounded-tr-none shadow-sm'
               : 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 border border-slate-100 dark:border-slate-800 rounded-tl-none'
           }`}>
             <div className="prose dark:prose-invert prose-slate max-w-none prose-sm">
               <ReactMarkdown
                 components={{
+                  h1: ({ node, ...props }) => <h1 className="text-xl md:text-2xl font-bold my-4" {...props} />,
+                  h2: ({ node, ...props }) => <h2 className="text-lg md:text-xl font-bold my-3" {...props} />,
+                  h3: ({ node, ...props }) => <h3 className="text-base md:text-lg font-semibold my-2" {...props} />,
+                  table: ({ node, ...props }) => <table className="table-auto w-full my-4 border-collapse border border-slate-200 dark:border-slate-700" {...props} />,
+                  thead: ({ node, ...props }) => <thead className="bg-slate-50 dark:bg-slate-800" {...props} />,
+                  th: ({ node, ...props }) => <th className="border border-slate-200 dark:border-slate-700 px-3 py-2 text-left font-semibold" {...props} />,
+                  td: ({ node, ...props }) => <td className="border border-slate-200 dark:border-slate-700 px-3 py-2" {...props} />,
+                  ul: ({ node, ...props }) => <ul className="list-disc list-inside my-4 pl-4 space-y-2" {...props} />,
+                  ol: ({ node, ...props }) => <ol className="list-decimal list-inside my-4 pl-4 space-y-2" {...props} />,
+                  li: ({ node, ...props }) => <li className="leading-relaxed" {...props} />,
+                  p: ({ node, ...props }) => <p className="mb-4 last:mb-0" {...props} />,
                   code({ node, inline, className, children, ...props }: any) {
                     const match = /language-(\w+)/.exec(className || '');
                     return !inline && match ? (
-                      <div className="my-4 rounded-xl overflow-hidden shadow-2xl border border-slate-800">
+                      <div className="my-4 rounded-xl overflow-hidden shadow-lg border border-slate-800 bg-slate-900">
+                        <div className="flex items-center justify-between px-4 py-1 bg-slate-800 text-xs text-slate-400">
+                          <span>{match[1]}</span>
+                          <button>Copy</button>
+                        </div>
                         <SyntaxHighlighter
                           style={oneDark}
                           language={match[1]}
                           PreTag="div"
                           customStyle={{
                             margin: 0,
-                            padding: '1.25rem',
+                            padding: '1rem',
                             fontSize: '0.875rem',
-                            backgroundColor: '#0f172a',
+                            backgroundColor: 'transparent',
                           }}
                           {...props}
                         >
@@ -69,7 +84,6 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                       </code>
                     );
                   },
-                  p: ({ children }) => <p className="mb-0 last:mb-0 leading-relaxed tabular-nums">{children}</p>,
                 }}
               >
                 {content}

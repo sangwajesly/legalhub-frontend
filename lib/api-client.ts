@@ -20,15 +20,15 @@ import {
   UploadFileResponse,
 } from '@/types';
 
+import { auth } from './firebase'; // Import Firebase auth instance
+
 class ApiClient {
   private client: AxiosInstance;
   private baseURL: string;
 
   constructor() {
-    // Remove trailing slash and /api suffix if present
-    this.baseURL = (process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8001')
-      .replace(/\/$/, '')
-      .replace(/\/api$/, '');
+    // All requests will be relative to the current domain, pointing to the Next.js API proxy
+    this.baseURL = '';
 
     this.client = axios.create({
       baseURL: this.baseURL,
@@ -39,14 +39,29 @@ class ApiClient {
     });
 
     // Request interceptor - add auth token
-    this.client.interceptors.request.use((config) => {
-    const authStorage = localStorage.getItem('auth-storage');
-    if (authStorage) {
-      const { state } = JSON.parse(authStorage);
-      if (state && state.token) {
-        config.headers.Authorization = `Bearer ${state.token}`;
+    this.client.interceptors.request.use(async (config) => {
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          const token = await user.getIdToken();
+          config.headers.Authorization = `Bearer ${token}`;
+          console.log('Firebase ID token attached to request.');
+        } catch (error) {
+          console.error('Error getting Firebase ID token:', error);
+          // Optionally handle the error, e.g., by logging out the user
+        }
+      } else {
+        // Fallback for non-Firebase auth or initial load
+        const authStorage = localStorage.getItem('auth-storage');
+        if (authStorage) {
+          const { state } = JSON.parse(authStorage);
+          if (state && state.token) {
+            config.headers.Authorization = `Bearer ${state.token}`;
+            console.log('Fallback token from localStorage attached.');
+          }
+        }
       }
-    }
+
       console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`);
       return config;
     });
@@ -59,15 +74,28 @@ class ApiClient {
 
         // Handle 401 Unauthorized - redirect to login
         if (error.response?.status === 401 && typeof window !== 'undefined') {
-          localStorage.removeItem('auth_token');
+          // More robust logout logic can be centralized here
+          // For now, just remove local token and redirect
+          localStorage.removeItem('auth_token'); // Also clear legacy token if present
+          // Consider using a more integrated auth state management logout function
           if (!window.location.pathname.includes('/login')) {
-            window.location.href = '/login';
+            // window.location.href = '/login';
+            console.warn('Redirect to login commented out for debugging.');
           }
         }
 
         return Promise.reject(error.response?.data || error);
       }
     );
+  }
+
+  // Helper to normalize user object (handling _id vs id)
+  private normalizeUser(userData: any): User {
+      if (!userData) return userData;
+      if (userData._id && !userData.id) {
+          userData.id = userData._id;
+      }
+      return userData as User;
   }
 
   // ============ AUTH ENDPOINTS ============
@@ -79,7 +107,7 @@ class ApiClient {
     // Handle nested response structure from backend
     const data = response.data;
     const authData: AuthResponse = {
-      user: data.user,
+      user: this.normalizeUser(data.user),
       token: data.tokens?.access_token || data.token,
       refreshToken: data.tokens?.refresh_token || data.refreshToken
     };
@@ -96,7 +124,7 @@ class ApiClient {
 
     const data = response.data;
     const authData: AuthResponse = {
-      user: data.user,
+      user: this.normalizeUser(data.user),
       token: data.tokens?.access_token || data.token,
       refreshToken: data.tokens?.refresh_token || data.refreshToken
     };
@@ -112,7 +140,7 @@ class ApiClient {
     const response = await this.client.post('/api/v1/auth/register', data);
 
     const authData: AuthResponse = {
-      user: response.data.user,
+      user: this.normalizeUser(response.data.user),
       token: response.data.tokens?.access_token || response.data.token,
       refreshToken: response.data.tokens?.refresh_token || response.data.refreshToken
     };
@@ -148,14 +176,14 @@ class ApiClient {
 
   async getProfile(): Promise<User> {
     // FIX: Changed from /auth/profile to /auth/me
-    const response = await this.client.get<User>('/api/v1/auth/me');
-    return response.data;
+    const response = await this.client.get<any>('/api/v1/auth/me');
+    return this.normalizeUser(response.data);
   }
 
   async updateProfile(data: Partial<User>): Promise<User> {
     // Using users endpoint for profile updates
     const response = await this.client.patch<User>('/api/v1/users/profile', data);
-    return response.data;
+    return this.normalizeUser(response.data);
   }
 
   async uploadAvatar(file: File): Promise<{ url: string }> {
@@ -306,10 +334,11 @@ class ApiClient {
     return response.data;
   }
 
-  async sendMessage(sessionId: string, content: string, attachments: string[] = []): Promise<SendMessageResponse> {
+  async sendMessage(sessionId: string, content: string, attachments: string[] = [], history: any[] = []): Promise<SendMessageResponse> {
     const response = await this.client.post<SendMessageResponse>(`/api/v1/chat/sessions/${sessionId}/messages`, {
       message: content, // Changed from content to message to match backend schema preference observed in conflicts
       attachments,
+      history
     });
     return response.data;
   }

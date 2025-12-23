@@ -54,11 +54,14 @@ export function ChatSidebar() {
           </button>
           
           <button
-            onClick={() => createSession({ title: 'New Chat' })}
+            onClick={() => {
+              useChatStore.getState().clearError();
+              createSession({ title: 'New Chat' });
+            }}
             disabled={isLoading}
-            className="flex items-center gap-3 px-4 py-3 bg-[#e9eef6] dark:bg-[#1e1f20] hover:bg-[#dde3ea] dark:hover:bg-[#2d2e30] rounded-full transition-colors disabled:opacity-50 text-sm font-medium"
+            className="flex items-center gap-2 px-3 py-2 bg-[#e9eef6] dark:bg-[#1e1f20] hover:bg-[#dde3ea] dark:hover:bg-[#2d2e30] rounded-full transition-colors disabled:opacity-50 text-xs font-semibold"
           >
-            <Plus size={20} className="text-blue-600 dark:text-blue-400" />
+            <Plus size={18} className="text-blue-600 dark:text-blue-400" />
             <span className="hidden lg:inline text-[#444746] dark:text-[#e3e3e3]">New Chat</span>
           </button>
         </div>
@@ -74,17 +77,17 @@ export function ChatSidebar() {
           <Link href="/dashboard">
             <Button
               variant="ghost"
-              className="w-full justify-start gap-3 rounded-xl hover:bg-slate-200 dark:hover:bg-[#2d2e30] text-slate-700 dark:text-[#e3e3e3]"
+              className="w-full justify-start gap-2 h-9 rounded-xl hover:bg-slate-200 dark:hover:bg-[#2d2e30] text-slate-700 dark:text-[#e3e3e3] text-xs"
             >
-              <LayoutDashboard size={18} />
-              <span>Go to Dashboard</span>
+              <LayoutDashboard size={16} />
+              <span>Dashboard</span>
             </Button>
           </Link>
         </div>
 
         {/* Sessions List - Scrollable */}
         <div className="flex-1 overflow-y-auto py-2 px-3 space-y-4">
-          {allSessions.length === 0 ? (
+          {!Array.isArray(allSessions) || allSessions.length === 0 ? (
             <div className="p-4 text-center">
               <p className="text-slate-500 dark:text-[#c4c7c5] text-xs">Recent chats appear here</p>
             </div>
@@ -93,10 +96,10 @@ export function ChatSidebar() {
               <h3 className="px-3 py-2 text-xs font-semibold text-slate-500 dark:text-[#c4c7c5] uppercase tracking-wider">
                 Recent
               </h3>
-              {allSessions.map((session: any) => (
+              {Array.isArray(allSessions) && allSessions.map((session: any) => (
                 <div
                   key={session.id}
-                  className={`group flex items-center justify-between px-3 py-2 rounded-full cursor-pointer transition-colors ${currentSessionId === session.id
+                  className={`group flex items-center justify-between px-3 py-1.5 rounded-full cursor-pointer transition-colors ${currentSessionId === session.id
                     ? 'bg-[#d3e3fd] dark:bg-[#004a77] text-blue-900 dark:text-[#c2e7ff]'
                     : 'hover:bg-slate-200 dark:hover:bg-[#2d2e30] text-slate-700 dark:text-[#e3e3e3]'
                     } ${isLoading ? 'pointer-events-none opacity-50' : ''}`}
@@ -115,7 +118,11 @@ export function ChatSidebar() {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      deleteChatSession(session.id);
+                      if (session.id) {
+                        deleteChatSession(session.id);
+                      } else {
+                        console.error("Attempted to delete session with missing ID:", session);
+                      }
                     }}
                     disabled={isLoading}
                     className="p-1 rounded-full hover:bg-slate-300 dark:hover:bg-[#3d3e41] opacity-0 group-hover:opacity-100 transition-opacity"
@@ -134,9 +141,9 @@ export function ChatSidebar() {
           <Link href="/settings">
             <Button
               variant="ghost"
-              className="w-full justify-start gap-3 rounded-xl hover:bg-slate-200 dark:hover:bg-[#2d2e30] text-slate-700 dark:text-[#e3e3e3]"
+              className="w-full justify-start gap-2 h-9 rounded-xl hover:bg-slate-200 dark:hover:bg-[#2d2e30] text-slate-700 dark:text-[#e3e3e3] text-xs"
             >
-              <Settings size={18} />
+              <Settings size={16} />
               <span>Settings</span>
             </Button>
           </Link>

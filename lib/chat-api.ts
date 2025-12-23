@@ -1,5 +1,20 @@
-import { Message, Session, SessionSummary, SendMessageResponse, UploadFileResponse } from '@/types';
-import apiClient from '@/lib/api-client'; // Import apiClient
+import {
+  addDoc,
+  collection,
+  serverTimestamp,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  doc
+} from 'firebase/firestore';
+import { db, auth } from './firebase';
+import {
+  Message,
+  Session,
+  SessionSummary,
+  SendMessageResponse
+} from '@/types';
 
 export interface GetSessionsResponse {
   sessions: SessionSummary[];
@@ -9,90 +24,146 @@ export interface GetMessagesResponse {
   messages: Message[];
 }
 
-// Function to handle API errors consistently
-const handleApiError = (error: any, defaultMessage: string) => {
-  console.error('API Error:', error);
-  throw new Error(error.response?.data?.message || error.message || defaultMessage);
-};
-
 export const chatApi = {
-  // 1. POST /sessions - Create a New Chat Session
   createSession: async (
-    sessionData: Partial<Session>,
-    userId: string
+    sessionData: Partial<Session>
   ): Promise<Session> => {
-    try {
-      const response = await apiClient.createSession(sessionData, userId);
-      return response;
-    } catch (error) {
-      handleApiError(error, 'Failed to create new chat session.');
-      throw error; // Re-throw to propagate the error
+    if (!auth.currentUser) {
+      throw new Error('User not authenticated');
     }
+    const sessionRef = await addDoc(collection(db, 'sessions'), {
+      ...sessionData,
+      userId: auth.currentUser.uid,
+      createdAt: serverTimestamp()
+    });
+    return {
+      id: sessionRef.id,
+      ...sessionData,
+      userId: auth.currentUser.uid,
+      createdAt: new Date().toISOString()
+    } as Session;
   },
 
-  // 2. GET /sessions - Fetch All Chat Sessions
   getSessions: async (): Promise<GetSessionsResponse> => {
-    try {
-      const response = await apiClient.getSessions(); // apiClient.getSessions() already returns SessionSummary[]
-      return { sessions: response };
-    } catch (error) {
-      handleApiError(error, 'Failed to fetch chat sessions.');
-      throw error;
+    if (!auth.currentUser) {
+      throw new Error('User not authenticated');
     }
+    const q = query(
+      collection(db, 'sessions'),
+      where('userId', '==', auth.currentUser.uid),
+      orderBy('createdAt', 'desc')
+    );
+    const querySnapshot = await getDocs(q);
+    const sessions: SessionSummary[] = querySnapshot.docs.map(
+      (doc) =>
+        ({
+          id: doc.id,
+          ...doc.data()
+        } as SessionSummary)
+    );
+    return { sessions };
   },
 
-  // 3. DELETE /sessions/{sessionId} - Delete a Chat Session
   deleteChatSession: async (sessionId: string): Promise<{ ok: boolean }> => {
-    try {
-      await apiClient.deleteChatSession(sessionId); // Use apiClient method
-      return { ok: true };
-    } catch (error) {
-      handleApiError(error, `Failed to delete chat session ${sessionId}.`);
-      throw error;
-    }
+    // This will be a bit more complex with subcollections.
+    // For now, we'll just delete the session document.
+    // A more complete solution would require a Cloud Function to delete the subcollection.
+    await deleteDoc(doc(db, 'sessions', sessionId));
+    return { ok: true };
   },
 
-  // 4. POST /sessions/{sessionId}/messages - Send Message & Get Reply
-  sendMessage: async (sessionId: string, message: string, attachments: string[] = []): Promise<SendMessageResponse> => {
-    try {
-      const response = await apiClient.sendMessage(sessionId, message, attachments); // Use apiClient method
-      return response;
-    } catch (error) {
-      handleApiError(error, `Failed to send message in session ${sessionId}.`);
-      throw error;
+  sendMessage: async (
+    sessionId: string,
+    message: string,
+    attachments: string[] = []
+  ): Promise<SendMessageResponse> => {
+    if (!auth.currentUser) {
+      throw new Error('User not authenticated');
     }
+    const messagesRef = collection(db, 'sessions', sessionId, 'messages');
+    const newMessage: Omit<Message, 'id'> = {
+      sessionId,
+      content: message,
+      sender: {
+        // Assuming the current user is always the sender when using this function
+        id: auth.currentUser.uid,
+        name: auth.currentUser.displayName || 'User',
+        avatar: auth.currentUser.photoURL || undefined
+      },
+      timestamp: new Date().toISOString(), // Or use serverTimestamp()
+      attachments: attachments.map((url) => ({
+        type: url.endsWith('.pdf') ? 'pdf' : 'image',
+        url
+      }))
+    };
+    const docRef = await addDoc(messagesRef, {
+      ...newMessage,
+      createdAt: serverTimestamp()
+    });
+
+    // We need to return a SendMessageResponse, which includes the bot's reply.
+    // Since we are now directly writing to Firestore, we don't have a bot reply.
+    // We will have to change the logic in the component to listen for new messages.
+    // For now, we will return a mock response.
+
+    return {
+      userMessage: {
+        id: docRef.id,
+        ...newMessage
+      },
+      botResponse: {
+        id: 'bot-response-placeholder',
+        sessionId,
+        content: 'This is a placeholder response. You should implement a listener for real-time updates.',
+        sender: {
+          id: 'bot',
+          name: 'Legal Assistant'
+        },
+        timestamp: new Date().toISOString()
+      }
+    };
   },
 
-  // 5. GET /sessions/{sessionId}/messages - Get Message History
   getChatHistory: async (sessionId: string): Promise<GetMessagesResponse> => {
-    try {
-      const response = await apiClient.getChatHistory(sessionId); // Use apiClient method
-      return { messages: response };
-    } catch (error) {
-      handleApiError(error, `Failed to fetch chat history for session ${sessionId}.`);
-      throw error;
-    }
+    const messagesRef = collection(db, 'sessions', sessionId, 'messages');
+    const q = query(messagesRef, orderBy('createdAt'));
+    const querySnapshot = await getDocs(q);
+    const messages: Message[] = querySnapshot.docs.map(
+      (doc) =>
+        ({
+          id: doc.id,
+          ...doc.data()
+        } as Message)
+    );
+    return { messages };
   },
 
-  // 6. POST /sessions/{sessionId}/messages/{messageId}/feedback - Submit Feedback
-  submitFeedback: async (sessionId: string, messageId: string, rating: number, feedback?: string): Promise<{ ok: boolean }> => {
-    try {
-      await apiClient.submitFeedback(sessionId, messageId, rating, feedback); // Use apiClient method
-      return { ok: true };
-    } catch (error) {
-      handleApiError(error, `Failed to submit feedback for message ${messageId} in session ${sessionId}.`);
-      throw error;
-    }
+  submitFeedback: async (
+    sessionId: string,
+    messageId: string,
+    rating: number,
+    feedback?: string
+  ): Promise<{ ok: boolean }> => {
+    const feedbackRef = doc(
+      db,
+      'sessions',
+      sessionId,
+      'messages',
+      messageId
+    );
+    await updateDoc(feedbackRef, {
+      feedback: {
+        rating,
+        text: feedback
+      }
+    });
+    return { ok: true };
   },
 
-  // 7. POST /upload - Upload File
-  uploadFile: async (file: File): Promise<UploadFileResponse> => {
-    try {
-      const response = await apiClient.uploadFile(file); // Use apiClient method
-      return response;
-    } catch (error) {
-      handleApiError(error, 'Failed to upload file.');
-      throw error;
-    }
-  },
+  uploadFile: async (file: File): Promise<{ url: string }> => {
+    // This would require setting up Firebase Storage
+    // For now, we'll return a placeholder
+    console.warn('File upload is not implemented for Firebase yet.');
+    return { url: `https://placehold.co/600x400?text=${file.name}` };
+  }
 };

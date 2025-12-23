@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Bell, User } from 'lucide-react';
+import { Bell, User, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -11,11 +11,23 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-
 import { useAuthStore } from '@/lib/store/auth-store';
 
 export function UserNav() {
-    const { user, logout } = useAuthStore();
+    const { user, isAuthenticated, logout } = useAuthStore();
+
+    console.log('[UserNav] Rendered. Auth state:', { isAuthenticated, user });
+
+    if (!isAuthenticated) {
+        return (
+            <Link href="/login">
+                <Button variant="outline" className="dark:text-white">
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Login
+                </Button>
+            </Link>
+        );
+    }
 
     return (
         <div className="flex items-center gap-3">
@@ -28,13 +40,14 @@ export function UserNav() {
 
             <div className="flex items-center gap-3">
                 <div className="text-right hidden sm:block">
-                    <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{user?.name || 'User'}</p>
+                    <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{user?.displayName || 'User'}</p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">{user?.email || 'Guest'}</p>
                 </div>
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="relative h-10 w-10 rounded-full bg-blue-50 dark:bg-slate-800 flex items-center justify-center border-2 border-white dark:border-slate-700 shadow-sm p-0 overflow-hidden hover:bg-blue-100 dark:hover:bg-slate-700 focus:ring-2 focus:ring-blue-500/20">
+                            {/* TODO: Add Avatar component with user?.avatarUrl */}
                             <User className="h-5 w-5 text-blue-600 dark:text-teal-400" />
                         </Button>
                     </DropdownMenuTrigger>

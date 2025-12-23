@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Plus, Paperclip, X, Image as ImageIcon, FileText } from 'lucide-react';
+import { Send, Plus, X, Image as ImageIcon, FileText } from 'lucide-react';
+
+import { SuggestedPrompts } from './SuggestedPrompts';
 
 interface ChatInputProps {
   onSendMessage: (message: string, files?: File[]) => void;
@@ -46,48 +48,51 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
   };
 
   return (
-    <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8 bg-gradient-to-t from-slate-50 dark:from-slate-950 via-slate-50/80 dark:via-slate-950/80 to-transparent pointer-events-none">
-      <div className="max-w-4xl mx-auto pointer-events-auto">
+    <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 bg-gradient-to-t from-slate-50 dark:from-slate-950 via-slate-50/90 dark:via-slate-950/90 to-transparent pointer-events-none z-10">
+      <div className="max-w-3xl mx-auto pointer-events-auto">
+        <SuggestedPrompts />
         <form 
           onSubmit={handleSubmit}
-          className="bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl shadow-blue-500/10 dark:shadow-black/50 border border-slate-200 dark:border-slate-800 transition-all focus-within:border-blue-400 dark:focus-within:border-teal-500 overflow-hidden"
+          className="bg-[#f0f4f9] dark:bg-[#1e1f20] rounded-[1.75rem] transition-all focus-within:bg-white dark:focus-within:bg-[#2d2e30] focus-within:shadow-md py-2 px-2 relative"
         >
           {/* File Previews */}
           {files.length > 0 && (
-            <div className="flex flex-wrap gap-2 px-6 pt-4 pb-2 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex flex-wrap gap-2 px-4 pt-2 pb-1 mx-2">
               {files.map((file, idx) => (
-                <div key={idx} className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 group animate-in zoom-in-50">
-                  {file.type.startsWith('image/') ? <ImageIcon size={14} className="text-blue-500" /> : <FileText size={14} className="text-blue-500" />}
-                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300 max-w-[120px] truncate">{file.name}</span>
+                <div key={idx} className="flex items-center gap-1.5 bg-white dark:bg-[#2d2e30] px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 group animate-in zoom-in-50">
+                  {file.type.startsWith('image/') ? <ImageIcon size={12} className="text-blue-500" /> : <FileText size={12} className="text-blue-500" />}
+                  <span className="text-[10px] font-medium text-slate-700 dark:text-slate-300 max-w-[100px] truncate">{file.name}</span>
                   <button 
                     type="button"
                     onClick={() => removeFile(idx)}
                     className="text-slate-400 hover:text-red-500 transition-colors"
                   >
-                    <X size={14} />
+                    <X size={12} />
                   </button>
                 </div>
               ))}
             </div>
           )}
 
-          <div className="flex items-end p-2 md:p-3 gap-2">
-            {/* Attachment Button */}
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-2xl text-slate-400 hover:text-blue-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
-              title="Attach files"
-            >
-              <Paperclip size={20} />
-            </button>
-            <input 
-              type="file" 
-              ref={fileInputRef} 
-              multiple 
-              className="hidden" 
-              onChange={handleFileChange}
-            />
+          <div className="flex items-center gap-2 pl-2 pr-2">
+             {/* Plus/Attach Button - Left aligned */}
+             <div className="flex items-center">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="w-10 h-10 flex items-center justify-center rounded-full text-[#444746] dark:text-[#c4c7c5] hover:bg-[#e3e3e3] dark:hover:bg-[#444746] transition-colors"
+                title="Add attachment"
+              >
+                <Plus size={22} className="stroke-[1.5]" />
+              </button>
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                multiple 
+                className="hidden" 
+                onChange={handleFileChange}
+              />
+            </div>
 
             {/* Input Field */}
             <textarea
@@ -101,34 +106,39 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
                   handleSubmit(e);
                 }
               }}
-              placeholder="Ask a legal question..."
-              className="flex-1 bg-transparent border-none focus:ring-0 text-slate-900 dark:text-white placeholder-slate-400 py-3 md:py-4 px-2 max-h-[200px] resize-none text-sm md:text-base leading-relaxed"
+              placeholder="Ask LegalHub..."
+              className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-slate-900 dark:text-white placeholder-[#444746] dark:placeholder-[#c4c7c5] py-3 text-[1rem] leading-relaxed resize-none min-h-[48px] max-h-[200px]"
             />
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isLoading || (!message.trim() && files.length === 0)}
-              className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-2xl transition-all ${
-                (message.trim() || files.length > 0) && !isLoading
-                  ? 'bg-blue-600 dark:bg-teal-600 text-white shadow-lg shadow-blue-500/30'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-300 dark:text-slate-700 cursor-not-allowed'
-              }`}
-            >
-              {isLoading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-              ) : (
-                <Send size={20} className={message.trim() ? "translate-x-0.5" : ""} />
-              )}
-            </button>
+            {/* Send Button - Right aligned */}
+            {message.trim() || files.length > 0 ? (
+               <button
+               type="submit"
+               disabled={isLoading}
+               className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-600 dark:bg-[#a8c7fa] text-white dark:text-[#062e6f] hover:opacity-90 transition-all"
+             >
+               {isLoading ? (
+                 <div className="w-5 h-5 border-2 border-white/30 dark:border-[#062e6f]/30 border-t-white dark:border-t-[#062e6f] rounded-full animate-spin"></div>
+               ) : (
+                 <Send size={20} className="translate-x-0.5" />
+               )}
+             </button>
+            ) : (
+               /* Show Mic or other icon when empty (Simulated for visual match) */
+               <div className="w-10 h-10"></div>
+            )}
+           
           </div>
         </form>
         
         {/* Under-input notice */}
-        <p className="text-[10px] text-center mt-3 text-slate-400 dark:text-slate-600 font-medium">
-          LegalHub AI can make mistakes. Verify important legal information.
+        <p className="text-[11px] text-center mt-3 text-[#444746] dark:text-[#c4c7c5] font-normal">
+          LegalHub can make mistakes, so double-check it.
         </p>
       </div>
     </div>
   );
 };
+
+export default ChatInput;
+

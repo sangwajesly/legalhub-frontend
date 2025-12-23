@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { 
   ArrowLeft, 
   Clock, 
@@ -18,7 +19,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { apiClient } from '@/lib/api-client';
-import { Article } from '@/types';
+import { DUMMY_ARTICLES } from '@/lib/mock-data';
 
 export default function ArticleDetailPage() {
   const { id } = useParams();
@@ -34,17 +35,22 @@ export default function ArticleDetailPage() {
         const data = await apiClient.getArticleById(id as string);
         setArticle(data);
       } catch (err) {
-        console.error('Failed to fetch article:', err);
-        // Fallback for prototype/demo
-        setArticle({
-          id: id as string,
-          title: "Understanding Land Ownership Laws in Kenya (2025 Guide)",
-          content: "Land ownership in Kenya is governed by a complex set of statutes, primarily the Land Act of 2012 and the Land Registration Act of 2012. Understanding these regulations is crucial for both domestic and foreign investors. \n\n### 1. Types of Land Tenure\nThere are three main categories of land in Kenya:\n- **Public Land**: Includes forests, water bodies, and minerals.\n- **Community Land**: Land held by communities on the basis of ethnicity, culture or similar community of interest.\n- **Private Land**: Land held by individuals or corporations under freehold or leasehold tenure.\n\n### 2. The Step-by-Step Purchase Process\nBuying land requires due diligence starting with an official search at the Land Registry to confirm ownership and encumbrances. \n\n### 3. Recent Legislative Updates\nThe 2024 Digital Land Records initiative has significantly reduced fraud by shifting all title deeds to an encrypted blockchain backend...",
-          author: { name: "Dr. Jane Odhiambo", avatar: "" },
-          likes: 342,
-          tags: ["Real Estate", "Law Guide", "Kenya"],
-          createdAt: new Date().toISOString()
-        } as any);
+        console.error('Failed to fetch article, checking dummy data:', err);
+        const dummyArticle = DUMMY_ARTICLES.find(a => a.id === id);
+        if (dummyArticle) {
+            setArticle(dummyArticle);
+        } else {
+            // Hard fallback if not in dummy list (legacy fallback)
+            setArticle({
+            id: id as string,
+            title: "Understanding Land Ownership Laws in Kenya (2025 Guide)",
+            content: "Land ownership in Kenya is governed by a complex set of statutes...",
+            author: { name: "Dr. Jane Odhiambo", avatar: "" },
+            likes: 342,
+            tags: ["Real Estate", "Law Guide", "Kenya"],
+            createdAt: new Date().toISOString()
+            } as any);
+        }
       } finally {
         setIsLoading(false);
       }

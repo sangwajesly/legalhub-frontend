@@ -9,6 +9,8 @@ import { FileText, Plus, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import toast from 'react-hot-toast';
 
+import { DUMMY_CASES } from '@/lib/mock-data';
+
 export default function CasesPage() {
     const [cases, setCases] = useState<Case[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -18,10 +20,17 @@ export default function CasesPage() {
         try {
             setIsLoading(true);
             const response = await apiClient.getCases();
-            setCases(response.data);
+            if (response && response.data) {
+                setCases(response.data);
+            } else {
+                 console.log('Using dummy cases');
+                 setCases(DUMMY_CASES);
+            }
         } catch (error) {
-            console.error('Failed to fetch cases:', error);
-            toast.error('Failed to load your cases');
+            console.error('Failed to fetch cases, using dummy data:', error);
+            setCases(DUMMY_CASES);
+            // Don't show error toast if we have a fallback
+            // toast.error('Failed to load your cases');
         } finally {
             setIsLoading(false);
         }
