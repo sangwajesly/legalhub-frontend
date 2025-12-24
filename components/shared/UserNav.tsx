@@ -40,7 +40,7 @@ export function UserNav() {
 
             <div className="flex items-center gap-3">
                 <div className="text-right hidden sm:block">
-                    <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{user?.displayName || 'User'}</p>
+                    <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{user?.name || 'User'}</p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">{user?.email || 'Guest'}</p>
                 </div>
 

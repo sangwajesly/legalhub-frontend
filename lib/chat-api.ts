@@ -6,7 +6,9 @@ import {
   query,
   where,
   orderBy,
-  doc
+  doc,
+  deleteDoc,
+  updateDoc
 } from 'firebase/firestore';
 import { db, auth } from './firebase';
 import {
@@ -81,9 +83,10 @@ export const chatApi = {
       throw new Error('User not authenticated');
     }
     const messagesRef = collection(db, 'sessions', sessionId, 'messages');
-    const newMessage: Omit<Message, 'id'> = {
+    const newMessage: any = {
       sessionId,
       content: message,
+      role: 'user',
       sender: {
         // Assuming the current user is always the sender when using this function
         id: auth.currentUser.uid,
@@ -96,7 +99,7 @@ export const chatApi = {
         url
       }))
     };
-    const docRef = await addDoc(messagesRef, {
+    await addDoc(messagesRef, {
       ...newMessage,
       createdAt: serverTimestamp()
     });
@@ -107,20 +110,8 @@ export const chatApi = {
     // For now, we will return a mock response.
 
     return {
-      userMessage: {
-        id: docRef.id,
-        ...newMessage
-      },
-      botResponse: {
-        id: 'bot-response-placeholder',
-        sessionId,
-        content: 'This is a placeholder response. You should implement a listener for real-time updates.',
-        sender: {
-          id: 'bot',
-          name: 'Legal Assistant'
-        },
-        timestamp: new Date().toISOString()
-      }
+      reply: 'This is a placeholder response. You should implement a listener for real-time updates.',
+      sessionId
     };
   },
 

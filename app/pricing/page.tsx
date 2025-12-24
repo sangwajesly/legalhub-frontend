@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Check, Info, Zap, Shield, Crown, Star, ArrowRight } from 'lucide-react';
+import { Check, Info, Zap, Crown, Star, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import Link from 'next/link';

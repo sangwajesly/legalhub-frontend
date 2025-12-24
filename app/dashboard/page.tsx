@@ -2,16 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import {
-  Briefcase,
   Calendar,
-  MessageSquare,
   FileText,
   ArrowUpRight,
   Plus,
   Search,
-  Clock,
-  AlertCircle,
-  TrendingUp,
   Gavel,
   ShieldCheck,
   Zap
@@ -82,7 +77,7 @@ export default function Dashboard() {
               <Avatar className="h-20 w-20 ring-4 ring-blue-50 dark:ring-slate-900 shadow-xl">
                 <AvatarImage src={user?.avatar} />
                 <AvatarFallback className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white text-2xl font-black">
-                  {user?.displayName?.charAt(0) || 'A'}
+                  {user?.name?.charAt(0) || 'A'}
                 </AvatarFallback>
               </Avatar>
               <div className="absolute bottom-0 right-0 h-6 w-6 bg-green-500 border-4 border-white dark:border-slate-950 rounded-full"></div>
@@ -90,7 +85,7 @@ export default function Dashboard() {
            <div>
               <div className="flex items-center gap-3">
                 <h1 className="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-                    Jambo, {user?.displayName?.split(' ')[0] || (user?.role === 'lawyer' ? 'Advocate' : 'Citizen')}
+                    Jambo, {user?.name?.split(' ')[0] || (user?.role === 'lawyer' ? 'Advocate' : 'Citizen')}
                 </h1>
                 <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 border-none font-bold">
                    {user?.role?.toUpperCase() || 'MEMBER'}
@@ -140,9 +135,9 @@ export default function Dashboard() {
                 <div className={`h-14 w-14 rounded-2xl flex items-center justify-center ${stat.bg} group-hover:scale-110 transition-transform`}>
                   <stat.icon className={`h-7 w-7 ${stat.color}`} />
                 </div>
-                <div className="text-right">
-                   <Badge variant="ghost" className="text-[10px] font-black uppercase tracking-tighter text-slate-400 p-0">{stat.trend}</Badge>
-                </div>
+                 <div className="text-right">
+                    <span className="text-[10px] font-black uppercase tracking-tighter text-slate-400 p-0">{stat.trend}</span>
+                 </div>
               </div>
               <div>
                 <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-1">{stat.label}</p>

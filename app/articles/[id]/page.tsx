@@ -7,12 +7,9 @@ import {
   ArrowLeft, 
   Clock, 
   Calendar, 
-  User, 
   Share2, 
   ThumbsUp, 
-  BookOpen, 
   MessageCircle,
-  Hash,
   ArrowRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -20,6 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { apiClient } from '@/lib/api-client';
 import { DUMMY_ARTICLES } from '@/lib/mock-data';
+import { Article } from '@/types';
 
 export default function ArticleDetailPage() {
   const { id } = useParams();
@@ -96,7 +94,7 @@ export default function ArticleDetailPage() {
             {/* Meta Information */}
             <div className="space-y-6 text-center lg:text-left">
                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4">
-                  {article.tags?.map((tag, idx) => (
+                  {article.tags?.map((tag: string, idx: number) => (
                     <Badge key={idx} className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-none px-3 py-1 font-bold">
                        #{tag}
                     </Badge>

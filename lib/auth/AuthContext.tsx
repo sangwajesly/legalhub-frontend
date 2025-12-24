@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 
                 // Sync with Zustand store
                 const zustandUser = useAuthStore.getState().user;
-                if (!zustandUser || zustandUser.uid !== user.uid) {
+                if (!zustandUser || zustandUser.id !== user.uid) {
                     console.log('[AuthContext] Syncing token and auth status to Zustand store.');
                     setZustandState({ 
                         token, 

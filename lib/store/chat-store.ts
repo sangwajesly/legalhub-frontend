@@ -219,10 +219,10 @@ export const useChatStore = create<ChatStore>()(
           }));
           
         } catch (error: any) {
-          set((state) => ({
+          set({
             error: error.message || 'Could not send message.',
             isLoading: false
-          }));
+          });
         }
       },
 
@@ -250,7 +250,29 @@ export const useChatStore = create<ChatStore>()(
         set({ chatHistory: [] });
       },
 
-      // ... (submitFeedback, uploadFile)
+      submitFeedback: async (messageId: string, rating: number, feedback?: string) => {
+        const { currentSessionId } = get();
+        if (!currentSessionId) return;
+        
+        try {
+          await apiClient.submitFeedback(currentSessionId, messageId, rating, feedback);
+        } catch (error) {
+          console.error('Failed to submit feedback:', error);
+        }
+      },
+
+      uploadFile: async (file: File) => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await apiClient.uploadFile(file);
+          set({ isLoading: false });
+          return response.fileId;
+        } catch (error: any) {
+          console.error('File upload error:', error);
+          set({ error: error.message || 'Failed to upload file', isLoading: false });
+          throw error;
+        }
+      },
 
     }),
     {

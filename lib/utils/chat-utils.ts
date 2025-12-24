@@ -1,4 +1,4 @@
-import { Session, Message, SessionSummary } from '@/types';
+import { Message, SessionSummary } from '@/types';
 
 
 /**

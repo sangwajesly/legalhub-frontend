@@ -86,13 +86,12 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, isLoading, onS
               </div>
             </div>
           ) : (
-            messages.map((msg, idx) => (
+            messages.map((msg) => (
               <MessageBubble
                 key={msg.id}
                 role={msg.role}
                 content={msg.content}
                 timestamp={msg.timestamp}
-                messageIndex={idx}
               />
             ))
           )}

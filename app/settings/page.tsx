@@ -17,7 +17,6 @@ export default function SettingsPage() {
 
     const [name, setName] = React.useState('');
     const [email, setEmail] = React.useState('');
-    const [bio, setBio] = React.useState(''); // Kept for UI, but not persisted to auth store yet as per checking types
     const [isSaving, setIsSaving] = React.useState(false);
 
     const { user, updateProfile } = useAuthStore();

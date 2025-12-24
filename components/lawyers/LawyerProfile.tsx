@@ -11,7 +11,7 @@ interface LawyerProfileProps {
 }
 
 const LawyerProfile: React.FC<LawyerProfileProps> = ({ lawyerId, onClose }) => {
-  const { selectedLawyer, selectLawyer, isLoading, error } = useLawyerStore();
+  const { selectedLawyer, selectLawyer, isLoading } = useLawyerStore();
   const [showBookingModal, setShowBookingModal] = useState(false);
 
   useEffect(() => {

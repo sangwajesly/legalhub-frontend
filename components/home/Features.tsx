@@ -1,6 +1,6 @@
 'use client';
 
-import { ShieldCheck, CreditCard, Zap, Shield, Sparkles } from 'lucide-react';
+import { ShieldCheck, CreditCard, Zap } from 'lucide-react';
 
 export function Features() {
   const features = [

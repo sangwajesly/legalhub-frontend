@@ -4,7 +4,6 @@ import React from 'react';
 import { Article } from '@/types';
 import Link from 'next/link';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Calendar, User, ArrowRight, ThumbsUp, MessageSquare, Scale } from 'lucide-react';
 
 interface ArticleCardProps {

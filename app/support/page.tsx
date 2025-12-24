@@ -6,15 +6,13 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
-  BookOpen, 
-  CreditCard, 
-  Shield, 
-  Search, 
-  Scale, 
   HelpCircle, 
-  MessageSquare, 
   ChevronRight,
-  LifeBuoy
+  LifeBuoy,
+  BookOpen, // Added BookOpen
+  CreditCard, // Added CreditCard
+  Shield, // Added Shield
+  Search // Added Search
 } from 'lucide-react';
 
 export default function SupportPage() {

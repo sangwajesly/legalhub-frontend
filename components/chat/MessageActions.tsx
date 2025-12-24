@@ -6,12 +6,10 @@ import { showToast } from '@/components/ui/Toast';
 
 interface MessageActionsProps {
   messageContent: string;
-  messageIndex?: number;
 }
 
 export const MessageActions: React.FC<MessageActionsProps> = ({
   messageContent,
-  messageIndex,
 }) => {
   const [copied, setCopied] = useState(false);
   const [feedback, setFeedback] = useState<'up' | 'down' | null>(null);

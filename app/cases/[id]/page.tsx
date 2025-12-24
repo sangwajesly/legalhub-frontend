@@ -21,7 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { apiClient } from '@/lib/api-client';
 import { Case } from '@/types';
-import toast from 'react-hot-toast';
+import Link from 'next/link';
 
 export default function CaseDetailPage() {
   const { id } = useParams();
@@ -35,21 +35,24 @@ export default function CaseDetailPage() {
       try {
         setIsLoading(true);
         const response = await apiClient.getCaseById(id as string);
-        setCaseData(response.data);
-      } catch (err) {
+        setCaseData(response);
+      } catch (err: any) {
         console.error('Failed to fetch case:', err);
         // Using demo data if fetch fails for the prototype
         setCaseData({
           id: id as string,
           title: "Property Dispute - Nairobi East",
-          category: "Real Estate",
+          caseType: "Real Estate",
           description: "A dispute regarding boundaries and ownership of a residential plot. The neighbor has claimed an additional 2 meters into our property.",
-          status: "in-progress",
+          status: "under-review",
           location: "Nairobi, Kenya",
-          severity: "Medium",
-          createdAt: new Date().toISOString(),
+          severity: "medium",
+          submittedAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
-          userId: "user-123"
+          submittedBy: "user-123",
+          jurisdiction: "Nairobi",
+          attachments: [],
+          isAnonymous: false
         } as Case);
       } finally {
         setIsLoading(false);
@@ -100,10 +103,10 @@ export default function CaseDetailPage() {
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                  <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 capitalize px-3 py-1 font-bold">
-                    {caseData.category}
+                    {caseData.caseType}
                  </Badge>
                  <Badge className={`px-3 py-1 font-bold border-none ${
-                    caseData.status === 'in-progress' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' :
+                    caseData.status === 'under-review' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' :
                     caseData.status === 'resolved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
                     'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
                  }`}>
@@ -113,7 +116,7 @@ export default function CaseDetailPage() {
               <h1 className="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight">{caseData.title}</h1>
               <div className="flex flex-wrap items-center gap-6 text-slate-500 dark:text-slate-400 text-sm font-medium">
                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4" /> Reported on {new Date(caseData.createdAt).toLocaleDateString()}
+                    <Clock className="h-4 w-4" /> Reported on {new Date(caseData.submittedAt).toLocaleDateString()}
                  </div>
                  <div className="flex items-center gap-2">
                     <MapPin className="h-4 w-4" /> {caseData.location}

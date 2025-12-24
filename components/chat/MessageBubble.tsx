@@ -11,14 +11,12 @@ interface MessageBubbleProps {
   content: string;
   role: 'user' | 'assistant';
   timestamp: string;
-  messageIndex?: number;
 }
 
 export const MessageBubble: React.FC<MessageBubbleProps> = ({
   content,
   role,
   timestamp,
-  messageIndex,
 }) => {
   const isUser = role === 'user';
 
@@ -96,7 +94,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
             <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500 uppercase tracking-widest">{timestamp}</span>
             {!isUser && (
               <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <MessageActions messageContent={content} messageIndex={messageIndex} />
+                <MessageActions messageContent={content} />
               </div>
             )}
           </div>
