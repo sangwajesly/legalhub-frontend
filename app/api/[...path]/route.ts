@@ -36,9 +36,7 @@ const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, ''
 // Define public routes that should bypass token verification in the proxy
 // These should match the requestPath (which starts after /api)
 const publicRoutes = [
-    '/v1/auth/login',
-    '/v1/auth/register',
-    '/v1/auth/google',
+    '/v1/auth/verify-token',
     '/v1/auth/refresh',
 ];
 
