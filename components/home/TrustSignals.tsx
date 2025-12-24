@@ -94,8 +94,7 @@ export function TrustSignals() {
               </div>
 
               <blockquote className="text-slate-700 dark:text-slate-300 italic leading-relaxed relative z-10">
-                "                &quot;{testimonial.quote}&quot;
-"
+                &quot;{testimonial.quote}&quot;
               </blockquote>
             </div>
           ))}
