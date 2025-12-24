@@ -18,7 +18,7 @@ export function FinalCTA() {
         </h2>
 
         <p className="text-lg md:text-xl text-blue-50 dark:text-teal-50 max-w-2xl mx-auto mb-12 leading-relaxed opacity-90 animate-fade-in [animation-delay:200ms]">
-          Join 50,000+ Africans who've found clarity and confidence. Your first question is completely free.
+          Join 50,000+ Africans who&apos;ve found clarity and confidence. Your first question is completely free.
           No payment required.
         </p>
 

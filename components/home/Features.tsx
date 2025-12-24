@@ -30,7 +30,7 @@ export function Features() {
             Why Choose LegalHub?
           </h2>
           <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
-            We're redefining legal support with accessibility, transparency, and cutting-edge security at our core.
+            We&apos;re redefining legal support with accessibility, transparency, and cutting-edge security at our core.
           </p>
         </div>
 

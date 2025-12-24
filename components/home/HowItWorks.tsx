@@ -33,7 +33,7 @@ export function HowItWorks() {
             How It Works
           </h2>
           <p className="text-lg text-gray-600 dark:text-slate-400 max-w-2xl mx-auto">
-            Get legal answers in three simple steps. Start with a question, get instant guidance, and take action when you're ready.
+            Get legal answers in three simple steps. Start with a question, get instant guidance, and take action when you&apos;re ready.
           </p>
         </div>
 
