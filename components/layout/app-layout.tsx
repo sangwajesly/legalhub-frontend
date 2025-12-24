@@ -11,24 +11,20 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const router = useRouter();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const { isAuthenticated, checkAuth, isLoading } = useAuthStore();
+    const { isAuthenticated, isLoading } = useAuthStore();
 
     // Determine if we are on a page that should show the layout
     const isHomePage = pathname === "/";
     const isChatPage = pathname === "/chat";
 
     // Exclude sidebar/header/footer from auth pages
-    const isAuthPage = pathname?.startsWith("/login") ||
+    const isAuthPage =
+        pathname?.startsWith("/login") ||
         pathname?.startsWith("/signup") ||
         pathname?.startsWith("/forgot-password") ||
         pathname?.startsWith("/reset-password");
 
     const showLayout = !isHomePage && !isChatPage && !isAuthPage;
-
-    // Check auth on mount
-    useEffect(() => {
-        checkAuth();
-    }, [checkAuth]);
 
     // Protect routes
     useEffect(() => {

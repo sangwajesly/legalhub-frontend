@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -50,6 +50,16 @@ export default function ProfilePage() {
         facebook: user?.socialLinks?.facebook || '',
     });
 
+    const fetchUserStats = useCallback(async () => {
+        if (!user?.id) return;
+        try {
+            const statsData = await apiClient.getUserStats(user.id);
+            setStats(statsData);
+        } catch (error) {
+            console.error('Failed to fetch stats:', error);
+        }
+    }, [user?.id]);
+
     useEffect(() => {
         if (user) {
             setFormData({
@@ -66,17 +76,7 @@ export default function ProfilePage() {
             // Fetch user stats
             fetchUserStats();
         }
-    }, [user]);
-
-    const fetchUserStats = async () => {
-        if (!user?.id) return;
-        try {
-            const statsData = await apiClient.getUserStats(user.id);
-            setStats(statsData);
-        } catch (error) {
-            console.error('Failed to fetch stats:', error);
-        }
-    };
+    }, [user, fetchUserStats]);
 
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
