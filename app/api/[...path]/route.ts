@@ -3,22 +3,31 @@ import admin from 'firebase-admin';
 import path from 'path';
 import fs from 'fs';
 
-// Initialize Firebase Admin SDK from service account file
+// Initialize Firebase Admin SDK
 if (!admin.apps.length) {
     try {
-        const serviceAccountPath = path.join(process.cwd(), 'firebase-service-account.json');
-        const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
-
-        admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount),
-        });
-        console.log('Firebase Admin SDK initialized successfully from file.');
+        const serviceAccountEnv = process.env.FIREBASE_SERVICE_ACCOUNT;
+        
+        if (serviceAccountEnv) {
+            console.log('Initializing Firebase Admin from environment variable.');
+            const serviceAccount = JSON.parse(serviceAccountEnv);
+            admin.initializeApp({
+                credential: admin.credential.cert(serviceAccount),
+            });
+        } else {
+            const serviceAccountPath = path.join(process.cwd(), 'firebase-service-account.json');
+            if (fs.existsSync(serviceAccountPath)) {
+                console.log('Initializing Firebase Admin from local file.');
+                const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
+                admin.initializeApp({
+                    credential: admin.credential.cert(serviceAccount),
+                });
+            } else {
+                console.warn('Firebase Admin Service Account not found (env or file). Authentication verification may fail.');
+            }
+        }
     } catch (error: any) {
         console.error('Firebase Admin SDK initialization error:', error.message);
-        // Add a check to provide a more helpful error message
-        if (error.code === 'ENOENT') {
-            console.error('Error: firebase-service-account.json not found. Please ensure the file exists in the project root.');
-        }
     }
 }
 
