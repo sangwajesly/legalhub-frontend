@@ -34,11 +34,12 @@ if (!admin.apps.length) {
 const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, '').replace(/\/api$/, '') || "http://localhost:8001";
 
 // Define public routes that should bypass token verification in the proxy
+// These should match the requestPath (which starts after /api)
 const publicRoutes = [
-    '/api/v1/auth/login',
-    '/api/v1/auth/register',
-    '/api/v1/auth/google',
-    '/api/v1/auth/refresh',
+    '/v1/auth/login',
+    '/v1/auth/register',
+    '/v1/auth/google',
+    '/v1/auth/refresh',
 ];
 
 async function handler(req: NextRequest, { params }: { params: { path: string[] } }) {
