@@ -119,8 +119,8 @@ class ApiClient {
     return authData;
   }
 
-  async loginWithGoogle(idToken: string): Promise<AuthResponse> {
-    const response = await this.client.post('/api/v1/auth/google', { idToken });
+  async verifyToken(idToken: string): Promise<AuthResponse> {
+    const response = await this.client.post('/api/v1/auth/verify-token', { idToken });
 
     const data = response.data;
     const authData: AuthResponse = {

@@ -3,7 +3,12 @@ import { persist } from 'zustand/middleware';
 import { User, LoginCredentials, RegisterData } from '@/types';
 import apiClient from '@/lib/api-client';
 import { auth, googleProvider } from '@/lib/firebase';
-import { signInWithPopup } from 'firebase/auth';
+import {
+    signInWithPopup,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signOut,
+} from 'firebase/auth';
 
 interface AuthState {
     user: User | null;
@@ -19,7 +24,6 @@ interface AuthState {
     updateProfile: (data: Partial<User>) => Promise<void>;
     logout: () => Promise<void>;
     clearError: () => void;
-    checkAuth: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -34,18 +38,25 @@ export const useAuthStore = create<AuthState>()(
             login: async (credentials: LoginCredentials) => {
                 set({ isLoading: true, error: null });
                 try {
-                    const response = await apiClient.login(credentials);
-                    const user = await apiClient.getProfile();
+                    const userCredential = await signInWithEmailAndPassword(
+                        auth,
+                        credentials.email,
+                        credentials.password
+                    );
+                    const idToken = await userCredential.user.getIdToken();
+                    const response = await apiClient.verifyToken(idToken);
+                    const profile = await apiClient.getProfile();
+
                     set({
-                        user,
+                        user: profile,
                         token: response.token,
                         isAuthenticated: true,
-                        isLoading: false
+                        isLoading: false,
                     });
                 } catch (error: any) {
                     set({
                         error: error.message || 'Login failed',
-                        isLoading: false
+                        isLoading: false,
                     });
                     throw error;
                 }
@@ -60,7 +71,7 @@ export const useAuthStore = create<AuthState>()(
                     const idToken = await user.getIdToken();
 
                     console.log('[AuthStore] Google Sign-in successful. Calling backend...');
-                    const response = await apiClient.loginWithGoogle(idToken);
+                    const response = await apiClient.verifyToken(idToken);
                     console.log('[AuthStore] Backend login successful. Fetching profile...');
                     const profile = await apiClient.getProfile();
                     
@@ -84,18 +95,29 @@ export const useAuthStore = create<AuthState>()(
             register: async (data: RegisterData) => {
                 set({ isLoading: true, error: null });
                 try {
-                    const response = await apiClient.register(data);
-                    const user = await apiClient.getProfile();
+                    const userCredential = await createUserWithEmailAndPassword(
+                        auth,
+                        data.email,
+                        data.password
+                    );
+                    const idToken = await userCredential.user.getIdToken();
+
+                    // The verify-token endpoint should also handle user creation on the backend
+                    const response = await apiClient.verifyToken(idToken); 
+                    
+                    // The profile returned here will be from the backend after creation
+                    const profile = await apiClient.getProfile();
+
                     set({
-                        user,
+                        user: profile,
                         token: response.token,
                         isAuthenticated: true,
-                        isLoading: false
+                        isLoading: false,
                     });
                 } catch (error: any) {
                     set({
                         error: error.message || 'Registration failed',
-                        isLoading: false
+                        isLoading: false,
                     });
                     throw error;
                 }
@@ -105,6 +127,7 @@ export const useAuthStore = create<AuthState>()(
                 set({ isLoading: true });
                 try {
                     await apiClient.logout();
+                    await signOut(auth); // Sign out from Firebase
                 } catch (error) {
                     console.error('Logout error:', error);
                 } finally {
@@ -112,7 +135,7 @@ export const useAuthStore = create<AuthState>()(
                         user: null,
                         token: null,
                         isAuthenticated: false,
-                        isLoading: false
+                        isLoading: false,
                     });
                 }
             },
@@ -128,20 +151,6 @@ export const useAuthStore = create<AuthState>()(
                         isLoading: false
                     });
                     throw error;
-                }
-            },
-
-            checkAuth: async () => {
-                const { token } = get();
-                if (!token) return;
-
-                try {
-                    const user = await apiClient.getProfile();
-                    // apiClient.getProfile already normalizes _id to id
-                    set({ user, isAuthenticated: true });
-                } catch (error) {
-                    // If profile fetch fails, token might be invalid
-                    set({ user: null, token: null, isAuthenticated: false });
                 }
             },
 
