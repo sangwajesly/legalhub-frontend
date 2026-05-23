@@ -5,91 +5,91 @@ import { ArrowRight, Bot, Gavel, Check } from 'lucide-react';
 
 export function ServiceSegmentation() {
   return (
-    <section className="py-24 bg-white dark:bg-slate-950">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-24 bg-[#FAF9F5] dark:bg-[#121315] transition-colors duration-300">
+      <div className="max-w-6xl mx-auto px-6">
         {/* Section Intro */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold font-display text-slate-900 dark:text-white mb-6">
-            Two Ways to Get Legal Help
+        <div className="text-center mb-20">
+          <h2 className="text-3xl md:text-5xl font-light font-display text-stone-900 dark:text-stone-50 mb-6">
+            How We Can Help You
           </h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
-            Whether you need quick guidance or expert representation, LegalHub connects you with the right solution.
+          <p className="text-sm md:text-base text-stone-500 dark:text-stone-400 max-w-2xl mx-auto leading-relaxed">
+            Whether you want a quick free answer to a worry or need a trusted local lawyer to stand by your side, we have you covered.
           </p>
         </div>
 
         {/* Service Cards */}
-        <div className="grid md:grid-cols-2 gap-10">
+        <div className="grid md:grid-cols-2 gap-8">
           {/* Card 1: AI Chat */}
-          <div className="group bg-blue-50/50 dark:bg-blue-900/10 rounded-[2.5rem] p-10 border border-blue-100 dark:border-blue-800 hover:border-blue-400 dark:hover:border-teal-500 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
-            <div className="flex items-center gap-5 mb-8">
-              <div className="w-16 h-16 bg-blue-600 dark:bg-teal-600 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-500">
-                <Bot size={32} />
+          <div className="bg-[#FDFCF9] dark:bg-stone-900/10 rounded-2xl p-10 border border-[#E5E2DC] dark:border-stone-800 flex flex-col justify-between group">
+            <div>
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-12 h-12 border border-[#B89868]/30 bg-stone-50 dark:bg-stone-850 rounded-xl flex items-center justify-center text-[#B89868]">
+                  <Bot size={20} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100 uppercase tracking-wider">Free AI Legal Guide</h3>
+                  <p className="text-[10px] text-[#B89868] font-bold uppercase tracking-widest">100% Free & Private</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-2xl font-bold text-slate-900 dark:text-white">AI Legal Assistant</h3>
-                <p className="text-blue-600 dark:text-teal-400 font-semibold text-sm">Instant & Free Assistance</p>
-              </div>
-            </div>
 
-            <ul className="space-y-4 mb-10">
-              {[
-                'Ask any legal question in English or French',
-                'Get AI-powered answers in seconds',
-                'Covers: land rights, tenancy, business, family law & more',
-                '100% confidential & free'
-              ].map((item, i) => (
-                <li key={i} className="flex items-start gap-3">
-                  <div className="mt-1 flex-shrink-0 w-5 h-5 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center">
-                    <Check size={12} className="text-blue-600 dark:text-teal-400" />
-                  </div>
-                  <span className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">{item}</span>
-                </li>
-              ))}
-            </ul>
+              <ul className="space-y-4 mb-12">
+                {[
+                  'Get quick answers on landlord issues, work troubles, or business questions',
+                  'Clear answers in simple, everyday words in under forty-five seconds',
+                  'Totally private — you don\'t even need to create an account',
+                  'Ready to help you day or night, twenty-four hours a day, seven days a week'
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <Check size={14} className="text-[#B89868] mt-1 flex-shrink-0" />
+                    <span className="text-stone-600 dark:text-stone-400 text-xs leading-relaxed font-sans font-medium">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
             <Link
               href="/chat"
-              className="w-full inline-flex items-center justify-center px-8 py-4 bg-blue-600 dark:bg-teal-600 text-white font-bold rounded-xl hover:bg-blue-700 dark:hover:bg-teal-700 transition-all duration-300 shadow-lg group/btn"
+              className="w-full inline-flex items-center justify-center px-6 py-4 bg-[#1C1B19] dark:bg-[#FAF9F5] text-[#FAF9F5] dark:text-[#121315] hover:bg-[#32312E] dark:hover:bg-[#EAE8E2] border border-[#1C1B19] dark:border-[#FAF9F5] rounded-xl text-xs font-bold uppercase tracking-widest transition-colors duration-300 group shadow-sm"
             >
-              Start Free Chat
-              <ArrowRight className="ml-2 group-hover/btn:translate-x-1 transition-transform" size={20} />
+              Ask a Free Question
+              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
 
           {/* Card 2: Lawyer Booking */}
-          <div className="group bg-teal-50/50 dark:bg-teal-900/10 rounded-[2.5rem] p-10 border border-teal-100 dark:border-teal-800 hover:border-teal-400 dark:hover:border-emerald-500 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
-            <div className="flex items-center gap-5 mb-8">
-              <div className="w-16 h-16 bg-teal-600 dark:bg-emerald-600 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-500">
-                <Gavel size={32} />
+          <div className="bg-[#FDFCF9] dark:bg-stone-900/10 rounded-2xl p-10 border border-[#E5E2DC] dark:border-stone-800 flex flex-col justify-between group">
+            <div>
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-12 h-12 border border-[#B89868]/30 bg-stone-50 dark:bg-stone-850 rounded-xl flex items-center justify-center text-[#B89868]">
+                  <Gavel size={20} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100 uppercase tracking-wider">Hire a Trusted Lawyer</h3>
+                  <p className="text-[10px] text-[#B89868] font-bold uppercase tracking-widest">Accredited & Local Experts</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Expert Representation</h3>
-                <p className="text-teal-600 dark:text-emerald-400 font-semibold text-sm">Verified Legal Professionals</p>
-              </div>
-            </div>
 
-            <ul className="space-y-4 mb-10">
-              {[
-                '500+ verified lawyers across West Africa',
-                'Filter by country, specialty & hourly rate',
-                'Video, phone, or in-person consultations',
-                'Transparent pricing in local currency'
-              ].map((item, i) => (
-                <li key={i} className="flex items-start gap-3">
-                  <div className="mt-1 flex-shrink-0 w-5 h-5 bg-teal-100 dark:bg-teal-900/40 rounded-full flex items-center justify-center">
-                    <Check size={12} className="text-teal-600 dark:text-emerald-400" />
-                  </div>
-                  <span className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">{item}</span>
-                </li>
-              ))}
-            </ul>
+              <ul className="space-y-4 mb-12">
+                {[
+                  'Connect with friendly, qualified lawyers in your own country',
+                  'Choose the right expert based on pricing, reviews, and location',
+                  'Talk securely over the phone, video, or scheduled in-person meetings',
+                  'Clear upfront prices with easy, secure local mobile payments'
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <Check size={14} className="text-[#B89868] mt-1 flex-shrink-0" />
+                    <span className="text-stone-600 dark:text-stone-400 text-xs leading-relaxed font-sans font-medium">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
             <Link
               href="/lawyers"
-              className="w-full inline-flex items-center justify-center px-8 py-4 bg-teal-600 dark:bg-emerald-600 text-white font-bold rounded-xl hover:bg-teal-700 dark:hover:bg-emerald-700 transition-all duration-300 shadow-lg group/btn"
+              className="w-full inline-flex items-center justify-center px-6 py-4 border border-stone-800 dark:border-stone-200 bg-transparent text-stone-800 dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-xl text-xs font-bold uppercase tracking-widest transition-colors duration-300 group"
             >
-              Find a Lawyer
-              <ArrowRight className="ml-2 group-hover/btn:translate-x-1 transition-transform" size={20} />
+              Find a Lawyer Near You
+              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
         </div>
@@ -97,3 +97,4 @@ export function ServiceSegmentation() {
     </section>
   );
 }
+

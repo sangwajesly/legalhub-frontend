@@ -42,10 +42,10 @@ const CaseForm: React.FC<CaseFormProps> = ({ onSubmit, isLoading }) => {
     };
 
     return (
-        <Card className="border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800/50">
+        <Card className="border-[#E5E2DC] dark:border-stone-800 shadow-sm bg-[#FDFCF9] dark:bg-stone-900/20 rounded-2xl">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-xl dark:text-white">
-                    <AlertCircle className="h-5 w-5 text-blue-600 dark:text-teal-400" />
+                <CardTitle className="flex items-center gap-2 text-xl font-serif font-bold text-[#121315] dark:text-[#FAF9F5]">
+                    <AlertCircle className="h-5 w-5 text-[#B89868]" />
                     Report a New Case
                 </CardTitle>
             </CardHeader>
@@ -53,7 +53,7 @@ const CaseForm: React.FC<CaseFormProps> = ({ onSubmit, isLoading }) => {
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Title */}
                     <div>
-                        <Label htmlFor="title" className="dark:text-slate-300">Case Title</Label>
+                        <Label htmlFor="title" className="text-stone-700 dark:text-stone-300 font-semibold ml-1">Case Title</Label>
                         <Input
                             id="title"
                             name="title"
@@ -61,20 +61,20 @@ const CaseForm: React.FC<CaseFormProps> = ({ onSubmit, isLoading }) => {
                             value={formData.title}
                             onChange={handleChange}
                             required
-                            className="dark:bg-slate-900 dark:border-slate-700 dark:text-white dark:placeholder-slate-500"
+                            className="h-11 bg-[#FAF9F5] dark:bg-stone-950/40 border border-[#E5E2DC] dark:border-stone-850 rounded-xl focus:ring-2 focus:ring-[#B89868]/20 focus:border-[#B89868] dark:text-white placeholder-stone-400 dark:placeholder-stone-500"
                         />
                     </div>
 
                     {/* Type & Severity */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <Label htmlFor="caseType" className="dark:text-slate-300">Case Type</Label>
+                            <Label htmlFor="caseType" className="text-stone-700 dark:text-stone-300 font-semibold ml-1">Case Type</Label>
                             <select
                                 id="caseType"
                                 name="caseType"
                                 value={formData.caseType}
                                 onChange={handleChange}
-                                className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-teal-500/20 focus:border-blue-500 dark:focus:border-teal-500 text-slate-900 dark:text-white"
+                                className="w-full h-11 px-3 bg-[#FAF9F5] dark:bg-stone-950/40 border border-[#E5E2DC] dark:border-stone-850 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B89868]/20 focus:border-[#B89868] text-sm text-[#121315] dark:text-white font-medium"
                                 required
                             >
                                 <option value="">Select Type</option>
@@ -86,13 +86,13 @@ const CaseForm: React.FC<CaseFormProps> = ({ onSubmit, isLoading }) => {
                             </select>
                         </div>
                         <div>
-                            <Label htmlFor="severity" className="dark:text-slate-300">Severity</Label>
+                            <Label htmlFor="severity" className="text-stone-700 dark:text-stone-300 font-semibold ml-1">Severity</Label>
                             <select
                                 id="severity"
                                 name="severity"
                                 value={formData.severity}
                                 onChange={handleChange}
-                                className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-teal-500/20 focus:border-blue-500 dark:focus:border-teal-500 text-slate-900 dark:text-white"
+                                className="w-full h-11 px-3 bg-[#FAF9F5] dark:bg-stone-950/40 border border-[#E5E2DC] dark:border-stone-850 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B89868]/20 focus:border-[#B89868] text-sm text-[#121315] dark:text-white font-medium"
                                 required
                             >
                                 <option value="low">Low</option>
@@ -105,7 +105,7 @@ const CaseForm: React.FC<CaseFormProps> = ({ onSubmit, isLoading }) => {
 
                     {/* Description */}
                     <div>
-                        <Label htmlFor="description" className="dark:text-slate-300">Description</Label>
+                        <Label htmlFor="description" className="text-stone-700 dark:text-stone-300 font-semibold ml-1">Description</Label>
                         <Textarea
                             id="description"
                             name="description"
@@ -114,14 +114,14 @@ const CaseForm: React.FC<CaseFormProps> = ({ onSubmit, isLoading }) => {
                             value={formData.description}
                             onChange={handleChange}
                             required
-                            className="dark:bg-slate-900 dark:border-slate-700 dark:text-white dark:placeholder-slate-500"
+                            className="bg-[#FAF9F5] dark:bg-stone-950/40 border border-[#E5E2DC] dark:border-stone-850 rounded-xl focus:ring-2 focus:ring-[#B89868]/20 focus:border-[#B89868] dark:text-white placeholder-stone-400 dark:placeholder-stone-500 font-normal"
                         />
                     </div>
 
                     {/* Location & Jurisdiction */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <Label htmlFor="location" className="dark:text-slate-300">Location</Label>
+                            <Label htmlFor="location" className="text-stone-700 dark:text-stone-300 font-semibold ml-1">Location</Label>
                             <Input
                                 id="location"
                                 name="location"
@@ -129,11 +129,11 @@ const CaseForm: React.FC<CaseFormProps> = ({ onSubmit, isLoading }) => {
                                 value={formData.location}
                                 onChange={handleChange}
                                 required
-                                className="dark:bg-slate-900 dark:border-slate-700 dark:text-white dark:placeholder-slate-500"
+                                className="h-11 bg-[#FAF9F5] dark:bg-stone-950/40 border border-[#E5E2DC] dark:border-stone-850 rounded-xl focus:ring-2 focus:ring-[#B89868]/20 focus:border-[#B89868] dark:text-white placeholder-stone-400 dark:placeholder-stone-500"
                             />
                         </div>
                         <div>
-                            <Label htmlFor="jurisdiction" className="dark:text-slate-300">Jurisdiction</Label>
+                            <Label htmlFor="jurisdiction" className="text-stone-700 dark:text-stone-300 font-semibold ml-1">Jurisdiction</Label>
                             <Input
                                 id="jurisdiction"
                                 name="jurisdiction"
@@ -141,25 +141,25 @@ const CaseForm: React.FC<CaseFormProps> = ({ onSubmit, isLoading }) => {
                                 value={formData.jurisdiction}
                                 onChange={handleChange}
                                 required
-                                className="dark:bg-slate-900 dark:border-slate-700 dark:text-white dark:placeholder-slate-500"
+                                className="h-11 bg-[#FAF9F5] dark:bg-stone-950/40 border border-[#E5E2DC] dark:border-stone-850 rounded-xl focus:ring-2 focus:ring-[#B89868]/20 focus:border-[#B89868] dark:text-white placeholder-stone-400 dark:placeholder-stone-500"
                             />
                         </div>
                     </div>
 
                     {/* Anonymous & Submit */}
-                    <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-700">
-                        <label className="flex items-center gap-2 cursor-pointer">
+                    <div className="flex items-center justify-between pt-4 border-t border-[#E5E2DC] dark:border-stone-850">
+                        <label className="flex items-center gap-2 cursor-pointer select-none">
                             <input
                                 type="checkbox"
                                 name="isAnonymous"
                                 checked={formData.isAnonymous}
                                 onChange={handleCheckboxChange}
-                                className="w-4 h-4 text-blue-600 dark:text-teal-600 rounded border-slate-300 dark:border-slate-600 focus:ring-blue-500 dark:focus:ring-teal-500 dark:bg-slate-900"
+                                className="w-4 h-4 rounded accent-[#B89868] text-[#B89868] focus:ring-[#B89868]/20 border-stone-300 dark:border-stone-800 dark:bg-stone-950/40"
                             />
-                            <span className="text-sm text-slate-700 dark:text-slate-300 font-medium">Submit Anonymously</span>
+                            <span className="text-sm text-stone-700 dark:text-stone-300 font-medium">Submit Anonymously</span>
                         </label>
 
-                        <Button type="submit" disabled={isLoading} className="bg-blue-600 dark:bg-gradient-to-r dark:from-teal-600 dark:to-emerald-600 hover:bg-blue-700 dark:hover:from-teal-700 dark:hover:to-emerald-700">
+                        <Button type="submit" disabled={isLoading} className="bg-[#1C1B19] hover:bg-[#2C2A27] dark:bg-[#FAF9F5] dark:hover:bg-[#E5E2DC] text-white dark:text-[#121315] rounded-xl font-semibold px-6 py-2.5 h-auto transition-all shadow-sm">
                             {isLoading ? 'Submitting...' : (
                                 <>
                                     Submit Report <Send className="ml-2 h-4 w-4" />

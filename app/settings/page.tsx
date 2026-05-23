@@ -49,88 +49,87 @@ export default function SettingsPage() {
     return (
         <div className="container mx-auto p-6 max-w-4xl space-y-8">
             <div>
-                <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Settings</h1>
-                <p className="text-slate-500 dark:text-slate-400 mt-2">Manage your account preferences and configurations.</p>
+                <h1 className="text-3xl font-serif font-bold text-[#121315] dark:text-[#FAF9F5]">Settings</h1>
+                <p className="text-stone-500 dark:text-stone-400 mt-2 font-normal">Manage your account preferences and configurations.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <nav className="space-y-1">
                     <Link href="/profile">
-                        <Button variant="ghost" className="w-full justify-start text-slate-600 dark:text-slate-400 hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-400">
-                            <User className="mr-2 h-4 w-4" />
+                        <Button variant="ghost" className="w-full justify-start text-stone-600 dark:text-stone-400 hover:bg-[#FAF9F5] dark:hover:bg-stone-900/40 rounded-xl font-semibold">
+                            <User className="mr-2 h-4 w-4 text-[#B89868]" />
                             Profile
                         </Button>
                     </Link>
-                    <Button variant="ghost" className="w-full justify-start bg-blue-50 text-blue-700 font-semibold dark:bg-blue-900/20 dark:text-blue-400">
-                        <Shield className="mr-2 h-4 w-4" />
+                    <Button variant="ghost" className="w-full justify-start bg-[#1C1B19] hover:bg-[#2C2A27] dark:bg-[#FAF9F5] dark:hover:bg-[#E5E2DC] text-white dark:text-[#121315] font-semibold rounded-xl shadow-sm transition-all duration-300">
+                        <Shield className="mr-2 h-4 w-4 text-[#B89868]" />
                         Settings
                     </Button>
-                    <Button variant="ghost" className="w-full justify-start text-slate-600 dark:text-slate-400">
-                        <Shield className="mr-2 h-4 w-4" />
+                    <Button variant="ghost" className="w-full justify-start text-stone-600 dark:text-stone-400 hover:bg-[#FAF9F5] dark:hover:bg-stone-900/40 rounded-xl font-semibold">
+                        <Shield className="mr-2 h-4 w-4 text-[#B89868]" />
                         Security
                     </Button>
-                    <Button variant="ghost" className="w-full justify-start text-slate-600 dark:text-slate-400">
-                        <Bell className="mr-2 h-4 w-4" />
+                    <Button variant="ghost" className="w-full justify-start text-stone-600 dark:text-stone-400 hover:bg-[#FAF9F5] dark:hover:bg-stone-900/40 rounded-xl font-semibold">
+                        <Bell className="mr-2 h-4 w-4 text-[#B89868]" />
                         Notifications
                     </Button>
-                    <Button variant="ghost" className="w-full justify-start text-slate-600 dark:text-slate-400">
-                        <CreditCard className="mr-2 h-4 w-4" />
+                    <Button variant="ghost" className="w-full justify-start text-stone-600 dark:text-stone-400 hover:bg-[#FAF9F5] dark:hover:bg-stone-900/40 rounded-xl font-semibold">
+                        <CreditCard className="mr-2 h-4 w-4 text-[#B89868]" />
                         Billing
                     </Button>
                 </nav>
 
                 <div className="md:col-span-3 space-y-6">
-                    <Card className="dark:bg-slate-900 dark:border-slate-800">
-                        <CardHeader>
-                            <CardTitle className="dark:text-white">Profile Information</CardTitle>
-                            <p className="text-sm text-muted-foreground dark:text-slate-400">Update your personal details and public profile.</p>
+                    <Card className="border-[#E5E2DC] dark:border-stone-800 bg-[#FDFCF9] dark:bg-stone-900/20 rounded-2xl shadow-sm">
+                        <CardHeader className="p-6 pb-2">
+                            <CardTitle className="text-xl font-serif font-bold text-[#121315] dark:text-[#FAF9F5]">Profile Information</CardTitle>
+                            <p className="text-sm text-stone-500 dark:text-stone-400 font-normal">Update your personal details and public profile.</p>
                         </CardHeader>
-                        <CardContent className="space-y-4">
+                        <CardContent className="p-6 space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="fullName" className="dark:text-white">Full Name</Label>
+                                <Label htmlFor="fullName" className="text-stone-700 dark:text-stone-300 font-semibold ml-1">Full Name</Label>
                                 <Input
                                     id="fullName"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    className="dark:bg-slate-800 dark:border-slate-700 dark:text-white"
+                                    className="h-11 bg-[#FAF9F5] dark:bg-stone-950/40 border border-[#E5E2DC] dark:border-stone-850 rounded-xl focus:ring-2 focus:ring-[#B89868]/20 focus:border-[#B89868] dark:text-white"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="email" className="dark:text-white">Email</Label>
+                                <Label htmlFor="email" className="text-stone-700 dark:text-stone-300 font-semibold ml-1">Email</Label>
                                 <Input
                                     id="email"
                                     type="email"
                                     value={email}
                                     disabled
-                                    className="dark:bg-slate-800 dark:border-slate-700 dark:text-white opacity-60 cursor-not-allowed"
+                                    className="h-11 bg-[#FAF9F5]/40 dark:bg-stone-950/20 border border-[#E5E2DC]/60 dark:border-stone-850 rounded-xl dark:text-white opacity-60 cursor-not-allowed"
                                 />
                             </div>
-                            {/* Bio input removed or kept as placeholder if needed, but not functional for now as per type constraint */}
                         </CardContent>
-                        <CardFooter>
-                            <Button onClick={handleSave} disabled={isSaving}>
+                        <CardFooter className="p-6 pt-4 border-t border-[#E5E2DC]/55 dark:border-stone-850">
+                            <Button onClick={handleSave} disabled={isSaving} className="bg-[#1C1B19] hover:bg-[#2C2A27] dark:bg-[#FAF9F5] dark:hover:bg-[#E5E2DC] text-white dark:text-[#121315] rounded-xl font-semibold px-6 py-2.5 h-auto shadow-sm transition-all">
                                 {isSaving ? 'Saving...' : 'Save Changes'}
                             </Button>
                         </CardFooter>
                     </Card>
 
-                    <Card className="dark:bg-slate-900 dark:border-slate-800">
-                        <CardHeader>
-                            <CardTitle className="dark:text-white">Account Preferences</CardTitle>
-                            <p className="text-sm text-muted-foreground dark:text-slate-400">Customize your experience on LegalHub.</p>
+                    <Card className="border-[#E5E2DC] dark:border-stone-800 bg-[#FDFCF9] dark:bg-stone-900/20 rounded-2xl shadow-sm">
+                        <CardHeader className="p-6 pb-2">
+                            <CardTitle className="text-xl font-serif font-bold text-[#121315] dark:text-[#FAF9F5]">Account Preferences</CardTitle>
+                            <p className="text-sm text-stone-500 dark:text-stone-400 font-normal">Customize your experience on LegalHub.</p>
                         </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+                        <CardContent className="p-6 space-y-4">
+                            <div className="flex items-center justify-between pb-4 border-b border-[#E5E2DC] dark:border-stone-850">
                                 <div>
-                                    <p className="font-medium text-slate-900 dark:text-white">Email Notifications</p>
-                                    <p className="text-sm text-slate-500 dark:text-slate-400">Receive emails about your case updates.</p>
+                                    <p className="font-semibold text-stone-800 dark:text-white">Email Notifications</p>
+                                    <p className="text-sm text-stone-500 dark:text-stone-400 font-normal">Receive emails about your case updates.</p>
                                 </div>
                                 <Switch defaultChecked />
                             </div>
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="font-medium text-slate-900 dark:text-white">Dark Mode</p>
-                                    <p className="text-sm text-slate-500 dark:text-slate-400">Toggle dark theme for the interface.</p>
+                                    <p className="font-semibold text-stone-800 dark:text-white">Dark Mode</p>
+                                    <p className="text-sm text-stone-500 dark:text-stone-400 font-normal">Toggle dark theme for the interface.</p>
                                 </div>
                                 <Switch
                                     checked={theme === 'dark'}

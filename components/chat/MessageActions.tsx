@@ -18,7 +18,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
     try {
       await navigator.clipboard.writeText(messageContent);
       setCopied(true);
-      showToast({ message: 'Message copied to clipboard', type: 'success' });
+      showToast({ message: 'Copied to clipboard', type: 'success' });
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       showToast({ message: 'Failed to copy message', type: 'error' });
@@ -34,52 +34,60 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   };
 
   return (
-    <div className="flex items-center gap-1.5 p-1 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+    <div className="flex items-center gap-1 p-1 bg-[#FDFCF9]/90 dark:bg-stone-900/95 backdrop-blur-sm rounded-xl border border-[#E5E2DC] dark:border-stone-850 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.06)] transition-all duration-200">
       <button
         onClick={handleCopy}
-        className={`p-1.5 rounded-lg transition-all ${
-          copied ? 'text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/20' : 'text-slate-400 hover:text-blue-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+        className={`p-1.5 rounded-lg transition-all duration-200 ${
+          copied 
+            ? 'text-emerald-600 dark:text-emerald-450 bg-emerald-50 dark:bg-emerald-950/20' 
+            : 'text-stone-400 dark:text-stone-500 hover:text-[#B89868] dark:hover:text-[#C5A880] hover:bg-[#FAF9F5] dark:hover:bg-stone-850'
         }`}
         title="Copy message"
       >
-        {copied ? <Check size={14} /> : <Copy size={14} />}
+        {copied ? <Check size={13} /> : <Copy size={13} />}
       </button>
 
       <button
         onClick={() => handleFeedback('up')}
-        className={`p-1.5 rounded-lg transition-all ${
-          feedback === 'up' ? 'text-blue-600 dark:text-teal-400 bg-blue-50 dark:bg-teal-900/20' : 'text-slate-400 hover:text-blue-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+        className={`p-1.5 rounded-lg transition-all duration-200 ${
+          feedback === 'up' 
+            ? 'text-[#B89868] bg-[#B89868]/10' 
+            : 'text-stone-400 dark:text-stone-500 hover:text-[#B89868] dark:hover:text-[#C5A880] hover:bg-[#FAF9F5] dark:hover:bg-stone-850'
         }`}
         title="Helpful"
       >
-        <ThumbsUp size={14} fill={feedback === 'up' ? 'currentColor' : 'none'} />
+        <ThumbsUp size={13} className="stroke-[1.75]" fill={feedback === 'up' ? 'currentColor' : 'none'} />
       </button>
 
       <button
         onClick={() => handleFeedback('down')}
-        className={`p-1.5 rounded-lg transition-all ${
-          feedback === 'down' ? 'text-red-600 bg-red-50 dark:bg-red-900/20' : 'text-slate-400 hover:text-red-500 hover:bg-slate-100 dark:hover:bg-slate-800'
+        className={`p-1.5 rounded-lg transition-all duration-200 ${
+          feedback === 'down' 
+            ? 'text-red-650 bg-red-50 dark:bg-red-950/25' 
+            : 'text-stone-400 dark:text-stone-500 hover:text-red-500 hover:bg-[#FAF9F5] dark:hover:bg-stone-850'
         }`}
         title="Not helpful"
       >
-        <ThumbsDown size={14} fill={feedback === 'down' ? 'currentColor' : 'none'} />
+        <ThumbsDown size={13} className="stroke-[1.75]" fill={feedback === 'down' ? 'currentColor' : 'none'} />
       </button>
 
-      <div className="w-[1px] h-4 bg-slate-200 dark:bg-slate-800 mx-0.5" />
+      <div className="w-[1px] h-3 bg-[#E5E2DC] dark:bg-stone-800 mx-0.5" />
 
       <button
-        className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+        className="p-1.5 rounded-lg text-stone-400 dark:text-stone-500 hover:text-[#B89868] dark:hover:text-[#C5A880] hover:bg-[#FAF9F5] dark:hover:bg-stone-850 transition-all duration-200"
         title="Share"
       >
-        <Share2 size={14} />
+        <Share2 size={13} className="stroke-[1.75]" />
       </button>
 
       <button
-        className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
-        title="More"
+        className="p-1.5 rounded-lg text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300 hover:bg-[#FAF9F5] dark:hover:bg-stone-850 transition-all duration-200"
+        title="More options"
       >
-        <MoreHorizontal size={14} />
+        <MoreHorizontal size={13} className="stroke-[1.75]" />
       </button>
     </div>
   );
 };
+
+export default MessageActions;

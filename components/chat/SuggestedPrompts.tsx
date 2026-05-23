@@ -18,10 +18,10 @@ export function SuggestedPrompts() {
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto px-4 md:px-6 pb-2 animate-fade-in">
-      <div className="flex items-center gap-2 mb-2">
-        <Sparkles className="h-4 w-4 text-slate-500" />
-        <h4 className="text-sm font-semibold text-slate-600 dark:text-slate-400">
+    <div className="w-full max-w-3xl mx-auto px-1 pb-3.5 animate-in fade-in slide-in-from-bottom-2 duration-300">
+      <div className="flex items-center gap-1.5 mb-2.5">
+        <Sparkles className="h-3.5 w-3.5 text-[#B89868] animate-pulse" />
+        <h4 className="text-[10px] font-bold text-[#B89868] uppercase tracking-wider">
           Suggested Follow-ups
         </h4>
       </div>
@@ -31,7 +31,7 @@ export function SuggestedPrompts() {
             key={index}
             onClick={() => handlePromptClick(prompt)}
             disabled={isLoading}
-            className="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all disabled:opacity-50"
+            className="px-3.5 py-1.5 bg-[#FDFCF9] dark:bg-stone-900/35 border border-[#E5E2DC] dark:border-stone-850 rounded-xl text-xs text-stone-700 dark:text-stone-300 hover:border-[#B89868]/60 hover:text-[#B89868] dark:hover:text-[#C5A880] hover:bg-white dark:hover:bg-stone-850 transition-all duration-200 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed font-sans font-semibold cursor-pointer"
           >
             {prompt}
           </button>

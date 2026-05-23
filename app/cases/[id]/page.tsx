@@ -64,10 +64,10 @@ export default function CaseDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+      <div className="min-h-screen flex items-center justify-center bg-[#FAF9F5] dark:bg-[#121315]">
         <div className="flex flex-col items-center gap-4">
-           <div className="h-12 w-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-           <p className="text-slate-500 font-medium">Loading case details...</p>
+           <div className="h-12 w-12 border-4 border-[#B89868] border-t-transparent rounded-full animate-spin"></div>
+           <p className="text-stone-555 font-medium text-sm">Loading case details...</p>
         </div>
       </div>
     );
@@ -76,19 +76,19 @@ export default function CaseDetailPage() {
   if (!caseData) return null;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20">
+    <div className="min-h-screen bg-[#FAF9F5] dark:bg-[#121315] pb-20">
       {/* Top Navigation Bar */}
-      <div className="sticky top-0 z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+      <div className="sticky top-0 z-30 bg-[#FAF9F5]/90 dark:bg-[#121315]/90 backdrop-blur-md border-b border-[#E5E2DC] dark:border-stone-850">
         <div className="container mx-auto px-6 h-16 flex items-center justify-between">
-          <Button variant="ghost" onClick={() => router.back()} className="gap-2 text-slate-600 dark:text-slate-400">
-            <ArrowLeft className="h-4 w-4" /> Back to Cases
+          <Button variant="ghost" onClick={() => router.back()} className="gap-2 text-stone-600 dark:text-stone-400 font-semibold">
+            <ArrowLeft className="h-4 w-4 text-[#B89868]" /> Back to Cases
           </Button>
           <div className="flex gap-2">
-            <Button variant="outline" size="icon" className="rounded-full dark:border-slate-800">
-              <MoreVertical className="h-4 w-4" />
+            <Button variant="outline" size="icon" className="rounded-xl border-[#E5E2DC] dark:border-stone-800 bg-[#FDFCF9] dark:bg-stone-900/30">
+              <MoreVertical className="h-4 w-4 text-stone-500" />
             </Button>
-            <Button className="bg-blue-600 dark:bg-teal-600 hover:bg-blue-700 dark:hover:bg-teal-700 text-white gap-2 rounded-xl">
-              <MessageSquare className="h-4 w-4" /> Chat with Lawyer
+            <Button className="bg-[#1C1B19] hover:bg-[#2C2A27] dark:bg-[#FAF9F5] dark:hover:bg-[#E5E2DC] text-white dark:text-[#121315] gap-2 rounded-xl font-semibold shadow-sm transition-all duration-300">
+              <MessageSquare className="h-4 w-4 text-[#B89868]" /> Chat with Lawyer
             </Button>
           </div>
         </div>
@@ -102,38 +102,38 @@ export default function CaseDetailPage() {
             {/* Header Section */}
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                 <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 capitalize px-3 py-1 font-bold">
+                 <Badge className="bg-[#FDFCF9] dark:bg-stone-900 border border-[#E5E2DC] dark:border-stone-800 text-[#B89868] font-semibold capitalize px-3 py-1 rounded-lg">
                     {caseData.caseType}
                  </Badge>
-                 <Badge className={`px-3 py-1 font-bold border-none ${
-                    caseData.status === 'under-review' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' :
-                    caseData.status === 'resolved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
-                    'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
+                 <Badge className={`px-3 py-1 font-semibold rounded-lg border ${
+                    caseData.status === 'under-review' ? 'bg-amber-500/10 text-amber-600 border-amber-500/20' :
+                    caseData.status === 'resolved' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' :
+                    'bg-stone-100 text-stone-700 dark:bg-stone-800 dark:text-stone-400 border-stone-200'
                  }`}>
                     {caseData.status.replace('-', ' ')}
                  </Badge>
               </div>
-              <h1 className="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight">{caseData.title}</h1>
-              <div className="flex flex-wrap items-center gap-6 text-slate-500 dark:text-slate-400 text-sm font-medium">
+              <h1 className="text-3xl lg:text-4xl font-serif font-bold text-[#121315] dark:text-white tracking-tight">{caseData.title}</h1>
+              <div className="flex flex-wrap items-center gap-6 text-stone-500 dark:text-stone-400 text-sm font-medium">
                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4" /> Reported on {new Date(caseData.submittedAt).toLocaleDateString()}
+                    <Clock className="h-4 w-4 text-[#B89868]" /> Reported on {new Date(caseData.submittedAt).toLocaleDateString()}
                  </div>
                  <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4" /> {caseData.location}
+                    <MapPin className="h-4 w-4 text-[#B89868]" /> {caseData.location}
                  </div>
                  <div className="flex items-center gap-2">
-                    <Shield className="h-4 w-4" /> ID: {caseData.id.slice(0, 8).toUpperCase()}
+                    <Shield className="h-4 w-4 text-[#B89868]" /> ID: {caseData.id.slice(0, 8).toUpperCase()}
                  </div>
               </div>
             </div>
 
             {/* Description Card */}
-            <Card className="rounded-[2rem] border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
-              <CardHeader>
-                 <CardTitle className="text-xl font-black dark:text-white">Case Summary</CardTitle>
+            <Card className="rounded-2xl border-[#E5E2DC] dark:border-stone-800 bg-[#FDFCF9] dark:bg-stone-900/20 shadow-sm">
+              <CardHeader className="p-6 pb-2">
+                 <CardTitle className="text-xl font-serif font-bold text-[#121315] dark:text-white">Case Summary</CardTitle>
               </CardHeader>
-              <CardContent>
-                 <p className="text-slate-600 dark:text-slate-300 leading-relaxed whitespaces-pre-wrap">
+              <CardContent className="p-6 pt-2">
+                 <p className="text-stone-600 dark:text-stone-300 leading-relaxed whitespace-pre-wrap font-normal">
                     {caseData.description}
                  </p>
               </CardContent>
@@ -141,23 +141,23 @@ export default function CaseDetailPage() {
 
             {/* Evidence/Files Mockup */}
             <div className="space-y-4">
-              <h3 className="text-xl font-black text-slate-900 dark:text-white px-2">Attachments & Evidence</h3>
+              <h3 className="text-xl font-serif font-bold text-[#121315] dark:text-white px-2">Attachments & Evidence</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
                  {[
                    { name: "Property Deed.pdf", size: "2.4 MB", type: "document" },
                    { name: "Boundary Photo.jpg", size: "1.1 MB", type: "image" }
                  ].map((file, idx) => (
-                    <div key={idx} className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer group">
+                    <div key={idx} className="p-4 rounded-xl border border-[#E5E2DC] dark:border-stone-850 bg-[#FAF9F5] dark:bg-stone-950/20 flex items-center justify-between hover:bg-[#FDFCF9] hover:border-[#B89868] transition-all duration-300 cursor-pointer group">
                       <div className="flex items-center gap-3">
-                         <div className="h-10 w-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                            <FileText className="h-5 w-5 text-blue-600 dark:text-teal-500" />
+                         <div className="h-10 w-10 rounded-xl bg-white dark:bg-stone-900 border border-[#E5E2DC] dark:border-stone-800 flex items-center justify-center">
+                            <FileText className="h-5 w-5 text-[#B89868]" />
                          </div>
                          <div>
-                            <p className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors">{file.name}</p>
-                            <p className="text-xs text-slate-500">{file.size}</p>
+                            <p className="text-sm font-bold text-[#121315] dark:text-white group-hover:text-[#B89868] transition-colors">{file.name}</p>
+                            <p className="text-xs text-stone-500 font-normal">{file.size}</p>
                          </div>
                       </div>
-                      <ChevronRight className="h-4 w-4 text-slate-400" />
+                      <ChevronRight className="h-4 w-4 text-stone-400 group-hover:text-[#B89868] transition-colors" />
                     </div>
                  ))}
               </div>
@@ -165,24 +165,24 @@ export default function CaseDetailPage() {
 
             {/* Timeline/History Mockup */}
             <div className="space-y-6 pt-4">
-              <h3 className="text-xl font-black text-slate-900 dark:text-white px-2 flex items-center gap-2">
-                 <History className="h-5 w-5 text-blue-600" /> Case Timeline
+              <h3 className="text-xl font-serif font-bold text-[#121315] dark:text-white px-2 flex items-center gap-2">
+                 <History className="h-5 w-5 text-[#B89868]" /> Case Timeline
               </h3>
-              <div className="relative pl-8 space-y-8 before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-200 dark:before:bg-slate-800">
+              <div className="relative pl-8 space-y-8 before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-[#E5E2DC] dark:before:bg-stone-850">
                  {[
                    { title: "Legal Consultation Scheduled", desc: "Assigned to Advocate Sarah Wilson", time: "2 hours ago", status: "upcoming", icon: Clock },
                    { title: "Evidence Verified", desc: "Deed documents were successfully verified by our system.", time: "Yesterday, 4:12 PM", status: "completed", icon: Shield },
                    { title: "Case Reported", desc: "Initial report submitted to LegalHub portal.", time: "Oct 12, 2025", status: "completed", icon: Gavel }
                  ].map((step, idx) => (
                    <div key={idx} className="relative">
-                      <div className={`absolute -left-[37px] top-1 h-6 w-6 rounded-full border-4 border-white dark:border-slate-950 flex items-center justify-center z-10 
-                        ${step.status === 'upcoming' ? 'bg-amber-500' : 'bg-blue-600'}`}>
-                        {step.status === 'completed' && <div className="h-2 w-2 rounded-full bg-white animate-pulse"></div>}
+                      <div className={`absolute -left-[37px] top-1 h-6 w-6 rounded-full border-4 border-[#FAF9F5] dark:border-stone-950 flex items-center justify-center z-10 
+                        ${step.status === 'upcoming' ? 'bg-[#B89868]' : 'bg-[#1C1B19] dark:bg-[#FAF9F5]'}`}>
+                        {step.status === 'completed' && <div className="h-2 w-2 rounded-full bg-white dark:bg-stone-900 animate-pulse"></div>}
                       </div>
                       <div className="space-y-1">
-                        <p className="font-black text-slate-900 dark:text-white">{step.title}</p>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">{step.desc}</p>
-                        <p className="text-xs font-bold text-blue-600 dark:text-teal-500 uppercase tracking-widest">{step.time}</p>
+                        <p className="font-bold text-[#121315] dark:text-white">{step.title}</p>
+                        <p className="text-sm text-stone-500 dark:text-stone-450 font-normal">{step.desc}</p>
+                        <p className="text-xs font-semibold text-[#B89868] dark:text-[#B89868]/90 uppercase tracking-wider">{step.time}</p>
                       </div>
                    </div>
                  ))}
@@ -193,49 +193,49 @@ export default function CaseDetailPage() {
           {/* Sidebar Area */}
           <div className="space-y-8">
              {/* Assigned Professional Card */}
-             <Card className="rounded-[2.5rem] bg-gradient-to-br from-slate-900 to-slate-800 text-white overflow-hidden shadow-2xl border-none">
-                <CardHeader className="pb-2">
-                  <Badge className="w-fit bg-emerald-500/20 text-emerald-400 border-emerald-500/30 mb-2">Assigned Advocate</Badge>
-                  <CardTitle className="text-xl font-black">Sarah Wilson</CardTitle>
-                  <CardDescription className="text-slate-400">Senior Property Attorney</CardDescription>
+             <Card className="rounded-2xl bg-[#121315] border border-[#E5E2DC]/10 text-white overflow-hidden shadow-sm">
+                <CardHeader className="p-6 pb-2">
+                  <Badge className="w-fit bg-emerald-500/10 text-emerald-450 border border-emerald-500/20 mb-2 rounded-lg font-semibold">Assigned Advocate</Badge>
+                  <CardTitle className="text-xl font-serif font-bold text-[#FAF9F5]">Sarah Wilson</CardTitle>
+                  <CardDescription className="text-stone-400 font-normal">Senior Property Attorney</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6 pt-4">
+                <CardContent className="p-6 space-y-6 pt-4">
                   <div className="flex items-center gap-4">
-                     <div className="h-14 w-14 rounded-2xl bg-white/10 flex items-center justify-center border border-white/10">
-                        <User className="h-7 w-7 text-emerald-400" />
+                     <div className="h-14 w-14 rounded-xl bg-white/5 flex items-center justify-center border border-white/10">
+                        <User className="h-7 w-7 text-[#B89868]" />
                      </div>
                      <div>
                         <p className="text-sm font-bold">12 Years Exp.</p>
-                        <p className="text-xs text-slate-400">Bar ID: LH-992384</p>
+                        <p className="text-xs text-stone-500 font-normal">Bar ID: LH-992384</p>
                      </div>
                   </div>
-                  <Button className="w-full h-12 rounded-xl bg-white text-slate-900 hover:bg-slate-100 font-black text-sm">
+                  <Button className="w-full h-11 rounded-xl bg-[#B89868] hover:bg-[#A38253] text-[#FAF9F5] font-semibold text-sm transition-all duration-300">
                     View Full Profile
                   </Button>
                 </CardContent>
              </Card>
 
              {/* Quick Actions/Alerts */}
-             <Card className="rounded-[2.5rem] border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
-                <div className="bg-amber-50 dark:bg-amber-900/10 p-4 flex items-center gap-3">
+             <Card className="rounded-2xl border-[#E5E2DC] dark:border-stone-800 bg-[#FDFCF9] dark:bg-stone-900/10 shadow-sm overflow-hidden">
+                <div className="bg-amber-500/10 border-b border-[#E5E2DC]/30 p-4 flex items-center gap-3">
                    <AlertCircle className="h-5 w-5 text-amber-600" />
-                   <p className="text-sm font-bold text-amber-900 dark:text-amber-400">Action Required</p>
+                   <p className="text-sm font-bold text-amber-800 dark:text-amber-450">Action Required</p>
                 </div>
                 <CardContent className="p-6 space-y-4 text-left">
-                   <p className="text-sm text-slate-600 dark:text-slate-300">
-                     Please sign the <span className="font-bold text-blue-600">Representation Agreement</span> to proceed with the boundary survey.
+                   <p className="text-sm text-stone-600 dark:text-stone-300 font-normal leading-relaxed">
+                     Please sign the <span className="font-semibold text-[#B89868] hover:underline cursor-pointer">Representation Agreement</span> to proceed with the boundary survey.
                    </p>
-                   <Button size="sm" className="w-full bg-blue-600 dark:bg-teal-600 text-white rounded-xl">
+                   <Button size="sm" className="w-full bg-[#1C1B19] hover:bg-[#2C2A27] dark:bg-[#FAF9F5] dark:hover:bg-[#E5E2DC] text-white dark:text-[#121315] rounded-xl font-semibold h-10 shadow-sm transition-all">
                      Review & Sign
                    </Button>
                 </CardContent>
              </Card>
 
-             <Card className="rounded-[2.5rem] border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm p-6 space-y-4">
-                <h4 className="text-sm font-black uppercase tracking-widest text-slate-400">Need immediate help?</h4>
-                <p className="text-xs text-slate-500 leading-relaxed">Our AI Legal Assistant can answer specific questions about Nairobi property bylaws 24/7.</p>
+             <Card className="rounded-2xl border-[#E5E2DC] dark:border-stone-800 bg-[#FDFCF9] dark:bg-stone-900/10 shadow-sm p-6 space-y-4">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-stone-400">Need immediate help?</h4>
+                <p className="text-xs text-stone-555 leading-relaxed font-normal">Our AI Legal Assistant can answer specific questions about Nairobi property bylaws 24/7.</p>
                 <Link href="/chat">
-                    <Button variant="outline" className="w-full h-12 rounded-xl border-blue-200 dark:border-teal-900 text-blue-600 dark:text-teal-400 hover:bg-blue-50 dark:hover:bg-teal-900/20 font-black">
+                    <Button variant="outline" className="w-full h-11 rounded-xl border-[#B89868] text-[#B89868] hover:bg-[#FAF9F5] dark:hover:bg-stone-900 font-semibold text-sm transition-all shadow-sm">
                     Ask AI Assistant
                     </Button>
                 </Link>

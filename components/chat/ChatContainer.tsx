@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useChatStore } from '@/lib/store/chat-store';
 import { useAuthStore } from '@/lib/store/auth-store';
 import ChatWindow from '@/components/chat/ChatWindow';
@@ -22,12 +22,27 @@ const ChatContainer: React.FC = () => {
   } = useChatStore();
 
   const { isAuthenticated, user } = useAuthStore();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
     if (isAuthenticated) {
       fetchAllSessions();
     }
   }, [isAuthenticated, fetchAllSessions]);
+
+  useEffect(() => {
+    // Set initial sidebar state based on screen size
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setIsSidebarOpen(false);
+      } else {
+        setIsSidebarOpen(true);
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     // Wait for user to be available before auto-creating
@@ -64,11 +79,16 @@ const ChatContainer: React.FC = () => {
     await sendMessage(content, attachmentUrls);
   };
 
+  const handleNewChat = () => {
+    useChatStore.getState().clearError();
+    createSession({ title: 'New Chat' });
+  };
+
   return (
-    <div className="flex h-screen overflow-hidden bg-white dark:bg-slate-950">
-      <ChatSidebar />
-      <main className="flex-1 flex flex-col relative overflow-hidden">
-        <div className="flex-1 flex flex-col w-full max-w-4xl mx-auto overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-[#FAF9F5] dark:bg-[#121315]">
+      <ChatSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+      <main className="flex-1 flex flex-col relative overflow-hidden transition-all duration-300">
+        <div className="flex-1 flex flex-col w-full overflow-hidden">
           <ChatWindow
             messages={chatHistory.map(m => ({
               ...m,
@@ -76,6 +96,9 @@ const ChatContainer: React.FC = () => {
             }))}
             isLoading={isLoading}
             onSendMessage={handleSendMessage}
+            isSidebarOpen={isSidebarOpen}
+            onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+            onNewChat={handleNewChat}
           />
           <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
         </div>

@@ -45,33 +45,35 @@ const ArticleFilters: React.FC<ArticleFilterProps> = ({ onFilterChange, isLoadin
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         disabled={isLoading}
-                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-teal-500/20 focus:border-blue-500 dark:focus:border-teal-500 transition-all disabled:opacity-50 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500"
+                        className="w-full pl-10 pr-4 py-2.5 bg-[#FDFCF9] dark:bg-stone-900/30 border border-[#E5E2DC] dark:border-stone-850 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B89868]/20 focus:border-[#B89868] transition-all disabled:opacity-50 text-[#121315] dark:text-[#FAF9F5] placeholder-stone-400 dark:placeholder-stone-500 text-sm font-medium"
                     />
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 dark:text-slate-500 h-4 w-4" />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-stone-400 dark:text-stone-500 h-4 w-4" />
                 </form>
 
                 {/* Categories */}
                 <div>
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-3 flex items-center gap-2">
-                        <Filter className="h-3 w-3" /> Categories
+                    <h3 className="text-xs font-semibold text-stone-450 dark:text-stone-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                        <Filter className="h-3.5 w-3.5 text-[#B89868]" /> Categories
                     </h3>
                     <div className="flex flex-wrap gap-2">
                         <button
+                            type="button"
                             onClick={() => handleFilterChange('category', undefined)}
-                            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${!filters.category
-                                ? 'bg-blue-600 dark:bg-teal-600 text-white shadow-sm'
-                                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-300 ${!filters.category
+                                ? 'bg-[#1C1B19] dark:bg-[#FAF9F5] text-white dark:text-[#121315] shadow-sm'
+                                : 'bg-[#FAF9F5] dark:bg-stone-900/40 text-stone-600 dark:text-stone-300 hover:bg-[#E5E2DC] dark:hover:bg-stone-850 border border-[#E5E2DC] dark:border-stone-850'
                                 }`}
                         >
                             All
                         </button>
                         {categories.map((category) => (
                             <button
+                                type="button"
                                 key={category}
                                 onClick={() => handleFilterChange('category', category)}
-                                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${filters.category === category
-                                    ? 'bg-blue-600 dark:bg-teal-600 text-white shadow-sm'
-                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-300 ${filters.category === category
+                                    ? 'bg-[#1C1B19] dark:bg-[#FAF9F5] text-white dark:text-[#121315] shadow-sm'
+                                    : 'bg-[#FAF9F5] dark:bg-stone-900/40 text-stone-600 dark:text-stone-300 hover:bg-[#E5E2DC] dark:hover:bg-stone-850 border border-[#E5E2DC] dark:border-stone-850'
                                     }`}
                             >
                                 {category}
@@ -91,9 +93,9 @@ const ArticleFilters: React.FC<ArticleFilterProps> = ({ onFilterChange, isLoadin
                                 setSearchQuery('');
                                 onFilterChange({});
                             }}
-                            className="text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 self-start p-0 h-auto"
+                            className="text-stone-550 dark:text-stone-400 hover:text-red-600 dark:hover:text-red-400 self-start p-0 h-auto font-semibold"
                         >
-                            <X className="h-3 w-3 mr-1" /> Clear Filters
+                            <X className="h-3.5 w-3.5 mr-1" /> Clear Filters
                         </Button>
                     )
                 }

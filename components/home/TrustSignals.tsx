@@ -4,64 +4,67 @@ import { Scale, Globe, Building2, Briefcase, Users, Building, BarChart3, CheckCi
 
 export function TrustSignals() {
   const logoPartners = [
-    { name: 'Legal Aid', icon: <Scale size={28} /> },
-    { name: 'ECOWAS', icon: <Globe size={28} /> },
-    { name: 'African Bar', icon: <Building2 size={28} /> },
-    { name: 'Tech Hubs', icon: <Briefcase size={28} /> },
-    { name: 'NGO Network', icon: <Users size={28} /> },
-    { name: 'Law Firms', icon: <Building size={28} /> },
+    { name: 'Legal Aid Association', icon: <Scale size={20} /> },
+    { name: 'ECOWAS Justice', icon: <Globe size={20} /> },
+    { name: 'African Bar Forum', icon: <Building2 size={20} /> },
+    { name: 'Regional Tech Alliance', icon: <Briefcase size={20} /> },
+    { name: 'Human Rights Coalition', icon: <Users size={20} /> },
+    { name: 'Federal Chambers', icon: <Building size={20} /> },
   ];
 
   const stats = [
-    { number: '50,000+', label: 'Legal Queries Answered', icon: <BarChart3 size={32} /> },
-    { number: '99.8%', label: 'Resolution Rate', icon: <CheckCircle size={32} /> },
-    { number: '500+', label: 'Verified Lawyers', icon: <Gavel size={32} /> },
-    { number: '24/7', label: 'Support Available', icon: <Clock size={32} /> },
+    { number: '50,000+', label: 'Citizens Helped', icon: <BarChart3 size={20} /> },
+    { number: '99%', label: 'Clarity & Care', icon: <CheckCircle size={20} /> },
+    { number: '500+', label: 'Verified Local Lawyers', icon: <Gavel size={20} /> },
+    { number: '24/7', label: 'Always Available', icon: <Clock size={20} /> },
   ];
 
   const testimonials = [
     {
       author: 'Kwame A.',
-      role: 'Business Owner, Accra',
-      quote: 'LegalHub helped me register my startup in Ghana within days. The AI answered all my questions, and I found an excellent lawyer for the paperwork.',
-      avatar: <User size={24} className="text-slate-400" />,
+      role: 'Shop Owner, Accra',
+      quote: 'I was worried about a new trade fee and didn\'t know if it was legal. The AI explained the local rules to me in simple terms in less than a minute. When I wanted to make sure, they connected me to a local lawyer who double-checked everything for a very fair fee. It saved my shop a lot of stress!',
+      avatar: <User size={18} className="text-[#B89868]" />,
     },
     {
       author: 'Aisha M.',
-      role: 'Teacher, Lagos',
-      quote: 'I was facing eviction without proper notice. LegalHub connected me with a lawyer who protected my rights. Forever grateful!',
-      avatar: <User size={24} className="text-slate-400" />,
+      role: 'School Teacher, Lagos',
+      quote: 'My landlord suddenly tried to increase my rent double without warning. I asked LegalHub and found out this violated local laws. The system matched me with a nearby lawyer who wrote a polite, official letter that settled the issue right away. Highly recommended for every citizen!',
+      avatar: <User size={18} className="text-[#B89868]" />,
     },
   ];
 
   return (
-    <section className="py-24 bg-slate-50 dark:bg-slate-900/30">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-24 bg-[#FDFCF9] dark:bg-[#16171B] border-t border-b border-[#E5E2DC] dark:border-stone-800/60 transition-colors duration-300">
+      <div className="max-w-6xl mx-auto px-6">
         {/* Partner Logos */}
         <div className="mb-24">
-          <p className="text-center text-sm font-semibold text-slate-400 uppercase tracking-widest mb-10">Trusted by leading organizations</p>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 items-center justify-center opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-700">
+          <p className="text-center text-[10px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-widest mb-10">Trusted Across West Africa</p>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 items-center justify-center opacity-40 grayscale hover:opacity-75 dark:opacity-30 dark:hover:opacity-60 transition-all duration-500">
             {logoPartners.map((partner) => (
-              <div key={partner.name} className="flex flex-col items-center gap-3">
-                <div className="text-slate-600 dark:text-slate-400">{partner.icon}</div>
-                <span className="text-xs font-bold text-slate-600 dark:text-slate-400 tracking-tight">{partner.name}</span>
+              <div 
+                key={partner.name} 
+                className="flex items-center justify-center gap-2 border border-[#E5E2DC]/60 dark:border-stone-800/40 px-4 py-3 rounded-xl bg-stone-50/40 dark:bg-transparent"
+              >
+                <div className="text-stone-700 dark:text-stone-300 flex-shrink-0">{partner.icon}</div>
+                <span className="text-[10px] font-bold text-stone-600 dark:text-stone-400 tracking-wider uppercase">{partner.name.split(' ')[0]}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-24">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
           {stats.map((stat, idx) => (
             <div
               key={idx}
-              className="bg-white dark:bg-slate-900 rounded-3xl p-8 text-center border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              className="bg-[#FAF9F5]/40 dark:bg-stone-900/10 rounded-2xl p-8 border border-[#E5E2DC] dark:border-stone-800 transition-all duration-300"
             >
-              <div className="flex justify-center text-blue-600 dark:text-teal-400 mb-4">
+              <div className="text-[#B89868] dark:text-[#C5A880] mb-4">
                 {stat.icon}
               </div>
-              <div className="text-4xl font-bold text-slate-900 dark:text-white mb-2">{stat.number}</div>
-              <p className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">{stat.label}</p>
+              <div className="text-3xl font-light font-display text-stone-900 dark:text-stone-100 mb-2">{stat.number}</div>
+              <p className="text-[9px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-widest">{stat.label}</p>
             </div>
           ))}
         </div>
@@ -71,31 +74,29 @@ export function TrustSignals() {
           {testimonials.map((testimonial, idx) => (
             <div
               key={idx}
-              className="bg-white dark:bg-slate-900 rounded-3xl p-10 border border-slate-100 dark:border-slate-800 shadow-sm relative group"
+              className="bg-[#FAF9F5] dark:bg-stone-900/10 rounded-2xl p-10 border border-[#E5E2DC] dark:border-stone-800 flex flex-col justify-between"
             >
-              <div className="absolute top-8 right-8 text-blue-100 dark:text-blue-900/20 pointer-events-none">
-                 <Scale size={64} />
+              <div>
+                <div className="flex gap-1 mb-6">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <Star key={i} size={11} className="fill-[#B89868] text-[#B89868]" />
+                  ))}
+                </div>
+
+                <blockquote className="text-stone-700 dark:text-stone-300 italic text-sm leading-relaxed mb-8 font-serif">
+                  &ldquo;{testimonial.quote}&rdquo;
+                </blockquote>
               </div>
               
-              <div className="flex items-center gap-4 mb-6 relative z-10">
-                <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center border border-slate-200 dark:border-slate-700">
+              <div className="flex items-center gap-3 pt-6 border-t border-[#E5E2DC]/80 dark:border-stone-800/80">
+                <div className="w-9 h-9 bg-stone-100 dark:bg-stone-850 rounded-full flex items-center justify-center border border-[#E5E2DC] dark:border-stone-800">
                   {testimonial.avatar}
                 </div>
                 <div>
-                  <h4 className="font-bold text-slate-900 dark:text-white leading-tight">{testimonial.author}</h4>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">{testimonial.role}</p>
+                  <h4 className="text-xs font-bold text-stone-900 dark:text-stone-200 uppercase tracking-wider">{testimonial.author}</h4>
+                  <p className="text-[10px] text-stone-400 dark:text-stone-500 font-medium tracking-tight">{testimonial.role}</p>
                 </div>
               </div>
-
-              <div className="flex gap-1 mb-6">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <Star key={i} size={14} className="fill-amber-400 text-amber-400" />
-                ))}
-              </div>
-
-              <blockquote className="text-slate-700 dark:text-slate-300 italic leading-relaxed relative z-10">
-                &quot;{testimonial.quote}&quot;
-              </blockquote>
             </div>
           ))}
         </div>
@@ -103,3 +104,4 @@ export function TrustSignals() {
     </section>
   );
 }
+

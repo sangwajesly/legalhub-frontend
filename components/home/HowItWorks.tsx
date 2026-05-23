@@ -5,92 +5,86 @@ import { MessageSquare, Zap, CheckCircle } from 'lucide-react';
 export function HowItWorks() {
   const steps = [
     {
-      number: '1',
-      icon: <MessageSquare className="w-12 h-12 text-blue-500 dark:text-teal-400" />,
-      title: 'Ask Your Question',
-      description: 'Type any legal question in plain English. No jargon. No sign-up required for first question.',
+      number: '01',
+      icon: <MessageSquare size={20} />,
+      title: 'Ask in Your Own Words',
+      description: 'Type your question or worry just like you would tell a friend. No legal terms needed, and it\'s completely private.',
     },
     {
-      number: '2',
-      icon: <Zap className="w-12 h-12 text-blue-500 dark:text-teal-400" />,
-      title: 'Get Instant Guidance',
-      description: 'Our AI legal advisor provides clear, actionable answers within seconds.',
+      number: '02',
+      icon: <Zap size={20} />,
+      title: 'Get Easy-to-Read Answers',
+      description: 'Our AI guide reads local laws and gives you a clear, simple answer in under forty-five seconds.',
     },
     {
-      number: '3',
-      icon: <CheckCircle className="w-12 h-12 text-blue-500 dark:text-teal-400" />,
-      title: 'Take Action',
-      description: 'Find and book a verified lawyer for deeper support. No obligation.',
+      number: '03',
+      icon: <CheckCircle size={20} />,
+      title: 'Decide What\'s Next',
+      description: 'Read your options. If you want, we can connect you to a friendly, verified lawyer nearby. Otherwise, you\'re all set!',
     },
   ];
 
   return (
-    <section className="py-16 bg-gradient-to-b from-gray-50 to-white dark:from-slate-900 dark:to-slate-950">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-24 bg-[#FAF9F5] dark:bg-[#121315] border-t border-[#E5E2DC] dark:border-stone-850 transition-colors duration-300">
+      <div className="max-w-6xl mx-auto px-6">
         {/* Section Title */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            How It Works
+        <div className="text-center mb-20">
+          <p className="text-[10px] text-[#B89868] font-bold uppercase tracking-widest mb-3">Three Simple Steps</p>
+          <h2 className="text-3xl md:text-5xl font-light font-display text-stone-900 dark:text-stone-50 mb-6">
+            Getting Help is Simple
           </h2>
-          <p className="text-lg text-gray-600 dark:text-slate-400 max-w-2xl mx-auto">
-            Get legal answers in three simple steps. Start with a question, get instant guidance, and take action when you&apos;re ready.
+          <p className="text-sm md:text-base text-stone-500 dark:text-stone-400 max-w-2xl mx-auto leading-relaxed">
+            You don&apos;t need to be a lawyer to understand your rights. Get clear answers and connect with legal support in three easy steps.
           </p>
         </div>
 
-        {/* Steps Container */}
-        <div className="relative">
-          {/* Desktop Arrow */}
-          <div className="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-200 via-teal-200 to-transparent dark:from-teal-800 dark:via-emerald-800 dark:to-transparent transform -translate-y-1/2 z-0"></div>
-
-          {/* Steps Grid */}
-          <div className="grid md:grid-cols-3 gap-8 relative z-10">
-            {steps.map((step, idx) => (
-              <div key={idx} className="group">
-                {/* Card */}
-                <div className="bg-white dark:bg-slate-800/50 rounded-2xl p-6 border border-gray-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-teal-500 hover:shadow-xl transition-all duration-300 h-full">
-                  {/* Step Number Badge */}
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-blue-500 to-teal-600 dark:from-teal-600 dark:to-emerald-600 text-white text-xl font-bold rounded-full mb-6 group-hover:scale-110 transition-transform duration-300">
-                    {step.number}
-                  </div>
-
-                  {/* Icon */}
-                  <div className="mb-4 group-hover:scale-110 transition-transform duration-300">
+        {/* Steps Grid */}
+        <div className="grid md:grid-cols-3 gap-0 border border-[#E5E2DC] dark:border-stone-800 bg-[#FDFCF9] dark:bg-stone-900/10 rounded-2xl overflow-hidden">
+          {steps.map((step, idx) => (
+            <div 
+              key={idx} 
+              className={`p-10 flex flex-col justify-between h-full ${
+                idx < steps.length - 1 ? 'border-b md:border-b-0 md:border-r border-[#E5E2DC] dark:border-stone-800' : ''
+              }`}
+            >
+              <div>
+                {/* Step Header */}
+                <div className="flex items-center justify-between mb-8">
+                  <div className="w-10 h-10 border border-[#B89868]/30 bg-stone-50 dark:bg-stone-850/50 flex items-center justify-center text-[#B89868] rounded-xl">
                     {step.icon}
                   </div>
-
-                  {/* Title */}
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-                    {step.title}
-                  </h3>
-
-                  {/* Description */}
-                  <p className="text-gray-600 dark:text-slate-300 leading-relaxed text-sm">
-                    {step.description}
-                  </p>
+                  <span className="font-display font-light italic text-2xl text-[#B89868]">
+                    {step.number}
+                  </span>
                 </div>
 
-                {/* Mobile Connector */}
-                {idx < steps.length - 1 && (
-                  <div className="md:hidden text-center text-2xl text-gray-400 dark:text-slate-600 my-4">↓</div>
-                )}
+                {/* Title */}
+                <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100 uppercase tracking-widest mb-4">
+                  {step.title}
+                </h3>
+
+                {/* Description */}
+                <p className="text-stone-600 dark:text-stone-400 leading-relaxed text-xs font-sans font-medium">
+                  {step.description}
+                </p>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
 
-        {/* Timeline/Process Info */}
-        <div className="grid md:grid-cols-3 gap-6 mt-12">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-blue-600 dark:text-teal-400 mb-2">45s</div>
-            <p className="text-sm text-gray-600 dark:text-slate-400">Average Response Time</p>
+        {/* Performance Metrics */}
+        <div className="grid md:grid-cols-3 gap-8 md:gap-0 border-t border-b md:border border-[#E5E2DC] dark:border-stone-800 mt-16 bg-[#FDFCF9]/50 dark:bg-stone-900/5 rounded-2xl overflow-hidden">
+          <div className="text-center py-8 border-b md:border-b-0 md:border-r border-[#E5E2DC] dark:border-stone-800">
+            <div className="text-3xl font-light font-display text-[#B89868] mb-2">50,000+</div>
+            <p className="text-[10px] text-stone-500 dark:text-stone-400 uppercase tracking-widest font-bold">Citizens Helped</p>
           </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-teal-600 dark:text-emerald-400 mb-2">0</div>
-            <p className="text-sm text-gray-600 dark:text-slate-400">Hidden Fees or Surprises</p>
+          <div className="text-center py-8 border-b md:border-b-0 md:border-r border-[#E5E2DC] dark:border-stone-800">
+            <div className="text-3xl font-light font-display text-[#B89868] mb-2">100% Free</div>
+            <p className="text-[10px] text-stone-500 dark:text-stone-400 uppercase tracking-widest font-bold">AI Legal Assistant</p>
           </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-amber-600 dark:text-amber-500 mb-2">∞</div>
-            <p className="text-sm text-gray-600 dark:text-slate-400">Questions You Can Ask</p>
+          <div className="text-center py-8">
+            <div className="text-3xl font-light font-display text-[#B89868] mb-2">Zero</div>
+            <p className="text-[10px] text-stone-500 dark:text-stone-400 uppercase tracking-widest font-bold">Surprise Fees</p>
           </div>
         </div>
       </div>

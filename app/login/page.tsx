@@ -46,82 +46,86 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="h-screen grid lg:grid-cols-2 bg-white dark:bg-slate-950 overflow-hidden">
+    <div className="h-screen grid lg:grid-cols-2 bg-[#FAF9F5] dark:bg-[#121315] overflow-hidden">
       {/* Left Side: Branding & Storytelling (Hidden on mobile) */}
-      <div className="hidden lg:flex relative bg-slate-900 overflow-hidden">
+      <div className="hidden lg:flex relative bg-[#121315] overflow-hidden border-r border-[#E5E2DC]/10 dark:border-stone-850">
         {/* Abstract Background Decorations */}
-        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-blue-600/20 rounded-full blur-[120px] animate-pulse"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-teal-600/20 rounded-full blur-[100px] animate-pulse delay-700"></div>
+        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-[#B89868]/5 rounded-full blur-[120px] animate-pulse"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#B89868]/5 rounded-full blur-[100px] animate-pulse delay-700"></div>
         
         <div className="relative z-10 w-full flex flex-col justify-between p-8 xl:p-12">
           {/* Top: Logo */}
-          <Link href="/" className="flex items-center gap-2 group w-fit">
-            <div className="h-10 w-10 xl:h-12 xl:w-12 bg-blue-600 dark:bg-teal-600 rounded-xl flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform">
-              <Scale className="h-6 w-6 xl:h-7 xl:w-7 text-white" />
+          <Link href="/" className="flex items-center gap-2.5 group w-fit">
+            <div className="h-10 w-10 xl:h-11 xl:w-11 border border-[#B89868]/30 rounded-xl flex items-center justify-center bg-stone-900/60 shadow-sm group-hover:rotate-6 transition-transform duration-300">
+              <Scale className="h-5 w-5 xl:h-5.5 xl:w-5.5 text-[#B89868]" />
             </div>
-            <span className="text-xl xl:text-2xl font-bold text-white tracking-tight">LegalHub</span>
+            <span className="text-xl xl:text-2xl font-serif font-bold text-[#FAF9F5] tracking-tight">
+              Legal<span className="text-[#B89868] italic font-serif">Hub</span>
+            </span>
           </Link>
 
           {/* Middle: Value Prop */}
           <div className="max-w-md space-y-6 xl:space-y-8">
             <div className="space-y-3 xl:space-y-4">
-              <h2 className="text-4xl xl:text-5xl font-bold text-white leading-tight">
-                Democratizing <span className="text-blue-500">Justice</span> for All.
+              <h2 className="text-4xl xl:text-5xl font-serif font-bold text-[#FAF9F5] leading-tight">
+                Democratizing <span className="text-[#B89868] font-serif">Justice</span> for All.
               </h2>
-              <p className="text-slate-400 text-base xl:text-lg leading-relaxed">
-                Empowering millions across Africa with instant AI legal guidance and verified professional advocacy.
+              <p className="text-stone-400 text-sm xl:text-base leading-relaxed font-normal">
+                Empowering individuals across the continent with secure AI guidance and verified legal representation you can trust.
               </p>
             </div>
 
             <div className="space-y-4 xl:space-y-5">
               {[
-                { icon: Shield, text: "Privacy-first, encrypted consultations", color: "text-blue-400" },
-                { icon: Zap, text: "Instant AI-powered legal incident analysis", color: "text-amber-400" },
-                { icon: CheckCircle2, text: "Pre-vetted network of top legal minds", color: "text-teal-400" }
+                { icon: Shield, text: "Privacy-first, encrypted consultations", color: "text-[#B89868]" },
+                { icon: Zap, text: "Instant AI-powered document & rights analysis", color: "text-[#B89868]" },
+                { icon: CheckCircle2, text: "Pre-vetted network of top legal minds", color: "text-[#B89868]" }
               ].map((feature, idx) => (
                 <div key={idx} className="flex items-center gap-4 group">
-                  <div className={`h-8 w-8 xl:h-10 xl:w-10 rounded-lg bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-white/20 transition-colors`}>
+                  <div className="h-8 w-8 xl:h-10 xl:w-10 rounded-xl bg-[#FAF9F5]/5 flex items-center justify-center border border-[#FAF9F5]/10 group-hover:border-[#B89868]/30 transition-colors duration-300">
                     <feature.icon className={`h-4 w-4 xl:h-5 xl:w-5 ${feature.color}`} />
                   </div>
-                  <span className="text-slate-200 text-sm xl:text-base font-medium">{feature.text}</span>
+                  <span className="text-stone-300 text-sm xl:text-base font-normal">{feature.text}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Bottom: Footer Info */}
-          <div className="flex items-center justify-between pt-8 border-t border-white/10 italic text-slate-500 text-xs xl:text-sm">
-            <p>&copy; 2025 LegalHub Africa.</p>
+          <div className="flex items-center justify-between pt-6 border-t border-[#FAF9F5]/10 italic text-stone-500 text-xs xl:text-sm">
+            <p>&copy; 2026 LegalHub Africa.</p>
             <div className="flex gap-4">
-              <a href="#" className="hover:text-slate-300">Privacy</a>
-              <a href="#" className="hover:text-slate-300">Terms</a>
+              <a href="#" className="hover:text-stone-300 transition-colors">Privacy</a>
+              <a href="#" className="hover:text-stone-300 transition-colors">Terms</a>
             </div>
           </div>
         </div>
       </div>
 
       {/* Right Side: Login Form */}
-      <div className="flex items-center justify-center p-6 xl:p-8 bg-gradient-to-br from-blue-50/50 via-white to-teal-50/50 dark:from-slate-950 dark:via-slate-900/50 dark:to-slate-950 overflow-y-auto lg:overflow-hidden">
+      <div className="flex items-center justify-center p-6 xl:p-8 bg-[#FAF9F5] dark:bg-[#121315] overflow-y-auto lg:overflow-hidden">
         <div className="w-full max-w-md space-y-6 xl:space-y-8 animate-fade-in">
           {/* Logo (Mobile-only) */}
           <div className="lg:hidden flex justify-center mb-6">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="h-10 w-10 bg-blue-600 dark:bg-teal-600 rounded-lg flex items-center justify-center">
-                <Scale className="h-6 w-6 text-white" />
+            <Link href="/" className="flex items-center gap-2.5">
+              <div className="h-10 w-10 border border-[#B89868]/30 rounded-xl flex items-center justify-center bg-stone-900/60 shadow-sm">
+                <Scale className="h-5 w-5 text-[#B89868]" />
               </div>
-              <span className="text-2xl font-bold text-slate-900 dark:text-white">LegalHub</span>
+              <span className="text-xl font-serif font-bold text-[#121315] dark:text-[#FAF9F5] tracking-tight">
+                Legal<span className="text-[#B89868] italic font-serif">Hub</span>
+              </span>
             </Link>
           </div>
 
           <div className="text-center lg:text-left space-y-1 xl:space-y-2">
-            <h1 className="text-2xl xl:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Welcome Back</h1>
-            <p className="text-sm xl:text-base text-slate-500 dark:text-slate-400">Sign in to manage your legal matters.</p>
+            <h1 className="text-2xl xl:text-3xl font-serif font-bold text-[#121315] dark:text-white tracking-tight">Welcome Back</h1>
+            <p className="text-sm xl:text-base text-stone-500 dark:text-stone-400">Sign in to manage your legal matters.</p>
           </div>
 
           <Button 
             variant="outline" 
             onClick={handleGoogleLogin}
-            className="w-full py-5 xl:py-6 dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-800 dark:text-white flex items-center justify-center gap-3 text-sm xl:text-base shadow-sm group transition-all rounded-xl"
+            className="w-full py-5 xl:py-6 border-[#E5E2DC] dark:border-stone-800 bg-[#FDFCF9] dark:bg-stone-900/50 hover:bg-[#FAF9F5] dark:hover:bg-stone-900 text-stone-700 dark:text-white flex items-center justify-center gap-3 text-sm xl:text-base shadow-sm group transition-all rounded-xl font-medium"
           >
             <svg className="w-4 h-4 xl:w-5 xl:h-5 group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -134,10 +138,10 @@ const LoginPage: React.FC = () => {
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-slate-200 dark:border-slate-800"></span>
+              <span className="w-full border-t border-[#E5E2DC] dark:border-stone-850"></span>
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white dark:bg-slate-950 px-4 text-slate-500 dark:text-slate-500 font-medium">Or email</span>
+              <span className="bg-[#FAF9F5] dark:bg-[#121315] px-4 text-stone-400 dark:text-stone-500 font-medium">Or email</span>
             </div>
           </div>
 
@@ -150,7 +154,7 @@ const LoginPage: React.FC = () => {
             )}
             
             <div className="space-y-1.5 xl:space-y-2">
-              <Label htmlFor="email" className="text-slate-700 dark:text-slate-300 text-xs xl:text-sm font-semibold">Email</Label>
+              <Label htmlFor="email" className="text-stone-700 dark:text-stone-300 text-xs xl:text-sm font-semibold">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -158,14 +162,14 @@ const LoginPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="h-10 xl:h-12 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 focus:ring-2 focus:ring-blue-500 dark:focus:ring-teal-500 transition-all rounded-xl dark:text-white"
+                className="h-11 bg-[#FDFCF9] dark:bg-stone-900/30 border-[#E5E2DC] dark:border-stone-850 focus:ring-2 focus:ring-[#B89868]/20 focus:border-[#B89868] transition-all rounded-xl dark:text-white"
               />
             </div>
 
             <div className="space-y-1.5 xl:space-y-2">
               <div className="flex justify-between">
-                <Label htmlFor="password" className="text-slate-700 dark:text-slate-300 text-xs xl:text-sm font-semibold">Password</Label>
-                <Link href="/forgot-password" gap-2 className="text-[10px] xl:text-xs text-blue-600 dark:text-teal-500 hover:underline font-medium">
+                <Label htmlFor="password" className="text-stone-700 dark:text-stone-300 text-xs xl:text-sm font-semibold">Password</Label>
+                <Link href="/forgot-password" className="text-[10px] xl:text-xs text-[#B89868] dark:text-[#B89868]/90 hover:underline font-medium">
                   Forgot?
                 </Link>
               </div>
@@ -176,17 +180,17 @@ const LoginPage: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="h-10 xl:h-12 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 focus:ring-2 focus:ring-blue-500 dark:focus:ring-teal-500 transition-all rounded-xl dark:text-white"
+                className="h-11 bg-[#FDFCF9] dark:bg-stone-900/30 border-[#E5E2DC] dark:border-stone-850 focus:ring-2 focus:ring-[#B89868]/20 focus:border-[#B89868] transition-all rounded-xl dark:text-white"
               />
             </div>
 
             <Button 
               type="submit" 
-              className="w-full py-5 xl:py-6 bg-blue-600 dark:bg-gradient-to-r dark:from-teal-600 dark:to-emerald-600 hover:bg-blue-700 dark:hover:from-teal-700 dark:hover:to-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 dark:shadow-teal-900/20 group transition-all"
+              className="w-full py-5 xl:py-6 bg-[#1C1B19] hover:bg-[#2C2A27] dark:bg-[#FAF9F5] dark:hover:bg-[#E5E2DC] text-[#FAF9F5] dark:text-[#121315] font-semibold rounded-xl shadow-sm group transition-all"
               disabled={isLoading}
             >
               {isLoading ? (
-                <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                <div className="h-5 w-5 border-2 border-stone-400 border-t-stone-800 rounded-full animate-spin"></div>
               ) : (
                 <span className="flex items-center gap-2">
                   Sign In <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -195,9 +199,9 @@ const LoginPage: React.FC = () => {
             </Button>
           </form>
 
-          <p className="text-center text-xs xl:text-sm text-slate-500 dark:text-slate-500">
+          <p className="text-center text-xs xl:text-sm text-stone-500 dark:text-stone-500">
             Professional access needed?{' '}
-            <Link href="/signup" className="text-blue-600 dark:text-teal-500 font-bold hover:underline">
+            <Link href="/signup" className="text-[#B89868] dark:text-[#B89868]/90 font-bold hover:underline">
               Join the Hub
             </Link>
           </p>

@@ -11,7 +11,6 @@ import {
   CaseSubmission,
   AnalyticsData,
   PaginatedResponse,
-  LoginCredentials,
   RegisterData,
   AuthResponse,
   User,
@@ -40,26 +39,43 @@ class ApiClient {
 
     // Request interceptor - add auth token
     this.client.interceptors.request.use(async (config) => {
+      let token: string | null = null;
+
+      // 1. Try to get token from Firebase if user is logged in
       const user = auth.currentUser;
       if (user) {
         try {
-          const token = await user.getIdToken();
-          config.headers.Authorization = `Bearer ${token}`;
-          console.log('Firebase ID token attached to request.');
+          token = await user.getIdToken();
+          console.log('Firebase ID token retrieved.');
         } catch (error) {
           console.error('Error getting Firebase ID token:', error);
-          // Optionally handle the error, e.g., by logging out the user
         }
-      } else {
-        // Fallback for non-Firebase auth or initial load
+      }
+
+      // 2. Fallback to Zustand store/localStorage if Firebase not ready or user not in Firebase
+      if (!token) {
         const authStorage = localStorage.getItem('auth-storage');
         if (authStorage) {
-          const { state } = JSON.parse(authStorage);
-          if (state && state.token) {
-            config.headers.Authorization = `Bearer ${state.token}`;
-            console.log('Fallback token from localStorage attached.');
+          try {
+            const { state } = JSON.parse(authStorage);
+            if (state && state.token) {
+              token = state.token;
+              console.log('Token from auth-storage retrieved.');
+            }
+          } catch (e) {
+            console.error('Error parsing auth-storage:', e);
           }
         }
+      }
+
+      // 3. Last fallback to legacy auth_token
+      if (!token) {
+          token = localStorage.getItem('auth_token');
+          if (token) console.log('Token from legacy localStorage retrieved.');
+      }
+
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
       }
 
       console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`);
@@ -70,17 +86,20 @@ class ApiClient {
     this.client.interceptors.response.use(
       (response) => response,
       (error) => {
-        console.error('API Error:', error.response?.data || error.message);
+        const status = error.response?.status;
+        console.error(`API Error [${status}]:`, error.response?.data || error.message);
 
-        // Handle 401 Unauthorized - redirect to login
-        if (error.response?.status === 401 && typeof window !== 'undefined') {
-          // More robust logout logic can be centralized here
-          // For now, just remove local token and redirect
-          localStorage.removeItem('auth_token'); // Also clear legacy token if present
-          // Consider using a more integrated auth state management logout function
-          if (!window.location.pathname.includes('/login')) {
-            // window.location.href = '/login';
-            console.warn('Redirect to login commented out for debugging.');
+        // Handle 401 Unauthorized - clear state and redirect to login
+        if (status === 401 && typeof window !== 'undefined') {
+          console.warn('401 Unauthorized detected. Clearing auth state.');
+          
+          // Clear everything
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('auth-storage');
+          
+          if (!window.location.pathname.includes('/login') && 
+              !window.location.pathname.includes('/signup')) {
+            window.location.href = '/login';
           }
         }
 
@@ -99,50 +118,15 @@ class ApiClient {
   }
 
   // ============ AUTH ENDPOINTS ============
-  // Auth endpoints use /api/auth (no version prefix)
 
-  async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    const response = await this.client.post('/api/v1/auth/login', credentials);
-
-    // Handle nested response structure from backend
-    const data = response.data;
-    const authData: AuthResponse = {
-      user: this.normalizeUser(data.user),
-      token: data.tokens?.access_token || data.token,
-      refreshToken: data.tokens?.refresh_token || data.refreshToken
-    };
-
-    if (authData.token) {
-      localStorage.setItem('auth_token', authData.token);
-    }
-
-    return authData;
-  }
-
-  async verifyToken(idToken: string): Promise<AuthResponse> {
-    const response = await this.client.post('/api/v1/auth/verify-token', { idToken });
+  async verifyToken(idToken: string, extraData?: Partial<RegisterData>): Promise<AuthResponse> {
+    const response = await this.client.post('/api/v1/auth/verify-token', { idToken, ...extraData });
 
     const data = response.data;
     const authData: AuthResponse = {
       user: this.normalizeUser(data.user),
       token: data.tokens?.access_token || data.token,
       refreshToken: data.tokens?.refresh_token || data.refreshToken
-    };
-
-    if (authData.token) {
-      localStorage.setItem('auth_token', authData.token);
-    }
-
-    return authData;
-  }
-
-  async register(data: RegisterData): Promise<AuthResponse> {
-    const response = await this.client.post('/api/v1/auth/register', data);
-
-    const authData: AuthResponse = {
-      user: this.normalizeUser(response.data.user),
-      token: response.data.tokens?.access_token || response.data.token,
-      refreshToken: response.data.tokens?.refresh_token || response.data.refreshToken
     };
 
     if (authData.token) {
@@ -157,6 +141,7 @@ class ApiClient {
       await this.client.post('/api/v1/auth/logout');
     } finally {
       localStorage.removeItem('auth_token');
+      localStorage.removeItem('auth-storage');
     }
   }
 

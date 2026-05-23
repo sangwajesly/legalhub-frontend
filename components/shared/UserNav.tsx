@@ -21,8 +21,8 @@ export function UserNav() {
     if (!isAuthenticated) {
         return (
             <Link href="/login">
-                <Button variant="outline" className="dark:text-white">
-                    <LogIn className="mr-2 h-4 w-4" />
+                <Button variant="outline" className="border-[#E5E2DC] dark:border-stone-800 text-stone-700 dark:text-stone-300 rounded-xl hover:bg-stone-50 dark:hover:bg-stone-850">
+                    <LogIn className="mr-2 h-4 w-4 text-[#B89868]" />
                     Login
                 </Button>
             </Link>
@@ -31,12 +31,12 @@ export function UserNav() {
 
     return (
         <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" className="relative text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-teal-400">
+            <Button variant="ghost" size="icon" className="relative text-stone-500 hover:text-[#B89868] dark:hover:text-[#C5A880] transition-colors rounded-xl">
                 <Bell className="h-5 w-5" />
-                <span className="absolute top-2.5 right-2.5 h-2 w-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-950"></span>
+                <span className="absolute top-2.5 right-2.5 h-2 w-2 bg-[#B89868] rounded-full border-2 border-[#FAF9F5] dark:border-[#121315]"></span>
             </Button>
 
-            <div className="h-6 w-[1px] bg-slate-200 dark:bg-slate-800 mx-1 hidden sm:block"></div>
+            <div className="h-6 w-[1px] bg-[#E5E2DC] dark:bg-stone-800 mx-1 hidden sm:block"></div>
 
             <div className="flex items-center gap-3">
                 <div className="text-right hidden sm:block">
@@ -46,9 +46,9 @@ export function UserNav() {
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="relative h-10 w-10 rounded-full bg-blue-50 dark:bg-slate-800 flex items-center justify-center border-2 border-white dark:border-slate-700 shadow-sm p-0 overflow-hidden hover:bg-blue-100 dark:hover:bg-slate-700 focus:ring-2 focus:ring-blue-500/20">
+                        <Button variant="ghost" className="relative h-10 w-10 rounded-full bg-[#FAF9F5] dark:bg-[#121315] flex items-center justify-center border border-[#E5E2DC] dark:border-stone-800 shadow-sm p-0 overflow-hidden hover:bg-stone-100 dark:hover:bg-stone-850 focus:ring-2 focus:ring-[#B89868]/20">
                             {/* TODO: Add Avatar component with user?.avatarUrl */}
-                            <User className="h-5 w-5 text-blue-600 dark:text-teal-400" />
+                            <User className="h-5 w-5 text-[#B89868]" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56 dark:bg-slate-900 dark:border-slate-800">

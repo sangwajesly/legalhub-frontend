@@ -33,16 +33,16 @@ const LawyerFilters: React.FC<LawyerFilterProps> = ({ onFilterChange, isLoading 
   ];
 
   return (
-    <Card className="border-slate-200 dark:border-slate-700 shadow-md bg-white dark:bg-slate-800/50 backdrop-blur-sm mb-8">
+    <Card className="border-[#E5E2DC] dark:border-stone-800 shadow-sm bg-[#FDFCF9] dark:bg-stone-900/20 backdrop-blur-sm mb-8 rounded-2xl">
       <CardContent className="p-5">
         <Button
           variant="ghost"
           onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center gap-2 font-semibold text-slate-900 dark:text-white w-full justify-between md:justify-start hover:bg-slate-100 dark:hover:bg-slate-700/50 rounded-xl transition-all"
+          className="flex items-center gap-2 font-semibold text-[#121315] dark:text-[#FAF9F5] w-full justify-between md:justify-start hover:bg-[#FAF9F5] dark:hover:bg-stone-900/40 border border-[#E5E2DC]/50 dark:border-stone-850/50 rounded-xl transition-all"
         >
           <span className="flex items-center gap-2">
-            <Filter className="h-5 w-5 text-blue-600 dark:text-teal-400" />
-            <span className="text-lg">Filters & Sort</span>
+            <Filter className="h-5 w-5 text-[#B89868]" />
+            <span className="text-lg font-serif">Refine Search & Filters</span>
           </span>
           {showFilters ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
         </Button>
@@ -51,15 +51,15 @@ const LawyerFilters: React.FC<LawyerFilterProps> = ({ onFilterChange, isLoading 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-7 animate-fade-in">
             {/* Specialization */}
             <div className="space-y-2.5">
-              <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                <span className="w-1.5 h-1.5 bg-blue-500 dark:bg-teal-500 rounded-full"></span>
+              <label className="text-sm font-semibold text-stone-700 dark:text-stone-300 flex items-center gap-2">
+                <span className="w-1.5 h-1.5 bg-[#B89868] rounded-full"></span>
                 Specialization
               </label>
               <select
                 value={filters.specialization || ''}
                 onChange={(e) => handleFilterChange('specialization', e.target.value)}
                 disabled={isLoading}
-                className="w-full px-4 py-3 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/40 dark:focus:ring-teal-500/40 focus:border-blue-500 dark:focus:border-teal-400 text-sm font-medium disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:text-slate-400 transition-all duration-200 text-slate-900 dark:text-white"
+                className="w-full px-4 py-3 bg-[#FAF9F5] dark:bg-stone-950/40 border border-[#E5E2DC] dark:border-stone-850 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B89868]/20 focus:border-[#B89868] text-sm font-medium disabled:bg-stone-50 dark:disabled:bg-stone-900 disabled:text-stone-400 transition-all duration-200 text-[#121315] dark:text-[#FAF9F5]"
               >
                 <option value="">All Specializations</option>
                 {specializations.map((spec) => (
@@ -72,8 +72,8 @@ const LawyerFilters: React.FC<LawyerFilterProps> = ({ onFilterChange, isLoading 
 
             {/* Location */}
             <div className="space-y-2.5">
-              <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                <span className="w-1.5 h-1.5 bg-blue-500 dark:bg-teal-500 rounded-full"></span>
+              <label className="text-sm font-semibold text-stone-700 dark:text-stone-300 flex items-center gap-2">
+                <span className="w-1.5 h-1.5 bg-[#B89868] rounded-full"></span>
                 Location
               </label>
               <input
@@ -82,14 +82,14 @@ const LawyerFilters: React.FC<LawyerFilterProps> = ({ onFilterChange, isLoading 
                 value={filters.location || ''}
                 onChange={(e) => handleFilterChange('location', e.target.value)}
                 disabled={isLoading}
-                className="w-full px-4 py-3 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/40 dark:focus:ring-teal-500/40 focus:border-blue-500 dark:focus:border-teal-400 text-sm font-medium disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:text-slate-400 transition-all duration-200 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500"
+                className="w-full px-4 py-3 bg-[#FAF9F5] dark:bg-stone-950/40 border border-[#E5E2DC] dark:border-stone-850 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B89868]/20 focus:border-[#B89868] text-sm font-medium disabled:bg-stone-50 dark:disabled:bg-stone-900 disabled:text-stone-400 transition-all duration-200 text-[#121315] dark:text-[#FAF9F5] placeholder-stone-400 dark:placeholder-stone-500"
               />
             </div>
 
             {/* Min Rating */}
             <div className="space-y-2.5">
-              <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                <span className="w-1.5 h-1.5 bg-blue-500 dark:bg-teal-500 rounded-full"></span>
+              <label className="text-sm font-semibold text-stone-700 dark:text-stone-300 flex items-center gap-2">
+                <span className="w-1.5 h-1.5 bg-[#B89868] rounded-full"></span>
                 Min Rating
               </label>
               <select
@@ -98,7 +98,7 @@ const LawyerFilters: React.FC<LawyerFilterProps> = ({ onFilterChange, isLoading 
                   handleFilterChange('minRating', e.target.value ? parseFloat(e.target.value) : undefined)
                 }
                 disabled={isLoading}
-                className="w-full px-4 py-3 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/40 dark:focus:ring-teal-500/40 focus:border-blue-500 dark:focus:border-teal-400 text-sm font-medium disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:text-slate-400 transition-all duration-200 text-slate-900 dark:text-white"
+                className="w-full px-4 py-3 bg-[#FAF9F5] dark:bg-stone-950/40 border border-[#E5E2DC] dark:border-stone-850 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B89868]/20 focus:border-[#B89868] text-sm font-medium disabled:bg-stone-50 dark:disabled:bg-stone-900 disabled:text-stone-400 transition-all duration-200 text-[#121315] dark:text-[#FAF9F5]"
               >
                 <option value="">All Ratings</option>
                 <option value="3">3.0+ ⭐</option>
@@ -110,8 +110,8 @@ const LawyerFilters: React.FC<LawyerFilterProps> = ({ onFilterChange, isLoading 
 
             {/* Max Price */}
             <div className="space-y-2.5">
-              <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                <span className="w-1.5 h-1.5 bg-blue-500 dark:bg-teal-500 rounded-full"></span>
+              <label className="text-sm font-semibold text-stone-700 dark:text-stone-300 flex items-center gap-2">
+                <span className="w-1.5 h-1.5 bg-[#B89868] rounded-full"></span>
                 Max Hourly Rate ($)
               </label>
               <input
@@ -122,7 +122,7 @@ const LawyerFilters: React.FC<LawyerFilterProps> = ({ onFilterChange, isLoading 
                   handleFilterChange('maxPrice', e.target.value ? parseFloat(e.target.value) : undefined)
                 }
                 disabled={isLoading}
-                className="w-full px-4 py-3 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/40 dark:focus:ring-teal-500/40 focus:border-blue-500 dark:focus:border-teal-400 text-sm font-medium disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:text-slate-400 transition-all duration-200 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500"
+                className="w-full px-4 py-3 bg-[#FAF9F5] dark:bg-stone-950/40 border border-[#E5E2DC] dark:border-stone-850 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B89868]/20 focus:border-[#B89868] text-sm font-medium disabled:bg-stone-50 dark:disabled:bg-stone-900 disabled:text-stone-400 transition-all duration-200 text-[#121315] dark:text-[#FAF9F5] placeholder-stone-400 dark:placeholder-stone-500"
               />
             </div>
           </div>

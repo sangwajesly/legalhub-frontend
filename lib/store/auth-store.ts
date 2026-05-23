@@ -32,7 +32,7 @@ export const useAuthStore = create<AuthState>()(
             user: null,
             token: null,
             isAuthenticated: false,
-            isLoading: false,
+            isLoading: true,
             error: null,
 
             login: async (credentials: LoginCredentials) => {
@@ -103,7 +103,11 @@ export const useAuthStore = create<AuthState>()(
                     const idToken = await userCredential.user.getIdToken();
 
                     // The verify-token endpoint should also handle user creation on the backend
-                    const response = await apiClient.verifyToken(idToken); 
+                    const response = await apiClient.verifyToken(idToken, {
+                        name: data.name,
+                        role: data.role,
+                        email: data.email
+                    }); 
                     
                     // The profile returned here will be from the backend after creation
                     const profile = await apiClient.getProfile();

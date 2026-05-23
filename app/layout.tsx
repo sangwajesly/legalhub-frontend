@@ -27,7 +27,7 @@ export default function RootLayout({
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
-      <body className="bg-slate-50 dark:bg-slate-950 min-h-screen flex flex-col transition-colors duration-300">
+      <body className="bg-[#FAF9F5] dark:bg-[#121315] min-h-screen flex flex-col transition-colors duration-300">
         <AuthProvider>
           <ThemeProvider
             attribute="class"

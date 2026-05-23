@@ -57,14 +57,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-950">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-teal-400"></div>
+            <div className="min-h-screen flex items-center justify-center bg-[#FAF9F5] dark:bg-[#121315]">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#B89868]"></div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-slate-950">
+        <div className="min-h-screen bg-[#FAF9F5] dark:bg-[#121315]">
             {showLayout && (
                 <Sidebar
                     isOpen={isSidebarOpen}
