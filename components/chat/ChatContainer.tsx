@@ -94,7 +94,7 @@ const ChatContainer: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#FAF9F5] dark:bg-[#121315]">
+    <div className="flex h-screen overflow-hidden bg-white dark:bg-[#212121]">
       <ChatSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
       <main className="flex-1 flex flex-col relative overflow-hidden transition-all duration-300">
         <div className="flex-1 flex flex-col w-full overflow-hidden">
