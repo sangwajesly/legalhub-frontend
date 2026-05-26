@@ -108,11 +108,20 @@ class ApiClient {
     );
   }
 
-  // Helper to normalize user object (handling _id vs id)
+  // Helper to normalize user object (handling _id vs id / uid vs id / displayName vs name)
   private normalizeUser(userData: any): User {
       if (!userData) return userData;
+      if (userData.uid && !userData.id) {
+          userData.id = userData.uid;
+      }
       if (userData._id && !userData.id) {
           userData.id = userData._id;
+      }
+      if (userData.displayName && !userData.name) {
+          userData.name = userData.displayName;
+      }
+      if (userData.display_name && !userData.name) {
+          userData.name = userData.display_name;
       }
       return userData as User;
   }
@@ -315,8 +324,12 @@ class ApiClient {
   // FIX: Updated all chat endpoints to use /sessions/ structure
 
   async createSession(sessionData: Partial<Session>, userId: string): Promise<Session> {
-    const response = await this.client.post<Session>('/api/v1/chat/sessions', { ...sessionData, user_id: userId });
-    return response.data;
+    const response = await this.client.post<any>('/api/v1/chat/sessions', { ...sessionData, user_id: userId });
+    const data = response.data;
+    if (data && data.sessionId && !data.id) {
+      data.id = data.sessionId;
+    }
+    return data as Session;
   }
 
   async sendMessage(sessionId: string, content: string, attachments: string[] = [], history: any[] = []): Promise<SendMessageResponse> {
@@ -334,8 +347,16 @@ class ApiClient {
   }
 
   async getSessions(): Promise<SessionSummary[]> {
-    const response = await this.client.get<SessionSummary[]>('/api/v1/chat/sessions');
-    return response.data;
+    const response = await this.client.get<any>('/api/v1/chat/sessions');
+    const data = response.data;
+    const sessionsList = Array.isArray(data) ? data : data.sessions || data.data || [];
+    
+    return sessionsList.map((s: any) => ({
+      id: s.id || s.sessionId || '',
+      title: s.title || 'Chat Session',
+      lastMessage: s.lastMessage || s.last_message || '',
+      timestamp: s.timestamp || s.lastMessageAt || s.createdAt || new Date().toISOString()
+    })) as SessionSummary[];
   }
 
   async deleteChatSession(sessionId: string): Promise<void> {
