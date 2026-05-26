@@ -40,6 +40,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
             const isPublic =
                 pathname === "/" ||
+                pathname === "/chat" ||
+                pathname?.startsWith("/chat") ||
                 pathname?.startsWith("/login") ||
                 pathname?.startsWith("/signup") ||
                 pathname?.startsWith("/forgot-password") ||

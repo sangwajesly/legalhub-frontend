@@ -24,6 +24,15 @@ const ChatContainer: React.FC = () => {
   const { isAuthenticated, user } = useAuthStore();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
+  // Auto guest login if unauthenticated on mounting
+  useEffect(() => {
+    if (!isAuthenticated) {
+      console.log('[ChatContainer] Unauthenticated user entering chat. Logging in as guest mock citizen.');
+      useAuthStore.getState().login({ email: "demo@legalhub.com", password: "demo_password" })
+        .catch(err => console.error("Auto guest login failed:", err));
+    }
+  }, [isAuthenticated]);
+
   useEffect(() => {
     if (isAuthenticated) {
       fetchAllSessions();
