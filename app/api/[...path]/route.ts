@@ -91,8 +91,13 @@ async function handler(req: NextRequest, { params }: { params: { path: string[] 
     }
 
     // Verify the token using Firebase Admin SDK
+    // Bypass verification for mock/demo tokens to support Demo / Public mode
     try {
-        await admin.auth().verifyIdToken(idToken);
+        if (idToken === 'mock_access_token_demo' || idToken === 'mock_firebase_id_token' || idToken.startsWith('mock_')) {
+            console.log('Bypassing Firebase Admin token verification in proxy for mock/demo token.');
+        } else {
+            await admin.auth().verifyIdToken(idToken);
+        }
     } catch (error) {
         console.error("Error verifying ID token in Next.js API route:", error);
         return new NextResponse(JSON.stringify({ detail: 'Invalid or expired authorization token.' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
