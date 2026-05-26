@@ -2,13 +2,6 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { User, LoginCredentials, RegisterData } from '@/types';
 import apiClient from '@/lib/api-client';
-import { auth, googleProvider } from '@/lib/firebase';
-import {
-    signInWithPopup,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    signOut,
-} from 'firebase/auth';
 
 interface AuthState {
     user: User | null;
@@ -32,19 +25,16 @@ export const useAuthStore = create<AuthState>()(
             user: null,
             token: null,
             isAuthenticated: false,
-            isLoading: true,
+            isLoading: false,
             error: null,
 
             login: async (credentials: LoginCredentials) => {
                 set({ isLoading: true, error: null });
                 try {
-                    const userCredential = await signInWithEmailAndPassword(
-                        auth,
-                        credentials.email,
-                        credentials.password
-                    );
-                    const idToken = await userCredential.user.getIdToken();
-                    const response = await apiClient.verifyToken(idToken);
+                    console.log('[AuthStore] Bypassing login with mock credentials');
+                    const response = await apiClient.verifyToken("mock_firebase_id_token", {
+                        email: credentials.email
+                    });
                     const profile = await apiClient.getProfile();
 
                     set({
@@ -65,17 +55,10 @@ export const useAuthStore = create<AuthState>()(
             loginWithGoogle: async () => {
                 set({ isLoading: true, error: null });
                 try {
-                    console.log('[AuthStore] Starting Google Popup Sign-in...');
-                    const result = await signInWithPopup(auth, googleProvider);
-                    const user = result.user;
-                    const idToken = await user.getIdToken();
-
-                    console.log('[AuthStore] Google Sign-in successful. Calling backend...');
-                    const response = await apiClient.verifyToken(idToken);
-                    console.log('[AuthStore] Backend login successful. Fetching profile...');
+                    console.log('[AuthStore] Bypassing Google login with mock credentials');
+                    const response = await apiClient.verifyToken("mock_firebase_id_token");
                     const profile = await apiClient.getProfile();
                     
-                    console.log('[AuthStore] Profile fetched. Setting final state in Zustand store.');
                     set({
                         user: profile,
                         token: response.token,
@@ -95,21 +78,12 @@ export const useAuthStore = create<AuthState>()(
             register: async (data: RegisterData) => {
                 set({ isLoading: true, error: null });
                 try {
-                    const userCredential = await createUserWithEmailAndPassword(
-                        auth,
-                        data.email,
-                        data.password
-                    );
-                    const idToken = await userCredential.user.getIdToken();
-
-                    // The verify-token endpoint should also handle user creation on the backend
-                    const response = await apiClient.verifyToken(idToken, {
+                    console.log('[AuthStore] Bypassing registration with mock credentials');
+                    const response = await apiClient.verifyToken("mock_firebase_id_token", {
                         name: data.name,
                         role: data.role,
                         email: data.email
                     }); 
-                    
-                    // The profile returned here will be from the backend after creation
                     const profile = await apiClient.getProfile();
 
                     set({
@@ -131,7 +105,6 @@ export const useAuthStore = create<AuthState>()(
                 set({ isLoading: true });
                 try {
                     await apiClient.logout();
-                    await signOut(auth); // Sign out from Firebase
                 } catch (error) {
                     console.error('Logout error:', error);
                 } finally {
