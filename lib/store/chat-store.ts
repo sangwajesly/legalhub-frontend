@@ -297,7 +297,8 @@ export const useChatStore = create<ChatStore>()((set, get) => ({
             : s
         )
       }));
-    },
+    }
+  },
 
   setIsLoading: (loading: boolean) => set({ isLoading: loading }),
   setError: (error: string | null) => set({ error }),

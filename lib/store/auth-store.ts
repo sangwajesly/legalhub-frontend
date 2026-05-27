@@ -48,7 +48,9 @@ export const useAuthStore = create<AuthState>()(
                             id: "mock_citizen_demo_uid",
                             email: credentials.email || "demo@legalhub.com",
                             name: "Demo User",
-                            role: "citizen"
+                            role: "citizen" as const,
+                            createdAt: new Date().toISOString(),
+                            updatedAt: new Date().toISOString()
                         };
                     }
 
@@ -85,7 +87,9 @@ export const useAuthStore = create<AuthState>()(
                             id: "mock_citizen_demo_uid",
                             email: "demo@legalhub.com",
                             name: "Demo User",
-                            role: "citizen"
+                            role: "citizen" as const,
+                            createdAt: new Date().toISOString(),
+                            updatedAt: new Date().toISOString()
                         };
                     }
                     
@@ -127,7 +131,9 @@ export const useAuthStore = create<AuthState>()(
                             id: "mock_citizen_demo_uid",
                             email: data.email || "demo@legalhub.com",
                             name: data.name || "Demo User",
-                            role: data.role || "citizen"
+                            role: (data.role || "citizen") as any,
+                            createdAt: new Date().toISOString(),
+                            updatedAt: new Date().toISOString()
                         };
                     }
 
