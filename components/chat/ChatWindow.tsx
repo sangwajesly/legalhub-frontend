@@ -36,10 +36,22 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   }, [messages]);
 
   const suggestions = [
-    'How do I register a business in Cameroon?',
-    'What are my tenant rights in Yaoundé?',
-    'Explain the land title procedure in Cameroon',
-    'Review an employment contract for red flags',
+    {
+      label: '🏛️ What fundamental rights does the Cameroon Constitution guarantee?',
+      query: 'What are the fundamental rights and freedoms guaranteed under the Constitution of Cameroon?',
+    },
+    {
+      label: '⚖️ What rights do I have if I am arrested or detained?',
+      query: 'What are the rights of an accused person during arrest and police custody under the Cameroonian Criminal Procedure Code?',
+    },
+    {
+      label: '🗳️ What are the requirements to stand as a presidential candidate?',
+      query: 'What are the eligibility conditions to be a candidate in presidential elections under the Electoral Code of Cameroon?',
+    },
+    {
+      label: '👩‍⚖️ What does Cameroonian law say about women\'s rights in customary marriage?',
+      query: 'What are the legal rights of women in customary marriages and family law in Cameroon?',
+    },
   ];
 
   return (
@@ -83,15 +95,18 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
               </h1>
 
               {/* Suggestion chips — plain text, no cards */}
-              <div className="flex flex-col gap-2 w-full max-w-md">
+              {/* Suggestion chips */}
+              <div className="flex flex-col gap-2 w-full max-w-lg">
                 {suggestions.map((s, i) => (
                   <button
                     key={i}
-                    onClick={() => onSendMessage?.(s)}
+                    onClick={() => onSendMessage?.(s.query)}
                     disabled={isLoading}
-                    className="text-left px-4 py-3 rounded-xl bg-stone-100 dark:bg-[#2f2f2f] hover:bg-stone-200 dark:hover:bg-[#3a3a3a] text-stone-700 dark:text-stone-300 text-sm transition-colors duration-150 disabled:opacity-40 cursor-pointer"
+                    className="text-left px-4 py-3 rounded-xl bg-stone-100 dark:bg-[#2f2f2f] hover:bg-stone-200 dark:hover:bg-[#3a3a3a] text-stone-700 dark:text-stone-300 text-sm transition-all duration-150 disabled:opacity-40 cursor-pointer hover:shadow-sm group"
                   >
-                    {s}
+                    <span className="block font-medium group-hover:text-stone-900 dark:group-hover:text-white transition-colors">
+                      {s.label}
+                    </span>
                   </button>
                 ))}
               </div>
