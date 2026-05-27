@@ -47,6 +47,7 @@ export interface LawyerFilter {
   minRating?: number;
   minExperience?: number;
   maxPrice?: number;
+  availability?: boolean;
 }
 
 // Booking types

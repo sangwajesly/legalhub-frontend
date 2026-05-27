@@ -16,7 +16,6 @@ const LawyersPage: React.FC = () => {
     fetchLawyers,
     clearError,
     setSearchQuery,
-    searchQuery,
   } = useLawyerStore();
 
   const [selectedLawyerId, setSelectedLawyerId] = useState<string | null>(null);
