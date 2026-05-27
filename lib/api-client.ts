@@ -334,9 +334,24 @@ class ApiClient {
 
   async sendMessage(sessionId: string, content: string, attachments: string[] = [], history: any[] = []): Promise<SendMessageResponse> {
     const response = await this.client.post<SendMessageResponse>(`/api/v1/chat/sessions/${sessionId}/messages`, {
-      message: content, // Changed from content to message to match backend schema preference observed in conflicts
+      message: content,
       attachments,
       history
+    });
+    return response.data;
+  }
+
+  /**
+   * Stateless RAG query — used for guest/local sessions that have no server-side session ID.
+   * Calls POST /api/v1/chat/query and returns the RAG-augmented reply + source citations.
+   */
+  async queryRAG(message: string, history: any[] = [], sessionId?: string): Promise<{ reply: string; sessionId: string | null; sources: Array<{ source: string; score: number }> }> {
+    const response = await this.client.post('/api/v1/chat/query', {
+      message,
+      history,
+      session_id: sessionId || null,
+      use_rag: true,
+      top_k: 5,
     });
     return response.data;
   }
