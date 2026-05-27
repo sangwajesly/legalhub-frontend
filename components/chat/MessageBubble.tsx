@@ -86,6 +86,12 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
             </div>
           )}
         </div>
+        {/* Timestamp */}
+        {timestamp && (
+          <span className="text-[10px] text-stone-400 mt-0.5 px-2">
+            {new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </span>
+        )}
 
         {/* Actions — only for assistant, shown on hover */}
         {!isUser && (

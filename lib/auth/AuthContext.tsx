@@ -20,16 +20,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         console.log('[AuthContext] Bypassed Auth Provider Mounted.');
         
+        // Force authentication if not already logged in (globally disables auth gates)
+        const currentState = useAuthStore.getState();
+        if (!currentState.isAuthenticated || !currentState.user) {
+            console.log('[AuthContext] Force-initializing authenticated mock citizen session.');
+            useAuthStore.setState({
+                isAuthenticated: true,
+                user: {
+                    id: "mock_citizen_demo_uid",
+                    uid: "mock_citizen_demo_uid",
+                    email: "demo@legalhub.com",
+                    displayName: "Demo User",
+                    name: "Demo User",
+                    role: "citizen",
+                    phoneNumber: "+237123456789",
+                    emailVerified: true,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                } as any,
+                token: "mock_access_token_demo",
+                isLoading: false
+            });
+        }
+
         // Synchronize state based on Zustand store value
         const syncState = (state: any) => {
             if (state.isAuthenticated && state.user) {
-                setCurrentUser({
+                const mockUser: any = {
                     uid: state.user.uid || state.user.id || 'mock_citizen_demo_uid',
                     email: state.user.email || 'demo@legalhub.com',
                     displayName: state.user.displayName || state.user.display_name || 'Demo User',
                     emailVerified: true,
                     getIdToken: async () => state.token || 'mock_access_token_demo',
-                } as any);
+                };
+                setCurrentUser(mockUser);
                 setIdToken(state.token || 'mock_access_token_demo');
             } else {
                 setCurrentUser(null);

@@ -26,35 +26,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
     const showLayout = !isHomePage && !isChatPage && !isAuthPage;
 
-    // Protect routes
+    // Protect routes (Temporarily disabled for Public Demo / Presentation mode)
     useEffect(() => {
-        if (!isLoading && !isAuthenticated && !isAuthPage && !isHomePage) {
-            // If not authenticated and not on a public page, redirect to login
-            // const publicPaths = ['/', '/login', '/signup', '/forgot-password', '/reset-password', '/contact', '/support'];
-            // Simplified check: if it requires layout (dashboard, lawyers, etc) OR is chat page, it's protected.
-            // Actually, Home page is public. Auth pages are public. Everything else is private?
-            // Let's protect everything except public pages.
-
-            // This logic needs to be robust. 
-            // Public: / (home), /login, /signup, /forgot*, /reset*, /contact, /about, /support, /privacy, /terms
-
-            const isPublic =
-                pathname === "/" ||
-                pathname === "/chat" ||
-                pathname?.startsWith("/chat") ||
-                pathname?.startsWith("/login") ||
-                pathname?.startsWith("/signup") ||
-                pathname?.startsWith("/forgot-password") ||
-                pathname?.startsWith("/reset-password") ||
-                pathname?.startsWith("/contact") ||
-                pathname?.startsWith("/support") ||
-                pathname?.startsWith("/privacy") ||
-                pathname?.startsWith("/terms");
-
-            if (!isPublic) {
-                router.push('/login');
-            }
-        }
+        // Redirection is disabled to keep all pages publicly accessible
+        console.log('[AppLayout] Auth-protection redirect disabled.');
     }, [isAuthenticated, isLoading, pathname, isAuthPage, isHomePage, router]);
 
     if (isLoading) {
