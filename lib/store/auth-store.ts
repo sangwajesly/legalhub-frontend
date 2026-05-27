@@ -32,10 +32,25 @@ export const useAuthStore = create<AuthState>()(
                 set({ isLoading: true, error: null });
                 try {
                     console.log('[AuthStore] Bypassing login with mock credentials');
-                    const response = await apiClient.verifyToken("mock_firebase_id_token", {
-                        email: credentials.email
-                    });
-                    const profile = await apiClient.getProfile();
+                    
+                    let response;
+                    let profile;
+                    
+                    try {
+                        response = await apiClient.verifyToken("mock_firebase_id_token", {
+                            email: credentials.email
+                        });
+                        profile = await apiClient.getProfile();
+                    } catch (e) {
+                        console.warn('[AuthStore] Backend auth endpoints unreachable, using local mock profile:', e);
+                        response = { token: "mock_access_token_demo" };
+                        profile = {
+                            id: "mock_citizen_demo_uid",
+                            email: credentials.email || "demo@legalhub.com",
+                            name: "Demo User",
+                            role: "citizen"
+                        };
+                    }
 
                     set({
                         user: profile,
@@ -56,8 +71,23 @@ export const useAuthStore = create<AuthState>()(
                 set({ isLoading: true, error: null });
                 try {
                     console.log('[AuthStore] Bypassing Google login with mock credentials');
-                    const response = await apiClient.verifyToken("mock_firebase_id_token");
-                    const profile = await apiClient.getProfile();
+                    
+                    let response;
+                    let profile;
+                    
+                    try {
+                        response = await apiClient.verifyToken("mock_firebase_id_token");
+                        profile = await apiClient.getProfile();
+                    } catch (e) {
+                        console.warn('[AuthStore] Backend auth endpoints unreachable, using local mock profile:', e);
+                        response = { token: "mock_access_token_demo" };
+                        profile = {
+                            id: "mock_citizen_demo_uid",
+                            email: "demo@legalhub.com",
+                            name: "Demo User",
+                            role: "citizen"
+                        };
+                    }
                     
                     set({
                         user: profile,
@@ -79,12 +109,27 @@ export const useAuthStore = create<AuthState>()(
                 set({ isLoading: true, error: null });
                 try {
                     console.log('[AuthStore] Bypassing registration with mock credentials');
-                    const response = await apiClient.verifyToken("mock_firebase_id_token", {
-                        name: data.name,
-                        role: data.role,
-                        email: data.email
-                    }); 
-                    const profile = await apiClient.getProfile();
+                    
+                    let response;
+                    let profile;
+                    
+                    try {
+                        response = await apiClient.verifyToken("mock_firebase_id_token", {
+                            name: data.name,
+                            role: data.role,
+                            email: data.email
+                        }); 
+                        profile = await apiClient.getProfile();
+                    } catch (e) {
+                        console.warn('[AuthStore] Backend registration endpoints unreachable, using local mock profile:', e);
+                        response = { token: "mock_access_token_demo" };
+                        profile = {
+                            id: "mock_citizen_demo_uid",
+                            email: data.email || "demo@legalhub.com",
+                            name: data.name || "Demo User",
+                            role: data.role || "citizen"
+                        };
+                    }
 
                     set({
                         user: profile,
