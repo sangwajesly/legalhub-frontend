@@ -38,6 +38,7 @@ const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, ''
 const publicRoutes = [
     '/v1/auth/verify-token',
     '/v1/auth/refresh',
+    '/v1/chat/query',           // Stateless RAG endpoint — no auth required (guest mode)
 ];
 
 async function handler(req: NextRequest, { params }: { params: { path: string[] } }) {
@@ -90,16 +91,21 @@ async function handler(req: NextRequest, { params }: { params: { path: string[] 
         return new NextResponse(JSON.stringify({ detail: 'Authorization token not provided.' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
     }
 
-    // Verify the token using Firebase Admin SDK
-    // Bypass verification for mock/demo tokens to support Demo / Public mode
+    // Verify the token using Firebase Admin SDK.
+    // If Firebase Admin is not initialised (e.g. no service account in local dev),
+    // skip proxy-level verification and let the backend verify the token itself.
+    const adminReady = admin.apps.length > 0;
     try {
-        if (idToken === 'mock_access_token_demo' || idToken === 'mock_firebase_id_token' || idToken.startsWith('mock_')) {
-            console.log('Bypassing Firebase Admin token verification in proxy for mock/demo token.');
+        if (!adminReady) {
+            // Firebase Admin not configured — forward token to backend; backend handles auth.
+            console.warn('[Proxy] Firebase Admin not initialised — skipping proxy token verification, forwarding to backend.');
+        } else if (idToken === 'mock_access_token_demo' || idToken === 'mock_firebase_id_token' || idToken.startsWith('mock_')) {
+            console.log('[Proxy] Bypassing Firebase Admin verification for mock/demo token.');
         } else {
             await admin.auth().verifyIdToken(idToken);
         }
     } catch (error) {
-        console.error("Error verifying ID token in Next.js API route:", error);
+        console.error('[Proxy] Error verifying ID token:', error);
         return new NextResponse(JSON.stringify({ detail: 'Invalid or expired authorization token.' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
     }
 
