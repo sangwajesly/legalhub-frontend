@@ -53,11 +53,17 @@ const ChatContainer: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const isCreatingSession = React.useRef(false);
+
   useEffect(() => {
     // Wait for user to be available before auto-creating
     if (isAuthenticated && user && !isLoading && !currentSessionId && allSessions.length === 0 && !error) {
-       // Only auto-create if no error implies we haven't failed recently
-      createSession({ title: 'New Chat' });
+      if (isCreatingSession.current) return;
+      isCreatingSession.current = true;
+      createSession({ title: 'New Chat' })
+        .finally(() => {
+          isCreatingSession.current = false;
+        });
     } else if (isAuthenticated && !isLoading && !currentSessionId && allSessions.length > 0) {
        setCurrentSession(allSessions[0].id);
     }

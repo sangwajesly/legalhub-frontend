@@ -92,7 +92,11 @@ export function ChatSidebar({ isOpen, setIsOpen }: ChatSidebarProps) {
               <p className="px-3 pt-2 pb-1 text-[11px] font-semibold text-stone-400 dark:text-stone-500 uppercase tracking-wider">
                 Recent
               </p>
-              {allSessions.map((session: any) => (
+              {allSessions
+                .filter((session: any, index: number, self: any[]) => 
+                  index === self.findIndex((s: any) => s.id === session.id)
+                )
+                .map((session: any) => (
                 <div
                   key={session.id}
                   className={`group flex items-center justify-between px-3 py-2 rounded-xl cursor-pointer transition-colors text-sm ${

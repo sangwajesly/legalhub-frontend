@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ArrowUp, Paperclip, X, Image as ImageIcon, FileText } from 'lucide-react';
 import { SuggestedPrompts } from './SuggestedPrompts';
+import { useChatStore } from '@/lib/store/chat-store';
 
 interface ChatInputProps {
   onSendMessage: (message: string, files?: File[]) => void;
@@ -10,6 +11,7 @@ interface ChatInputProps {
 }
 
 export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }) => {
+  const { rateLimitCountdown } = useChatStore();
   const [message, setMessage] = useState('');
   const [files, setFiles] = useState<File[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -47,7 +49,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
     setFiles(files.filter((_, i) => i !== index));
   };
 
-  const canSend = (message.trim().length > 0 || files.length > 0) && !isLoading;
+  const canSend = (message.trim().length > 0 || files.length > 0) && !isLoading && rateLimitCountdown === 0;
 
   return (
     <div className="w-full px-4 pb-4 md:pb-6 bg-white dark:bg-[#212121]">
@@ -96,6 +98,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
               ref={textareaRef}
               rows={1}
               value={message}
+              disabled={rateLimitCountdown > 0}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
@@ -103,8 +106,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
                   handleSubmit(e);
                 }
               }}
-              placeholder="Message LegalHub"
-              className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-stone-900 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-500 text-sm leading-relaxed resize-none min-h-[28px] max-h-[200px]"
+              placeholder={rateLimitCountdown > 0 ? `Please wait ${rateLimitCountdown}s before sending...` : "Message LegalHub"}
+              className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-stone-900 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-500 text-sm leading-relaxed resize-none min-h-[28px] max-h-[200px] disabled:opacity-50 disabled:cursor-not-allowed"
             />
 
             {/* Send */}

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { Message, Session, SessionSummary } from '@/types';
 import apiClient from '@/lib/api-client';
 import { useAuthStore } from './auth-store';
+import toast from 'react-hot-toast';
 
 interface ChatStore {
   allSessions: SessionSummary[];
@@ -10,6 +11,8 @@ interface ChatStore {
   isLoading: boolean;
   error: string | null;
   suggestedFollowUps: string[];
+  rateLimitCountdown: number;
+  setRateLimitCountdown: (countdown: number) => void;
 
   // Session management
   fetchAllSessions: () => Promise<void>;
@@ -38,6 +41,8 @@ export const useChatStore = create<ChatStore>()((set, get) => ({
   isLoading: false,
   error: null,
   suggestedFollowUps: [],
+  rateLimitCountdown: 0,
+  setRateLimitCountdown: (countdown: number) => set({ rateLimitCountdown: countdown }),
 
   fetchAllSessions: async () => {
     const token = useAuthStore.getState().token;
@@ -238,6 +243,40 @@ export const useChatStore = create<ChatStore>()((set, get) => ({
       }));
 
     } catch (error: any) {
+      // Check if it's a rate limit error (429)
+      const isRateLimit = 
+        (error?.response?.status === 429) || 
+        (error?.status === 429) || 
+        (error?.detail?.error === 'RateLimitExceeded') ||
+        (typeof error === 'object' && error !== null && 'detail' in error && error.detail?.error === 'RateLimitExceeded');
+
+      if (isRateLimit) {
+        // Extract retry seconds
+        const retryAfter = error?.detail?.retry_after || error?.retry_after || 10;
+        
+        // Remove the user's last message from chat history since it wasn't successfully processed
+        set((state) => ({
+          chatHistory: state.chatHistory.filter((m) => m.id !== userMessage.id),
+          isLoading: false
+        }));
+
+        toast.error(`Chat rate limit reached. Please wait ${retryAfter} seconds.`);
+        
+        // Start countdown
+        set({ rateLimitCountdown: retryAfter });
+        
+        const intervalId = setInterval(() => {
+          const currentCountdown = get().rateLimitCountdown;
+          if (currentCountdown <= 1) {
+            set({ rateLimitCountdown: 0 });
+            clearInterval(intervalId);
+          } else {
+            set({ rateLimitCountdown: currentCountdown - 1 });
+          }
+        }, 1000);
+        return;
+      }
+
       // ---------- TRUE OFFLINE FALLBACK ----------
       // Only reaches here if the network request itself failed (no backend reachable).
       console.warn('Backend unreachable. Using offline Cameroonian law reference:', error);
