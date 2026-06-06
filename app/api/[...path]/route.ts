@@ -31,7 +31,7 @@ if (!admin.apps.length) {
     }
 }
 
-const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, '').replace(/\/api$/, '') || "http://localhost:8001";
+const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, '').replace(/\/api$/, '') || "http://localhost:8000";
 
 // Define public routes that should bypass token verification in the proxy
 // These should match the requestPath (which starts after /api)
