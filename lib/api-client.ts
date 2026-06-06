@@ -198,10 +198,20 @@ class ApiClient {
   // All use /api/v1/ prefix
 
   async getLawyers(filters?: LawyerFilter, page: number = 1, limit: number = 10): Promise<PaginatedResponse<Lawyer>> {
-    const response = await this.client.get<PaginatedResponse<Lawyer>>('/api/v1/lawyers', {
+    const response = await this.client.get<any>('/api/v1/lawyers', {
       params: { ...filters, page, limit }
     });
-    return response.data;
+    const data = response.data;
+    return {
+      success: true,
+      data: data.lawyers || [],
+      pagination: {
+        page: data.page || page,
+        limit: data.pageSize || limit,
+        total: data.total || 0,
+        totalPages: Math.ceil((data.total || 0) / (data.pageSize || limit))
+      }
+    };
   }
 
   async getLawyerById(id: string): Promise<Lawyer> {
@@ -211,10 +221,10 @@ class ApiClient {
 
   async searchLawyers(query: string): Promise<Lawyer[]> {
     // FIX: Use regular lawyers endpoint with query params instead of /search
-    const response = await this.client.get<PaginatedResponse<Lawyer>>('/api/v1/lawyers', {
+    const response = await this.client.get<any>('/api/v1/lawyers', {
       params: { q: query, page: 1, limit: 20 }
     });
-    return response.data.data || [];
+    return response.data.lawyers || [];
   }
 
   // ============ BOOKING ENDPOINTS ============
@@ -226,10 +236,20 @@ class ApiClient {
 
   async getUserBookings(userId: string, page: number = 1): Promise<PaginatedResponse<Booking>> {
     // FIX: Updated endpoint structure to match backend
-    const response = await this.client.get<PaginatedResponse<Booking>>(`/api/v1/bookings/user/${userId}`, {
+    const response = await this.client.get<any>(`/api/v1/bookings/user/${userId}`, {
       params: { page }
     });
-    return response.data;
+    const data = response.data;
+    return {
+      success: true,
+      data: data.bookings || [],
+      pagination: {
+        page: data.page || page,
+        limit: data.pageSize || 20,
+        total: data.total || 0,
+        totalPages: Math.ceil((data.total || 0) / (data.pageSize || 20))
+      }
+    };
   }
 
   async updateBooking(id: string, updates: Partial<Booking>): Promise<Booking> {
@@ -246,10 +266,20 @@ class ApiClient {
   // ============ ARTICLE ENDPOINTS ============
 
   async getArticles(filters?: ArticleFilter, page: number = 1): Promise<PaginatedResponse<Article>> {
-    const response = await this.client.get<PaginatedResponse<Article>>('/api/v1/articles', {
+    const response = await this.client.get<any>('/api/v1/articles', {
       params: { ...filters, page }
     });
-    return response.data;
+    const data = response.data;
+    return {
+      success: true,
+      data: data.articles || [],
+      pagination: {
+        page: data.page || page,
+        limit: data.pageSize || 20,
+        total: data.total || 0,
+        totalPages: Math.ceil((data.total || 0) / (data.pageSize || 20))
+      }
+    };
   }
 
   async getArticleById(id: string): Promise<Article> {
@@ -287,10 +317,20 @@ class ApiClient {
   }
 
   async getCases(filters?: Record<string, any>, page: number = 1): Promise<PaginatedResponse<Case>> {
-    const response = await this.client.get<PaginatedResponse<Case>>('/api/v1/cases', {
+    const response = await this.client.get<any>('/api/v1/cases', {
       params: { ...filters, page }
     });
-    return response.data;
+    const data = response.data;
+    return {
+      success: true,
+      data: data.cases || [],
+      pagination: {
+        page: data.page || page,
+        limit: data.pageSize || 20,
+        total: data.total || 0,
+        totalPages: Math.ceil((data.total || 0) / (data.pageSize || 20))
+      }
+    };
   }
 
   async getCaseById(id: string): Promise<Case> {
@@ -300,10 +340,20 @@ class ApiClient {
 
   async getUserCases(userId: string, page: number = 1): Promise<PaginatedResponse<Case>> {
     // FIX: Updated to match backend structure
-    const response = await this.client.get<PaginatedResponse<Case>>(`/api/v1/cases/user/${userId}`, {
+    const response = await this.client.get<any>(`/api/v1/cases/user/${userId}`, {
       params: { page }
     });
-    return response.data;
+    const data = response.data;
+    return {
+      success: true,
+      data: data.cases || [],
+      pagination: {
+        page: data.page || page,
+        limit: data.pageSize || 20,
+        total: data.total || 0,
+        totalPages: Math.ceil((data.total || 0) / (data.pageSize || 20))
+      }
+    };
   }
 
   async updateCaseStatus(id: string, status: Case['status']): Promise<Case> {
