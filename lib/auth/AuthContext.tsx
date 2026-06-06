@@ -1,8 +1,10 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User as FirebaseUser } from 'firebase/auth';
+import { User as FirebaseUser, onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../firebase';
 import { useAuthStore } from '../store/auth-store';
+import apiClient from '../api-client';
 
 interface AuthContextType {
     currentUser: FirebaseUser | null;
@@ -18,58 +20,61 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        console.log('[AuthContext] Bypassed Auth Provider Mounted.');
+        console.log('[AuthContext] Firebase Auth Provider Mounted.');
         
-        // Force authentication if not already logged in (globally disables auth gates)
-        const currentState = useAuthStore.getState();
-        if (!currentState.isAuthenticated || !currentState.user) {
-            console.log('[AuthContext] Force-initializing authenticated mock citizen session.');
-            useAuthStore.setState({
-                isAuthenticated: true,
-                user: {
-                    id: "mock_citizen_demo_uid",
-                    uid: "mock_citizen_demo_uid",
-                    email: "demo@legalhub.com",
-                    displayName: "Demo User",
-                    name: "Demo User",
-                    role: "citizen",
-                    phoneNumber: "+237123456789",
-                    emailVerified: true,
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString()
-                } as any,
-                token: "mock_access_token_demo",
-                isLoading: false
-            });
-        }
-
-        // Synchronize state based on Zustand store value
-        const syncState = (state: any) => {
-            if (state.isAuthenticated && state.user) {
-                const mockUser: any = {
-                    uid: state.user.uid || state.user.id || 'mock_citizen_demo_uid',
-                    email: state.user.email || 'demo@legalhub.com',
-                    displayName: state.user.displayName || state.user.display_name || 'Demo User',
-                    emailVerified: true,
-                    getIdToken: async () => state.token || 'mock_access_token_demo',
-                };
-                setCurrentUser(mockUser);
-                setIdToken(state.token || 'mock_access_token_demo');
+        // Listen to Firebase auth state changes
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+            setLoading(true);
+            if (firebaseUser) {
+                try {
+                    console.log(`[AuthContext] Firebase user detected: ${firebaseUser.email}`);
+                    const token = await firebaseUser.getIdToken();
+                    
+                    // Sync session with backend
+                    const authResponse = await apiClient.verifyToken(token);
+                    
+                    // Fetch full profile from backend
+                    const profile = await apiClient.getProfile();
+                    
+                    // Sync state to Zustand store
+                    useAuthStore.setState({
+                        user: profile,
+                        token: authResponse.token,
+                        isAuthenticated: true,
+                        isLoading: false,
+                        error: null
+                    });
+                    
+                    setCurrentUser(firebaseUser);
+                    setIdToken(token);
+                } catch (error: any) {
+                    console.error('[AuthContext] Error syncing user with backend:', error);
+                    // Reset auth state on sync failure
+                    useAuthStore.setState({
+                        user: null,
+                        token: null,
+                        isAuthenticated: false,
+                        isLoading: false,
+                        error: error.message || 'Authentication synchronization failed'
+                    });
+                    setCurrentUser(null);
+                    setIdToken(null);
+                }
             } else {
+                console.log('[AuthContext] No active Firebase session found.');
+                // Clear store state
+                useAuthStore.setState({
+                    user: null,
+                    token: null,
+                    isAuthenticated: false,
+                    isLoading: false,
+                    error: null
+                });
                 setCurrentUser(null);
                 setIdToken(null);
             }
-        };
-
-        // Sync initially
-        syncState(useAuthStore.getState());
-
-        // Listen to Zustand store changes
-        const unsubscribe = useAuthStore.subscribe((state) => {
-            syncState(state);
+            setLoading(false);
         });
-
-        setLoading(false);
 
         return () => unsubscribe();
     }, []);

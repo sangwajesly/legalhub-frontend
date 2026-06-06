@@ -31,29 +31,24 @@ export const useAuthStore = create<AuthState>()(
             login: async (credentials: LoginCredentials) => {
                 set({ isLoading: true, error: null });
                 try {
-                    console.log('[AuthStore] Bypassing login with mock credentials');
+                    const { signInWithEmailAndPassword } = await import('firebase/auth');
+                    const { auth } = await import('@/lib/firebase');
                     
-                    let response;
-                    let profile;
+                    // 1. Sign in via Firebase Auth SDK
+                    const userCredential = await signInWithEmailAndPassword(
+                        auth, 
+                        credentials.email, 
+                        credentials.password
+                    );
+                    const user = userCredential.user;
+                    const idToken = await user.getIdToken();
                     
-                    try {
-                        response = await apiClient.verifyToken("mock_firebase_id_token", {
-                            email: credentials.email
-                        });
-                        profile = await apiClient.getProfile();
-                    } catch (e) {
-                        console.warn('[AuthStore] Backend auth endpoints unreachable, using local mock profile:', e);
-                        response = { token: "mock_access_token_demo" };
-                        profile = {
-                            id: "mock_citizen_demo_uid",
-                            email: credentials.email || "demo@legalhub.com",
-                            name: "Demo User",
-                            role: "citizen" as const,
-                            createdAt: new Date().toISOString(),
-                            updatedAt: new Date().toISOString()
-                        };
-                    }
-
+                    // 2. Sync session with backend API
+                    const response = await apiClient.verifyToken(idToken);
+                    
+                    // 3. Retrieve combined User + UserProfile from backend
+                    const profile = await apiClient.getProfile();
+                    
                     set({
                         user: profile,
                         token: response.token,
@@ -72,26 +67,20 @@ export const useAuthStore = create<AuthState>()(
             loginWithGoogle: async () => {
                 set({ isLoading: true, error: null });
                 try {
-                    console.log('[AuthStore] Bypassing Google login with mock credentials');
+                    const { signInWithPopup, GoogleAuthProvider } = await import('firebase/auth');
+                    const { auth } = await import('@/lib/firebase');
                     
-                    let response;
-                    let profile;
+                    // 1. Authenticate with Google Provider Popup
+                    const provider = new GoogleAuthProvider();
+                    const userCredential = await signInWithPopup(auth, provider);
+                    const user = userCredential.user;
+                    const idToken = await user.getIdToken();
                     
-                    try {
-                        response = await apiClient.verifyToken("mock_firebase_id_token");
-                        profile = await apiClient.getProfile();
-                    } catch (e) {
-                        console.warn('[AuthStore] Backend auth endpoints unreachable, using local mock profile:', e);
-                        response = { token: "mock_access_token_demo" };
-                        profile = {
-                            id: "mock_citizen_demo_uid",
-                            email: "demo@legalhub.com",
-                            name: "Demo User",
-                            role: "citizen" as const,
-                            createdAt: new Date().toISOString(),
-                            updatedAt: new Date().toISOString()
-                        };
-                    }
+                    // 2. Sync session with backend
+                    const response = await apiClient.verifyToken(idToken);
+                    
+                    // 3. Fetch user profile
+                    const profile = await apiClient.getProfile();
                     
                     set({
                         user: profile,
@@ -112,31 +101,34 @@ export const useAuthStore = create<AuthState>()(
             register: async (data: RegisterData) => {
                 set({ isLoading: true, error: null });
                 try {
-                    console.log('[AuthStore] Bypassing registration with mock credentials');
+                    const { createUserWithEmailAndPassword, updateProfile: updateFirebaseProfile } = await import('firebase/auth');
+                    const { auth } = await import('@/lib/firebase');
                     
-                    let response;
-                    let profile;
+                    // 1. Create user in Firebase Auth
+                    const userCredential = await createUserWithEmailAndPassword(
+                        auth,
+                        data.email,
+                        data.password
+                    );
+                    const user = userCredential.user;
                     
-                    try {
-                        response = await apiClient.verifyToken("mock_firebase_id_token", {
-                            name: data.name,
-                            role: data.role,
-                            email: data.email
-                        }); 
-                        profile = await apiClient.getProfile();
-                    } catch (e) {
-                        console.warn('[AuthStore] Backend registration endpoints unreachable, using local mock profile:', e);
-                        response = { token: "mock_access_token_demo" };
-                        profile = {
-                            id: "mock_citizen_demo_uid",
-                            email: data.email || "demo@legalhub.com",
-                            name: data.name || "Demo User",
-                            role: (data.role || "citizen") as any,
-                            createdAt: new Date().toISOString(),
-                            updatedAt: new Date().toISOString()
-                        };
+                    // Update display name in Firebase Auth profile
+                    if (data.name) {
+                        await updateFirebaseProfile(user, { displayName: data.name });
                     }
-
+                    
+                    const idToken = await user.getIdToken();
+                    
+                    // 2. Sync/create user in Backend Firestore
+                    const response = await apiClient.verifyToken(idToken, {
+                        name: data.name,
+                        role: data.role || 'citizen',
+                        email: data.email
+                    });
+                    
+                    // 3. Fetch user profile
+                    const profile = await apiClient.getProfile();
+                    
                     set({
                         user: profile,
                         token: response.token,
@@ -155,6 +147,13 @@ export const useAuthStore = create<AuthState>()(
             logout: async () => {
                 set({ isLoading: true });
                 try {
+                    const { signOut } = await import('firebase/auth');
+                    const { auth } = await import('@/lib/firebase');
+                    
+                    // Sign out from Firebase
+                    await signOut(auth);
+                    
+                    // Call backend logout
                     await apiClient.logout();
                 } catch (error) {
                     console.error('Logout error:', error);
