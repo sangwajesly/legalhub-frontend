@@ -20,6 +20,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (process.env.NEXT_PUBLIC_USE_LOCAL_DATABASE === 'true') {
+            console.log('[AuthContext] Local Database Mode active. Skipping Firebase Auth synchronization.');
+            
+            const initLocalAuth = async () => {
+                const store = useAuthStore.getState();
+                if (store.token && store.isAuthenticated) {
+                    // Trust the persisted state. The user object and token are already
+                    // in the Zustand store from login. No network call needed here —
+                    // getProfile() on mount was causing 401s that wiped the session.
+                    console.log('[AuthContext] Local session found. Trusting persisted state.');
+                    useAuthStore.setState({ isLoading: false });
+                } else {
+                    // No persisted session — resolve loading immediately
+                    console.log('[AuthContext] No local session found.');
+                    useAuthStore.setState({ isLoading: false });
+                }
+                setLoading(false);
+            };
+            
+            initLocalAuth();
+            return;
+        }
+
         console.log('[AuthContext] Firebase Auth Provider Mounted.');
         
         // Listen to Firebase auth state changes
@@ -87,7 +110,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return (
         <AuthContext.Provider value={value}>
-            {!loading && children}
+            {children}
         </AuthContext.Provider>
     );
 }

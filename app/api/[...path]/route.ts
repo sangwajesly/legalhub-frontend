@@ -33,11 +33,11 @@ if (!admin.apps.length) {
 
 const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, '').replace(/\/api$/, '') || "http://localhost:8000";
 
-// Define public routes that should bypass token verification in the proxy
-// These should match the requestPath (which starts after /api)
 const publicRoutes = [
     '/v1/auth/verify-token',
     '/v1/auth/refresh',
+    '/v1/auth/login',
+    '/v1/auth/register',
     '/v1/chat/query',           // Stateless RAG endpoint — no auth required (guest mode)
 ];
 
@@ -99,8 +99,8 @@ async function handler(req: NextRequest, { params }: { params: { path: string[] 
         if (!adminReady) {
             // Firebase Admin not configured — forward token to backend; backend handles auth.
             console.warn('[Proxy] Firebase Admin not initialised — skipping proxy token verification, forwarding to backend.');
-        } else if (idToken === 'mock_access_token_demo' || idToken === 'mock_firebase_id_token' || idToken.startsWith('mock_')) {
-            console.log('[Proxy] Bypassing Firebase Admin verification for mock/demo token.');
+        } else if (idToken === 'mock_access_token_demo' || idToken === 'mock_firebase_id_token' || idToken.startsWith('mock_') || process.env.USE_LOCAL_DATABASE === 'true' || process.env.NEXT_PUBLIC_USE_LOCAL_DATABASE === 'true') {
+            console.log('[Proxy] Bypassing Firebase Admin verification (mock token or local database enabled).');
         } else {
             await admin.auth().verifyIdToken(idToken);
         }

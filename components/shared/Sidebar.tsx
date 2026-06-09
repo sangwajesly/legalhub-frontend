@@ -15,6 +15,7 @@ import {
     X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useAuthStore } from '@/lib/store/auth-store';
 
 const sidebarItems = [
     { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
@@ -32,6 +33,7 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
     const pathname = usePathname();
+    const { logout } = useAuthStore();
 
     return (
         <>
@@ -88,7 +90,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                             <span className="font-medium">Settings</span>
                         </span>
                     </Link>
-                    <button className="w-full flex items-center gap-3 px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50/50 dark:hover:bg-red-950/10 hover:text-red-700 dark:hover:text-red-300 rounded-xl border border-transparent transition-colors">
+                    <button
+                        onClick={() => logout()}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50/50 dark:hover:bg-red-950/10 hover:text-red-700 dark:hover:text-red-300 rounded-xl border border-transparent transition-colors"
+                    >
                         <LogOut className="h-5 w-5" />
                         <span className="font-medium">Sign Out</span>
                     </button>

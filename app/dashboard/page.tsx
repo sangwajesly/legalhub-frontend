@@ -98,7 +98,7 @@ export default function Dashboard() {
            <div>
               <div className="flex items-center gap-3">
                 <h1 className="text-3xl lg:text-4xl font-serif font-bold text-[#121315] dark:text-[#FAF9F5] tracking-tight">
-                    Jambo, {user?.name?.split(' ')[0] || (user?.role === 'lawyer' ? 'Advocate' : 'Friend')}
+                    Hello, {user?.name || (user?.role === 'lawyer' ? 'Advocate' : 'Friend')}
                 </h1>
                 <Badge className="bg-[#FAF9F5] dark:bg-stone-900 border border-[#E5E2DC] dark:border-stone-800 text-[#B89868] font-semibold text-xs rounded-xl px-2.5 py-0.5">
                    {user?.role?.toUpperCase() || 'MEMBER'}

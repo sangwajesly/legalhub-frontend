@@ -3,6 +3,24 @@ import { persist } from 'zustand/middleware';
 import { User, LoginCredentials, RegisterData } from '@/types';
 import apiClient from '@/lib/api-client';
 
+const getErrorMessage = (error: any, fallback: string): string => {
+    if (!error) return fallback;
+    if (typeof error === 'string') return error;
+    if (error.message && typeof error.message === 'string') return error.message;
+    if (error.detail) {
+        if (Array.isArray(error.detail)) {
+            return error.detail.map((err: any) => {
+                const field = err.loc && err.loc.length > 1 ? err.loc.slice(1).join('.') : '';
+                const prefix = field ? `${field}: ` : '';
+                return `${prefix}${err.msg || err.message || JSON.stringify(err)}`;
+            }).join(', ');
+        }
+        if (typeof error.detail === 'string') return error.detail;
+        return JSON.stringify(error.detail);
+    }
+    return error.error || JSON.stringify(error) || fallback;
+};
+
 interface AuthState {
     user: User | null;
     token: string | null;
@@ -31,6 +49,11 @@ export const useAuthStore = create<AuthState>()(
             login: async (credentials: LoginCredentials) => {
                 set({ isLoading: true, error: null });
                 try {
+                    // Direct local login fallback when local database mode is active
+                    if (process.env.NEXT_PUBLIC_USE_LOCAL_DATABASE === 'true') {
+                        throw new Error('LOCAL_DB_MODE');
+                    }
+
                     const { signInWithEmailAndPassword } = await import('firebase/auth');
                     const { auth } = await import('@/lib/firebase');
                     
@@ -56,8 +79,32 @@ export const useAuthStore = create<AuthState>()(
                         isLoading: false,
                     });
                 } catch (error: any) {
+                    const isFirebaseError = error.code?.startsWith('auth/') || error.message?.includes('firebase');
+                    const isNetworkOrFallback = !isFirebaseError || error.code === 'auth/network-request-failed' || error.message === 'LOCAL_DB_MODE';
+
+                    if (isNetworkOrFallback || process.env.NEXT_PUBLIC_USE_LOCAL_DATABASE === 'true') {
+                        console.warn('[AuthStore] Firebase login failed or skipped. Falling back to local backend login.', error.message);
+                        try {
+                            const response = await apiClient.login(credentials.email, credentials.password);
+                            
+                            set({
+                                user: response.user,
+                                token: response.token,
+                                isAuthenticated: true,
+                                isLoading: false,
+                            });
+                            return;
+                        } catch (localError: any) {
+                            set({
+                                error: getErrorMessage(localError, 'Local login failed'),
+                                isLoading: false,
+                            });
+                            throw localError;
+                        }
+                    }
+
                     set({
-                        error: error.message || 'Login failed',
+                        error: getErrorMessage(error, 'Login failed'),
                         isLoading: false,
                     });
                     throw error;
@@ -91,7 +138,7 @@ export const useAuthStore = create<AuthState>()(
                 } catch (error: any) {
                     console.error('[AuthStore] Error during Google login:', error);
                     set({
-                        error: error.message || 'Google Login failed',
+                        error: getErrorMessage(error, 'Google Login failed'),
                         isLoading: false
                     });
                     throw error;
@@ -101,6 +148,11 @@ export const useAuthStore = create<AuthState>()(
             register: async (data: RegisterData) => {
                 set({ isLoading: true, error: null });
                 try {
+                    // Direct local registration fallback when local database mode is active
+                    if (process.env.NEXT_PUBLIC_USE_LOCAL_DATABASE === 'true') {
+                        throw new Error('LOCAL_DB_MODE');
+                    }
+
                     const { createUserWithEmailAndPassword, updateProfile: updateFirebaseProfile } = await import('firebase/auth');
                     const { auth } = await import('@/lib/firebase');
                     
@@ -136,8 +188,32 @@ export const useAuthStore = create<AuthState>()(
                         isLoading: false,
                     });
                 } catch (error: any) {
+                    const isFirebaseError = error.code?.startsWith('auth/') || error.message?.includes('firebase');
+                    const isNetworkOrFallback = !isFirebaseError || error.code === 'auth/network-request-failed' || error.message === 'LOCAL_DB_MODE';
+
+                    if (isNetworkOrFallback || process.env.NEXT_PUBLIC_USE_LOCAL_DATABASE === 'true') {
+                        console.warn('[AuthStore] Firebase signup failed or skipped. Falling back to local backend signup.', error.message);
+                        try {
+                            const response = await apiClient.register(data);
+                            
+                            set({
+                                user: response.user,
+                                token: response.token,
+                                isAuthenticated: true,
+                                isLoading: false,
+                            });
+                            return;
+                        } catch (localError: any) {
+                            set({
+                                error: getErrorMessage(localError, 'Local signup failed'),
+                                isLoading: false,
+                            });
+                            throw localError;
+                        }
+                    }
+
                     set({
-                        error: error.message || 'Registration failed',
+                        error: getErrorMessage(error, 'Registration failed'),
                         isLoading: false,
                     });
                     throw error;
@@ -147,25 +223,39 @@ export const useAuthStore = create<AuthState>()(
             logout: async () => {
                 set({ isLoading: true });
                 try {
-                    const { signOut } = await import('firebase/auth');
-                    const { auth } = await import('@/lib/firebase');
-                    
-                    // Sign out from Firebase
-                    await signOut(auth);
-                    
-                    // Call backend logout
-                    await apiClient.logout();
+                    if (process.env.NEXT_PUBLIC_USE_LOCAL_DATABASE !== 'true') {
+                        const { signOut } = await import('firebase/auth');
+                        const { auth } = await import('@/lib/firebase');
+                        await signOut(auth);
+                    }
                 } catch (error) {
-                    console.error('Logout error:', error);
+                    console.error('Firebase signout error:', error);
                 } finally {
+                    // Best-effort backend session invalidation
+                    try {
+                        await apiClient.logout();
+                    } catch (error) {
+                        console.error('Backend logout error:', error);
+                    }
+                    // Clear all persisted auth data from localStorage
+                    if (typeof window !== 'undefined') {
+                        localStorage.removeItem('auth_token');
+                        localStorage.removeItem('auth-storage');
+                    }
+                    // Reset Zustand state
                     set({
                         user: null,
                         token: null,
                         isAuthenticated: false,
                         isLoading: false,
                     });
+                    // Hard redirect to login — clears all React component state
+                    if (typeof window !== 'undefined') {
+                        window.location.href = '/login';
+                    }
                 }
             },
+
 
             updateProfile: async (data: Partial<User>) => {
                 set({ isLoading: true, error: null });
@@ -174,7 +264,7 @@ export const useAuthStore = create<AuthState>()(
                      set({ user: updatedUser, isLoading: false });
                 } catch (error: any) {
                     set({
-                        error: error.message || 'Profile update failed',
+                        error: getErrorMessage(error, 'Profile update failed'),
                         isLoading: false
                     });
                     throw error;

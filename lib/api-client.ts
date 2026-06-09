@@ -91,15 +91,31 @@ class ApiClient {
 
         // Handle 401 Unauthorized - clear state and redirect to login
         if (status === 401 && typeof window !== 'undefined') {
-          console.warn('401 Unauthorized detected. Clearing auth state.');
-          
-          // Clear everything
+          console.warn('401 Unauthorized detected.');
+
+          const isLocalMode = process.env.NEXT_PUBLIC_USE_LOCAL_DATABASE === 'true';
+          const requestUrl: string = error.config?.url || '';
+          // Don't hard-redirect for auth-check endpoints — these are background
+          // session hydration calls. A failure here should just clear state, not navigate.
+          const isAuthCheck =
+            requestUrl.includes('/auth/me') ||
+            requestUrl.includes('/auth/verify-token') ||
+            requestUrl.includes('/auth/profile');
+
+          // Always clear tokens so the next request won't send a stale one
           localStorage.removeItem('auth_token');
-          localStorage.removeItem('auth-storage');
-          
-          if (!window.location.pathname.includes('/login') && 
-              !window.location.pathname.includes('/signup')) {
-            window.location.href = '/login';
+
+          if (!isLocalMode && !isAuthCheck) {
+            // Only wipe persisted Zustand state and redirect when it's a "real"
+            // protected resource being denied (i.e. not a background auth-check).
+            localStorage.removeItem('auth-storage');
+
+            if (
+              !window.location.pathname.includes('/login') &&
+              !window.location.pathname.includes('/signup')
+            ) {
+              window.location.href = '/login';
+            }
           }
         }
 
@@ -126,11 +142,69 @@ class ApiClient {
       return userData as User;
   }
 
+  // Helper to normalize lawyer profile object
+  private normalizeLawyer(l: any): Lawyer {
+      if (!l) return l;
+      return {
+          id: l.uid || l.id || '',
+          name: l.displayName || l.name || 'Advocate',
+          email: l.email || '',
+          specialization: l.practiceAreas || l.specialization || [],
+          location: l.location || 'Unknown',
+          rating: l.rating !== undefined && l.rating !== null ? l.rating : 5.0,
+          reviewCount: l.numReviews !== undefined && l.numReviews !== null ? l.numReviews : 0,
+          yearsOfExperience: l.yearsExperience !== undefined && l.yearsExperience !== null ? l.yearsExperience : 0,
+          hourlyRate: l.hourlyRate !== undefined && l.hourlyRate !== null ? l.hourlyRate : 0,
+          avatar: l.profilePicture || l.avatar || undefined,
+          bio: l.bio || '',
+          verified: !!l.verified,
+          availability: l.availability !== undefined ? l.availability : true,
+      } as unknown as Lawyer;
+  }
+
   // ============ AUTH ENDPOINTS ============
 
   async verifyToken(idToken: string, extraData?: Partial<RegisterData>): Promise<AuthResponse> {
     const response = await this.client.post('/api/v1/auth/verify-token', { idToken, ...extraData });
 
+    const data = response.data;
+    const authData: AuthResponse = {
+      user: this.normalizeUser(data.user),
+      token: data.tokens?.access_token || data.token,
+      refreshToken: data.tokens?.refresh_token || data.refreshToken
+    };
+
+    if (authData.token) {
+      localStorage.setItem('auth_token', authData.token);
+    }
+
+    return authData;
+  }
+
+  async login(email: string, password: string): Promise<AuthResponse> {
+    const response = await this.client.post('/api/v1/auth/login', { email, password });
+    const data = response.data;
+    const authData: AuthResponse = {
+      user: this.normalizeUser(data.user),
+      token: data.tokens?.access_token || data.token,
+      refreshToken: data.tokens?.refresh_token || data.refreshToken
+    };
+
+    if (authData.token) {
+      localStorage.setItem('auth_token', authData.token);
+    }
+
+    return authData;
+  }
+
+  async register(registerData: RegisterData): Promise<AuthResponse> {
+    const payload = {
+      email: registerData.email,
+      password: registerData.password,
+      displayName: registerData.name,
+      role: registerData.role || 'citizen',
+    };
+    const response = await this.client.post('/api/v1/auth/register', payload);
     const data = response.data;
     const authData: AuthResponse = {
       user: this.normalizeUser(data.user),
@@ -202,9 +276,11 @@ class ApiClient {
       params: { ...filters, page, limit }
     });
     const data = response.data;
+    const rawLawyers = data.lawyers || [];
+    const normalizedLawyers = rawLawyers.map((l: any) => this.normalizeLawyer(l));
     return {
       success: true,
-      data: data.lawyers || [],
+      data: normalizedLawyers,
       pagination: {
         page: data.page || page,
         limit: data.pageSize || limit,
@@ -215,8 +291,8 @@ class ApiClient {
   }
 
   async getLawyerById(id: string): Promise<Lawyer> {
-    const response = await this.client.get<Lawyer>(`/api/v1/lawyers/${id}`);
-    return response.data;
+    const response = await this.client.get<any>(`/api/v1/lawyers/${id}`);
+    return this.normalizeLawyer(response.data);
   }
 
   async searchLawyers(query: string): Promise<Lawyer[]> {
@@ -224,7 +300,8 @@ class ApiClient {
     const response = await this.client.get<any>('/api/v1/lawyers', {
       params: { q: query, page: 1, limit: 20 }
     });
-    return response.data.lawyers || [];
+    const rawLawyers = response.data.lawyers || [];
+    return rawLawyers.map((l: any) => this.normalizeLawyer(l));
   }
 
   // ============ BOOKING ENDPOINTS ============

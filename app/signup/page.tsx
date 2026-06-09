@@ -35,7 +35,7 @@ const SignupPage: React.FC = () => {
 
     try {
       await register({ name, email, password, role: 'citizen' });
-      router.push('/dashboard');
+      router.push('/chat');
     } catch (err: any) {
       // Error handled by store
     }
@@ -46,7 +46,7 @@ const SignupPage: React.FC = () => {
     clearError();
     try {
       await loginWithGoogle();
-      router.push('/dashboard');
+      router.push('/chat');
     } catch (error) {
       // Error handled by store
     }

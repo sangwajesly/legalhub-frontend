@@ -7,7 +7,6 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
@@ -40,8 +39,7 @@ export function UserNav() {
 
             <div className="flex items-center gap-3">
                 <div className="text-right hidden sm:block">
-                    <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{user?.name || 'User'}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{user?.email || 'Guest'}</p>
+                    <p className="text-sm font-semibold text-stone-700 dark:text-stone-300">{user?.name || 'User'}</p>
                 </div>
 
                 <DropdownMenu>
@@ -51,9 +49,12 @@ export function UserNav() {
                             <User className="h-5 w-5 text-[#B89868]" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56 dark:bg-slate-900 dark:border-slate-800">
-                        <DropdownMenuLabel className="dark:text-slate-100">My Account</DropdownMenuLabel>
-                        <DropdownMenuSeparator className="dark:bg-slate-800" />
+                    <DropdownMenuContent align="end" className="w-64 dark:bg-slate-900 dark:border-slate-800 p-2">
+                        <div className="px-3 py-2 text-left">
+                            <p className="text-sm font-semibold text-stone-900 dark:text-stone-100 leading-none mb-1">{user?.name || 'User'}</p>
+                            <p className="text-xs text-stone-500 dark:text-stone-400 leading-none truncate">{user?.email || 'Guest'}</p>
+                        </div>
+                        <DropdownMenuSeparator className="dark:bg-slate-800 my-1" />
                         <Link href="/profile">
                             <DropdownMenuItem className="cursor-pointer dark:text-slate-300 dark:focus:bg-slate-800 dark:focus:text-white">
                                 <span>Profile</span>

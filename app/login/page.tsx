@@ -28,7 +28,7 @@ const LoginPage: React.FC = () => {
 
     try {
       await login({ email, password });
-      router.push('/dashboard');
+      router.push('/chat');
     } catch (err: any) {
       // Error handled by store
     }
@@ -39,7 +39,7 @@ const LoginPage: React.FC = () => {
     clearError();
     try {
       await loginWithGoogle();
-      router.push('/dashboard');
+      router.push('/chat');
     } catch (error) {
       // Error handled by store
     }
