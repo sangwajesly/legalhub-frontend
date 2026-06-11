@@ -1,15 +1,50 @@
 'use client';
 
-import { Scale, Globe, Building2, Briefcase, Users, Building, BarChart3, CheckCircle, Gavel, Clock, User, Star } from 'lucide-react';
+import { BarChart3, CheckCircle, Gavel, Clock, User, Star } from 'lucide-react';
 
 export function TrustSignals() {
   const logoPartners = [
-    { name: 'Legal Aid Association', icon: <Scale size={20} /> },
-    { name: 'ECOWAS Justice', icon: <Globe size={20} /> },
-    { name: 'African Bar Forum', icon: <Building2 size={20} /> },
-    { name: 'Regional Tech Alliance', icon: <Briefcase size={20} /> },
-    { name: 'Human Rights Coalition', icon: <Users size={20} /> },
-    { name: 'Federal Chambers', icon: <Building size={20} /> },
+    {
+      name: 'Bar Council',
+      icon: (
+        <svg className="h-5 w-5 text-stone-700 dark:text-stone-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeDasharray="1 1" />
+          <circle cx="12" cy="12" r="8" />
+          <path d="M12 7v10M8 11h8M7 14l2-3-2-3M15 14l2-3-2-3" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ),
+    },
+    {
+      name: 'Minjustice',
+      icon: (
+        <svg className="h-5 w-5 text-stone-700 dark:text-stone-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7s0 6 8 10z" />
+          <path d="M12 8v8M9 11h6" strokeLinecap="round" />
+        </svg>
+      ),
+    },
+    {
+      name: 'Legal Alliance',
+      icon: (
+        <svg className="h-5 w-5 text-stone-700 dark:text-stone-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M12 3l7 5-7 5-7-5 7-5zM12 11l7 5-7 5-7-5 7-5z" strokeLinejoin="round" />
+          <circle cx="12" cy="3" r="1" fill="currentColor" />
+          <circle cx="19" cy="8" r="1" fill="currentColor" />
+          <circle cx="5" cy="8" r="1" fill="currentColor" />
+          <circle cx="12" cy="13" r="1" fill="currentColor" />
+        </svg>
+      ),
+    },
+    {
+      name: 'Legal Aid',
+      icon: (
+        <svg className="h-5 w-5 text-stone-700 dark:text-stone-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M3 12a9 9 0 0 1 15-6.7M21 12a9 9 0 0 1-15 6.7" strokeLinecap="round" />
+          <path d="M9 10h6M12 7v7" />
+          <circle cx="12" cy="15" r="1" fill="currentColor" />
+        </svg>
+      ),
+    },
   ];
 
   const stats = [
@@ -21,15 +56,17 @@ export function TrustSignals() {
 
   const testimonials = [
     {
-      author: 'Kwame A.',
-      role: 'Shop Owner, Accra',
-      quote: 'I was worried about a new trade fee and didn\'t know if it was legal. The AI explained the local rules to me in simple terms in less than a minute. When I wanted to make sure, they connected me to a local lawyer who double-checked everything for a very fair fee. It saved my shop a lot of stress!',
+      author: 'Mbongih Noel',
+      role: 'Shop Owner, Douala',
+      quote: "I was confused about a new municipal tax notice for my shop. The AI assistant explained the regulations in plain French in seconds. When I needed a formal verification, it connected me with a local advocate who reviewed it and saved me from an unlawful fee.",
+      date: '3 days ago',
       avatar: <User size={18} className="text-[#B89868]" />,
     },
     {
-      author: 'Aisha M.',
-      role: 'School Teacher, Lagos',
-      quote: 'My landlord suddenly tried to increase my rent double without warning. I asked LegalHub and found out this violated local laws. The system matched me with a nearby lawyer who wrote a polite, official letter that settled the issue right away. Highly recommended for every citizen!',
+      author: 'Fouda Marie',
+      role: 'Secondary School Teacher, Yaoundé',
+      quote: "My landlord suddenly tried to double my rent without notice. I used LegalHub and learned it violated tenancy laws. The platform matched me with a lawyer who quickly drafted a formal reply to settle the dispute. Very grateful for this service!",
+      date: '2 weeks ago',
       avatar: <User size={18} className="text-[#B89868]" />,
     },
   ];
@@ -39,15 +76,15 @@ export function TrustSignals() {
       <div className="max-w-6xl mx-auto px-6">
         {/* Partner Logos */}
         <div className="mb-24">
-          <p className="text-center text-[10px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-widest mb-10">Trusted Across West Africa</p>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 items-center justify-center opacity-40 grayscale hover:opacity-75 dark:opacity-30 dark:hover:opacity-60 transition-all duration-500">
+          <p className="text-center text-[10px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-widest mb-10">Trusted Across Cameroon</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 items-center justify-center opacity-40 grayscale hover:opacity-75 dark:opacity-30 dark:hover:opacity-60 transition-all duration-500 max-w-4xl mx-auto">
             {logoPartners.map((partner) => (
               <div 
                 key={partner.name} 
                 className="flex items-center justify-center gap-2 border border-[#E5E2DC]/60 dark:border-stone-800/40 px-4 py-3 rounded-xl bg-stone-50/40 dark:bg-transparent"
               >
-                <div className="text-stone-700 dark:text-stone-300 flex-shrink-0">{partner.icon}</div>
-                <span className="text-[10px] font-bold text-stone-600 dark:text-stone-400 tracking-wider uppercase">{partner.name.split(' ')[0]}</span>
+                <div className="flex-shrink-0">{partner.icon}</div>
+                <span className="text-[10px] font-bold text-stone-600 dark:text-stone-400 tracking-wider uppercase">{partner.name}</span>
               </div>
             ))}
           </div>
@@ -74,16 +111,21 @@ export function TrustSignals() {
           {testimonials.map((testimonial, idx) => (
             <div
               key={idx}
-              className="bg-[#FAF9F5] dark:bg-stone-900/10 rounded-2xl p-10 border border-[#E5E2DC] dark:border-stone-800 flex flex-col justify-between"
+              className="bg-[#FAF9F5] dark:bg-stone-900/10 rounded-2xl p-10 border border-[#E5E2DC] dark:border-stone-800 flex flex-col justify-between relative overflow-hidden"
             >
               <div>
-                <div className="flex gap-1 mb-6">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <Star key={i} size={11} className="fill-[#B89868] text-[#B89868]" />
-                  ))}
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex gap-1">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Star key={i} size={11} className="fill-[#B89868] text-[#B89868]" />
+                    ))}
+                  </div>
+                  <span className="text-[9px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">
+                    {testimonial.date}
+                  </span>
                 </div>
 
-                <blockquote className="text-stone-700 dark:text-stone-300 italic text-sm leading-relaxed mb-8 font-serif">
+                <blockquote className="text-stone-700 dark:text-stone-350 italic text-sm leading-relaxed mb-8 font-serif">
                   &ldquo;{testimonial.quote}&rdquo;
                 </blockquote>
               </div>

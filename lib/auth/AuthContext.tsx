@@ -47,6 +47,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         // Listen to Firebase auth state changes
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+            const store = useAuthStore.getState();
+            
+            // If store is actively loading (indicates a login/register action in progress), let the store handle it
+            if (store.isLoading) {
+                console.log('[AuthContext] Store is actively loading. Letting auth-store handle session sync.');
+                if (firebaseUser) {
+                    setCurrentUser(firebaseUser);
+                    try {
+                        const token = await firebaseUser.getIdToken();
+                        setIdToken(token);
+                    } catch {}
+                }
+                setLoading(false);
+                return;
+            }
+
             setLoading(true);
             if (firebaseUser) {
                 try {

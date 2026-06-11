@@ -175,7 +175,13 @@ export const useAuthStore = create<AuthState>()(
                     const response = await apiClient.verifyToken(idToken, {
                         name: data.name,
                         role: data.role || 'citizen',
-                        email: data.email
+                        email: data.email,
+                        bio: data.bio,
+                        location: data.location,
+                        licenseNumber: data.licenseNumber,
+                        practiceAreas: data.practiceAreas,
+                        hourlyRate: data.hourlyRate,
+                        yearsExperience: data.yearsExperience,
                     });
                     
                     // 3. Fetch user profile
@@ -260,8 +266,9 @@ export const useAuthStore = create<AuthState>()(
             updateProfile: async (data: Partial<User>) => {
                 set({ isLoading: true, error: null });
                 try {
-                     const updatedUser = await apiClient.updateProfile(data);
-                     set({ user: updatedUser, isLoading: false });
+                     await apiClient.updateProfile(data);
+                     const fullProfile = await apiClient.getProfile();
+                     set({ user: fullProfile, isLoading: false });
                 } catch (error: any) {
                     set({
                         error: getErrorMessage(error, 'Profile update failed'),

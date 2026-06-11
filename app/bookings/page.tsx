@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useLawyerStore } from '@/lib/store/lawyer-store';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { Card, CardContent } from '@/components/ui/card';
@@ -13,12 +14,31 @@ const BookingsPage: React.FC = () => {
   const { bookings, fetchUserBookings, cancelBooking, isLoading, error, clearError } =
     useLawyerStore();
   const { user, isAuthenticated } = useAuthStore();
+  const router = useRouter();
+
+  const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
+  const [cancelConfirmId, setCancelConfirmId] = useState<string | null>(null);
+
+  const upcomingBookings = bookings.filter(
+    (b) => b.status === 'pending' || b.status === 'confirmed'
+  );
+  const pastBookings = bookings.filter(
+    (b) => b.status === 'completed' || b.status === 'cancelled'
+  );
+
+  const displayedBookings = activeTab === 'upcoming' ? upcomingBookings : pastBookings;
 
   useEffect(() => {
-    if (isAuthenticated && user?.id) {
-      fetchUserBookings(user.id);
+    if (isAuthenticated) {
+      if (user?.role === 'lawyer' || user?.role === 'admin' || user?.role === 'government') {
+        router.replace('/dashboard');
+        return;
+      }
+      if (user?.id) {
+        fetchUserBookings(user.id);
+      }
     }
-  }, [fetchUserBookings, user?.id, isAuthenticated]);
+  }, [fetchUserBookings, user, isAuthenticated, router]);
 
   const getStatusVariant = (status: string) => {
     switch (status) {
@@ -31,14 +51,16 @@ const BookingsPage: React.FC = () => {
   };
 
   const handleCancelBooking = async (bookingId: string) => {
-    if (confirm('Are you sure you want to cancel this booking?')) {
-      try {
-        await cancelBooking(bookingId);
-        toast.success('Booking cancelled successfully');
-      } catch (err) {
-        toast.error('Failed to cancel booking');
-      }
+    try {
+      await cancelBooking(bookingId);
+      toast.success('Booking cancelled successfully');
+    } catch (err) {
+      toast.error('Failed to cancel booking');
     }
+  };
+
+  const handleJoinCall = (bookingId: string) => {
+    window.open(`/call/${bookingId}`, '_blank');
   };
 
   return (
@@ -88,11 +110,37 @@ const BookingsPage: React.FC = () => {
           </div>
         )}
 
-        {/* Bookings List */}
+        {/* Tab Switcher */}
         {!isLoading && bookings.length > 0 && (
-          <div className="space-y-6">
-            {bookings.map((booking) => (
-              <Card key={booking.id} className="hover:shadow-md transition-all duration-300 border-[#E5E2DC] dark:border-stone-800 overflow-hidden bg-[#FDFCF9] dark:bg-stone-900/20 rounded-2xl">
+          <div className="flex border-b border-[#E5E2DC]/80 dark:border-stone-800 mb-8 w-full">
+            <button
+              onClick={() => setActiveTab('upcoming')}
+              className={`py-3 px-6 font-semibold text-sm transition-all border-b-2 -mb-[2px] ${
+                activeTab === 'upcoming'
+                  ? 'border-[#B89868] text-[#B89868]'
+                  : 'border-transparent text-stone-500 hover:text-stone-850 dark:hover:text-white'
+              }`}
+            >
+              Upcoming consultations ({upcomingBookings.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('past')}
+              className={`py-3 px-6 font-semibold text-sm transition-all border-b-2 -mb-[2px] ${
+                activeTab === 'past'
+                  ? 'border-[#B89868] text-[#B89868]'
+                  : 'border-transparent text-stone-500 hover:text-stone-850 dark:hover:text-white'
+              }`}
+            >
+              Past & Cancelled ({pastBookings.length})
+            </button>
+          </div>
+        )}
+
+        {/* Bookings List */}
+        {!isLoading && displayedBookings.length > 0 && (
+          <div className="space-y-6 animate-fade-in">
+            {displayedBookings.map((booking) => (
+              <Card key={booking.id} className="hover:shadow-md transition-all duration-300 border-[#E5E2DC] dark:border-stone-800 overflow-hidden bg-[#FDFCF9] dark:bg-stone-900/20 rounded-2xl animate-fade-in">
                 <CardContent className="p-0">
                   <div className="flex flex-col md:flex-row">
                     {/* Status Strip */}
@@ -105,15 +153,32 @@ const BookingsPage: React.FC = () => {
                     <div className="p-6 flex-1 flex flex-col md:flex-row gap-6">
                       <div className="flex-1 space-y-4">
                         <div className="flex items-center justify-between flex-wrap gap-2">
-                          <h3 className="text-xl font-bold font-serif text-[#121315] dark:text-[#FAF9F5]">
-                            Lawyer Consultation
-                          </h3>
+                          <div className="flex items-center gap-3">
+                            {booking.lawyerAvatar ? (
+                              <img
+                                src={booking.lawyerAvatar}
+                                alt={booking.lawyerName || 'Lawyer'}
+                                className="w-10 h-10 rounded-full object-cover border border-[#E5E2DC] dark:border-stone-700 shadow-sm"
+                              />
+                            ) : (
+                              <div className="w-10 h-10 rounded-full bg-[#FAF9F5] dark:bg-stone-800 flex items-center justify-center border border-[#E5E2DC] dark:border-stone-700">
+                                <span className="text-xs font-bold text-[#B89868]">
+                                  {(booking.lawyerName || 'L').charAt(0)}
+                                </span>
+                              </div>
+                            )}
+                            <div>
+                              <h3 className="text-lg font-semibold text-[#121315] dark:text-[#FAF9F5]">
+                                {booking.lawyerName || 'Lawyer Consultation'}
+                              </h3>
+                            </div>
+                          </div>
                           <Badge variant={getStatusVariant(booking.status) as any} className="capitalize px-3 py-1 rounded-lg">
                             {booking.status}
                           </Badge>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-stone-600 dark:text-stone-450">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-stone-600 dark:text-stone-450 font-sans">
                           <div className="flex items-center gap-2">
                             <Calendar className="h-4 w-4 text-[#B89868]" />
                             <span className="font-medium text-stone-850 dark:text-white">
@@ -135,7 +200,7 @@ const BookingsPage: React.FC = () => {
                         </div>
 
                         {booking.notes && (
-                          <div className="p-4 bg-[#FAF9F5] dark:bg-stone-950/40 rounded-xl border border-[#E5E2DC] dark:border-stone-850 text-sm text-stone-600 dark:text-stone-300 italic">
+                          <div className="p-4 bg-[#FAF9F5] dark:bg-stone-950/40 rounded-xl border border-[#E5E2DC] dark:border-stone-850 text-sm text-stone-600 dark:text-stone-300 italic font-sans">
                             "{booking.notes}"
                           </div>
                         )}
@@ -149,8 +214,8 @@ const BookingsPage: React.FC = () => {
                             </Button>
                             <Button
                               variant="outline"
-                              className="w-full text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950/20 border-red-200 dark:border-red-900/30 rounded-xl font-semibold transition-all duration-300"
-                              onClick={() => handleCancelBooking(booking.id)}
+                              className="w-full text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950/20 border-red-200 dark:border-red-900/30 rounded-xl font-semibold transition-all duration-300 animate-fade-in"
+                              onClick={() => setCancelConfirmId(booking.id)}
                             >
                               Cancel
                             </Button>
@@ -158,13 +223,16 @@ const BookingsPage: React.FC = () => {
                         )}
                         {booking.status === 'confirmed' && (
                           <>
-                            <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold shadow-sm transition-all duration-300">
+                            <Button
+                              onClick={() => handleJoinCall(booking.id)}
+                              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold shadow-sm transition-all duration-300 animate-fade-in"
+                            >
                               Join Call
                             </Button>
                             <Button
                               variant="outline"
                               className="w-full text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950/20 border-red-200 dark:border-red-900/30 rounded-xl font-semibold transition-all duration-300"
-                              onClick={() => handleCancelBooking(booking.id)}
+                              onClick={() => setCancelConfirmId(booking.id)}
                             >
                               Cancel
                             </Button>
@@ -185,24 +253,66 @@ const BookingsPage: React.FC = () => {
         )}
 
         {/* Empty State */}
-        {!isLoading && bookings.length === 0 && (
-          <div className="text-center py-16 bg-[#FDFCF9] dark:bg-stone-900/10 rounded-2xl border border-dashed border-[#E5E2DC] dark:border-stone-800 shadow-sm">
+        {!isLoading && (bookings.length === 0 || displayedBookings.length === 0) && (
+          <div className="text-center py-16 bg-[#FDFCF9] dark:bg-stone-900/10 rounded-2xl border border-dashed border-[#E5E2DC] dark:border-stone-800 shadow-sm animate-fade-in">
             <div className="w-16 h-16 bg-[#FAF9F5] dark:bg-stone-900/50 rounded-full flex items-center justify-center mx-auto mb-4 border border-[#E5E2DC] dark:border-stone-850">
               <Calendar className="h-8 w-8 text-stone-400" />
             </div>
-            <h2 className="text-2xl font-bold font-serif text-[#121315] dark:text-[#FAF9F5] mb-2">No bookings yet</h2>
-            <p className="text-stone-555 dark:text-stone-400 mb-8 max-w-md mx-auto font-normal text-sm">
-              You haven't scheduled any consultations yet. Find a legal companion to get started on your path.
+            <h2 className="text-2xl font-bold font-serif text-[#121315] dark:text-[#FAF9F5] mb-2">
+              {bookings.length === 0 ? 'No bookings yet' : activeTab === 'upcoming' ? 'No upcoming consultations' : 'No past history'}
+            </h2>
+            <p className="text-stone-500 dark:text-stone-400 mb-8 max-w-md mx-auto font-normal text-sm font-sans leading-relaxed">
+              {bookings.length === 0 
+                ? "You haven't scheduled any consultations yet. Find a legal companion to get started on your path."
+                : activeTab === 'upcoming'
+                  ? "You don't have any upcoming scheduled consultations. Find a legal companion to book a session."
+                  : "You don't have any past completed or cancelled consultations in your record."}
             </p>
-            <Button
-              className="bg-[#1C1B19] hover:bg-[#2C2A27] dark:bg-[#FAF9F5] dark:hover:bg-[#E5E2DC] text-[#FAF9F5] dark:text-[#121315] rounded-xl font-semibold shadow-sm transition-all duration-300 px-8 py-5 h-auto text-base"
-              onClick={() => window.location.href = '/lawyers'}
-            >
-              Find a Lawyer
-            </Button>
+            {(bookings.length === 0 || (activeTab === 'upcoming' && displayedBookings.length === 0)) && (
+              <Button
+                className="bg-[#1C1B19] hover:bg-[#2C2A27] dark:bg-[#FAF9F5] dark:hover:bg-[#E5E2DC] text-[#FAF9F5] dark:text-[#121315] rounded-xl font-semibold shadow-sm transition-all duration-300 px-8 py-5 h-auto text-base"
+                onClick={() => window.location.href = '/lawyers'}
+              >
+                Find a Lawyer
+              </Button>
+            )}
           </div>
         )}
       </div>
+
+      {/* Custom Confirmation Modal */}
+      {cancelConfirmId && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in">
+          <div className="bg-[#FAF9F5] dark:bg-[#0E0F11] rounded-[2rem] p-8 max-w-sm w-full shadow-2xl border border-[#E5E2DC] dark:border-stone-850 animate-scale-in">
+            <div className="w-16 h-16 bg-red-100 dark:bg-red-950/20 text-red-600 dark:text-red-450 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <AlertCircle className="h-8 w-8 text-red-500" />
+            </div>
+            <h2 className="text-xl font-bold font-serif text-slate-900 dark:text-white text-center mb-2">Cancel Consultation?</h2>
+            <p className="text-sm text-slate-650 dark:text-slate-400 text-center mb-6 leading-relaxed font-sans">
+              Are you sure you want to cancel this consultation? This action cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setCancelConfirmId(null)}
+                className="flex-1 rounded-xl py-3 font-semibold border-[#E5E2DC] dark:border-stone-800 dark:text-stone-300 dark:hover:bg-stone-900 font-sans"
+              >
+                No, Keep
+              </Button>
+              <Button
+                onClick={() => {
+                  const id = cancelConfirmId;
+                  setCancelConfirmId(null);
+                  handleCancelBooking(id);
+                }}
+                className="flex-1 rounded-xl py-3 font-semibold bg-red-600 hover:bg-red-700 text-white font-sans"
+              >
+                Yes, Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

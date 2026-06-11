@@ -16,6 +16,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     // Determine if we are on a page that should show the layout
     const isHomePage = pathname === "/";
     const isChatPage = pathname === "/chat";
+    const isAboutPage = pathname === "/about";
+    const isPricingPage = pathname === "/pricing";
 
     // Exclude sidebar/header/footer from auth pages
     const isAuthPage =
@@ -24,7 +26,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         pathname?.startsWith("/forgot-password") ||
         pathname?.startsWith("/reset-password");
 
-    const showLayout = !isHomePage && !isChatPage && !isAuthPage;
+    const isCallPage = pathname?.startsWith("/call");
+
+    const showLayout = !isHomePage && !isChatPage && !isAuthPage && !isAboutPage && !isPricingPage && !isCallPage;
 
     // Protect routes (Temporarily disabled for Public Demo / Presentation mode)
     useEffect(() => {

@@ -48,6 +48,9 @@ export default function ProfilePage() {
         twitter: user?.socialLinks?.twitter || '',
         linkedin: user?.socialLinks?.linkedin || '',
         facebook: user?.socialLinks?.facebook || '',
+        hourlyRate: '',
+        licenseNumber: '',
+        specialization: '',
     });
 
     const fetchUserStats = useCallback(async () => {
@@ -61,7 +64,7 @@ export default function ProfilePage() {
     }, [user?.id]);
 
     useEffect(() => {
-        if (user) {
+        if (user && !isEditing) {
             setFormData({
                 name: user.name || '',
                 bio: user.bio || '',
@@ -71,12 +74,30 @@ export default function ProfilePage() {
                 twitter: user.socialLinks?.twitter || '',
                 linkedin: user.socialLinks?.linkedin || '',
                 facebook: user.socialLinks?.facebook || '',
+                hourlyRate: '',
+                licenseNumber: '',
+                specialization: '',
             });
+
+            if (user.role === 'lawyer') {
+                apiClient.getLawyerById(user.id)
+                    .then((profile) => {
+                        setFormData(prev => ({
+                            ...prev,
+                            hourlyRate: profile.hourlyRate?.toString() || '',
+                            licenseNumber: profile.licenseNumber || '',
+                            specialization: profile.specialization?.join(', ') || '',
+                        }));
+                    })
+                    .catch((err) => {
+                        console.error('Failed to fetch lawyer profile:', err);
+                    });
+            }
 
             // Fetch user stats
             fetchUserStats();
         }
-    }, [user, fetchUserStats]);
+    }, [user, fetchUserStats, isEditing]);
 
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -96,6 +117,7 @@ export default function ProfilePage() {
     };
 
     const handleSave = async () => {
+        if (!user) return;
         setIsLoading(true);
         try {
             let avatarUrl = user?.avatar;
@@ -122,6 +144,23 @@ export default function ProfilePage() {
                 },
             });
 
+            // Update lawyer specific fields if user is a lawyer
+            if (user.role === 'lawyer') {
+                const specArray = formData.specialization
+                    ? formData.specialization.split(',').map(s => s.trim()).filter(Boolean)
+                    : [];
+                const parsedRate = formData.hourlyRate ? parseFloat(formData.hourlyRate) : 0;
+
+                await apiClient.updateLawyerProfile(user.id, {
+                    name: formData.name,
+                    bio: formData.bio,
+                    location: formData.location,
+                    specialization: specArray,
+                    hourlyRate: parsedRate,
+                    licenseNumber: formData.licenseNumber,
+                });
+            }
+
             toast.success('Profile updated successfully!');
             setIsEditing(false);
             setAvatarFile(null);
@@ -138,7 +177,8 @@ export default function ProfilePage() {
         setAvatarFile(null);
         setAvatarPreview(null);
         if (user) {
-            setFormData({
+            setFormData(prev => ({
+                ...prev,
                 name: user.name || '',
                 bio: user.bio || '',
                 phone: user.phone || '',
@@ -147,7 +187,20 @@ export default function ProfilePage() {
                 twitter: user.socialLinks?.twitter || '',
                 linkedin: user.socialLinks?.linkedin || '',
                 facebook: user.socialLinks?.facebook || '',
-            });
+            }));
+
+            if (user.role === 'lawyer') {
+                apiClient.getLawyerById(user.id)
+                    .then((profile) => {
+                        setFormData(prev => ({
+                            ...prev,
+                            hourlyRate: profile.hourlyRate?.toString() || '',
+                            licenseNumber: profile.licenseNumber || '',
+                            specialization: profile.specialization?.join(', ') || '',
+                        }));
+                    })
+                    .catch((err) => console.error(err));
+            }
         }
     };
 
@@ -165,7 +218,7 @@ export default function ProfilePage() {
 
     const getRoleBadgeColor = (role: string) => {
         switch (role) {
-            case 'lawyer': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+            case 'lawyer': return 'bg-[#B89868]/15 text-[#B89868] dark:bg-[#B89868]/20 dark:text-[#C5A880]';
             case 'ngo': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
             case 'government': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
             default: return 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200';
@@ -202,12 +255,12 @@ export default function ProfilePage() {
                                 <div className="relative">
                                     <Avatar className="h-24 w-24">
                                         <AvatarImage src={avatarPreview || user.avatar} alt={user.name} />
-                                        <AvatarFallback className="text-2xl bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                                        <AvatarFallback className="text-2xl bg-gradient-to-br from-[#B89868] to-[#C5A880] text-white">
                                             {user.name.charAt(0).toUpperCase()}
                                         </AvatarFallback>
                                     </Avatar>
                                     {isEditing && (
-                                        <label className="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full cursor-pointer transition-colors">
+                                        <label className="absolute bottom-0 right-0 bg-[#B89868] hover:bg-[#a58151] text-white p-2 rounded-full cursor-pointer transition-colors">
                                             <Camera className="h-4 w-4" />
                                             <input
                                                 type="file"
@@ -268,7 +321,7 @@ export default function ProfilePage() {
                                         value={formData.phone}
                                         onChange={handleInputChange}
                                         disabled={!isEditing}
-                                        placeholder="+1 (555) 123-4567"
+                                        placeholder="+237 677 12 34 56"
                                         className="dark:bg-slate-800 dark:border-slate-700 dark:text-white"
                                     />
                                 </div>
@@ -322,6 +375,60 @@ export default function ProfilePage() {
                                     />
                                 </div>
                             </div>
+
+                            {/* Lawyer Specific Details */}
+                            {user.role === 'lawyer' && (
+                                <div className="space-y-4 pt-4 border-t dark:border-slate-800">
+                                    <h3 className="font-semibold text-slate-900 dark:text-white">Professional Details</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="hourlyRate" className="dark:text-white">
+                                                Hourly Rate (FCFA)
+                                            </Label>
+                                            <Input
+                                                id="hourlyRate"
+                                                name="hourlyRate"
+                                                type="number"
+                                                value={formData.hourlyRate}
+                                                onChange={handleInputChange}
+                                                disabled={!isEditing}
+                                                placeholder="e.g. 15000"
+                                                className="dark:bg-slate-800 dark:border-slate-700 dark:text-white"
+                                            />
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label htmlFor="licenseNumber" className="dark:text-white">
+                                                License Number
+                                            </Label>
+                                            <Input
+                                                id="licenseNumber"
+                                                name="licenseNumber"
+                                                value={formData.licenseNumber}
+                                                onChange={handleInputChange}
+                                                disabled={true} // License numbers cannot be edited directly by lawyers
+                                                placeholder="e.g. BAR-12345"
+                                                className="dark:bg-slate-800 dark:border-slate-700 dark:text-white opacity-60"
+                                            />
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label htmlFor="specialization" className="dark:text-white">
+                                                Specializations (comma separated)
+                                            </Label>
+                                            <Input
+                                                id="specialization"
+                                                name="specialization"
+                                                value={formData.specialization}
+                                                onChange={handleInputChange}
+                                                disabled={!isEditing}
+                                                placeholder="e.g. Criminal, Family, Corporate"
+                                                className="dark:bg-slate-800 dark:border-slate-700 dark:text-white"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
                             {/* Social Links */}
                             <div className="space-y-4 pt-4 border-t dark:border-slate-800">
@@ -402,9 +509,9 @@ export default function ProfilePage() {
                             <CardTitle className="dark:text-white">Activity Stats</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                            <div className="flex items-center justify-between p-3 bg-[#B89868]/5 dark:bg-[#B89868]/10 rounded-lg">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-blue-600 rounded-lg">
+                                    <div className="p-2 bg-[#B89868] rounded-lg">
                                         <Briefcase className="h-5 w-5 text-white" />
                                     </div>
                                     <div>

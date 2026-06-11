@@ -76,14 +76,14 @@ export function Footer() {
               links: [
                 { label: 'Help Registry', href: '#' },
                 { label: 'Operational Steps', href: '#' },
-                { label: 'Fee Transparency', href: '#' },
+                { label: 'Fee Transparency', href: '/pricing' },
                 { label: 'Direct Contact', href: '#' },
               ],
             },
             {
               title: 'Institution',
               links: [
-                { label: 'Our Mission', href: '#' },
+                { label: 'Our Mission', href: '/about' },
                 { label: 'Authority Panel', href: '#' },
                 { label: 'Terms of Service', href: '#' },
                 { label: 'Privacy Protocol', href: '#' },

@@ -6,7 +6,7 @@ import { ArrowRight, ShieldCheck, Clock, CircleDollarSign } from 'lucide-react';
 export function Hero() {
   return (
     <section className="relative pt-36 pb-24 lg:pt-48 lg:pb-36 overflow-hidden bg-[#FAF9F5] dark:bg-[#121315] min-h-[90vh] flex items-center transition-colors duration-300">
-      {/* Decorative clean line elements (instead of messy AI blobs) */}
+      {/* Decorative grid lines */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40 dark:opacity-20">
         <div className="absolute left-1/2 top-0 bottom-0 w-[1px] bg-[#E5E2DC] dark:bg-stone-800/60 transform -translate-x-1/2"></div>
         <div className="absolute top-[30%] left-0 right-0 h-[1px] bg-[#E5E2DC] dark:bg-stone-800/60"></div>
@@ -14,23 +14,19 @@ export function Hero() {
       </div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 w-full text-center">
-        {/* Subtle Pre-header */}
         <div className="inline-flex items-center gap-2 px-3 py-1 border border-[#B89868]/30 bg-[#FAF9F5] dark:bg-[#18191C] text-[#B89868] text-[10px] font-bold uppercase tracking-widest mb-8 rounded-full animate-fade-in">
           <span>Simple, Trusted Legal Help</span>
         </div>
 
-        {/* Major Editorial Headline */}
         <h1 className="text-4xl sm:text-5xl md:text-7xl font-light font-display text-stone-900 dark:text-stone-50 mb-8 leading-[1.08] tracking-tight max-w-4xl mx-auto animate-fade-in [animation-delay:100ms]">
           Legal assistance, <br />
           made <span className="font-serif italic text-[#B89868]">clear</span> and <span className="font-serif italic text-[#B89868]">accessible</span>.
         </h1>
 
-        {/* Approachable Description */}
         <p className="text-sm md:text-base lg:text-lg text-stone-600 dark:text-stone-300 mb-12 max-w-2xl mx-auto leading-relaxed font-sans font-medium tracking-tight animate-fade-in [animation-delay:200ms]">
           Get instant, clear answers to your everyday legal questions for free. No complicated jargon, no sign-ups, and complete privacy. Connect with a friendly local lawyer when you are ready.
         </p>
 
-        {/* Action Elements */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16 animate-fade-in [animation-delay:300ms]">
           <Link
             href="/chat"
@@ -47,7 +43,6 @@ export function Hero() {
           </Link>
         </div>
 
-        {/* Friendly Standards Row */}
         <div className="flex flex-wrap justify-center gap-8 lg:gap-16 text-[10px] md:text-xs text-stone-500 dark:text-stone-400 pt-10 border-t border-[#E5E2DC] dark:border-stone-800 max-w-4xl mx-auto animate-fade-in [animation-delay:400ms]">
           <div className="flex items-center gap-2">
             <ShieldCheck size={16} className="text-[#B89868]" />

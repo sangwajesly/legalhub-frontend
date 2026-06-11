@@ -174,18 +174,13 @@ export const useLawyerStore = create<LawyerStore>((set, get) => ({
 
   createBooking: async (booking) => {
     try {
+      set({ isLoading: true, error: null });
       const result = await apiClient.createBooking(booking);
-      set((state) => ({ bookings: [...state.bookings, result] }));
+      set((state) => ({ bookings: [...state.bookings, result], isLoading: false }));
       return result;
-    } catch {
-      const mockBooking: Booking = {
-        ...booking,
-        id: `mock-${Date.now()}`,
-        status: 'confirmed',
-        createdAt: new Date().toISOString(),
-      };
-      set((state) => ({ bookings: [...state.bookings, mockBooking], error: null }));
-      return mockBooking;
+    } catch (err: any) {
+      set({ isLoading: false, error: err.detail || err.message || 'Failed to create booking' });
+      throw err;
     }
   },
 
@@ -215,9 +210,13 @@ export const useLawyerStore = create<LawyerStore>((set, get) => ({
   cancelBooking: async (id) => {
     try {
       await apiClient.cancelBooking(id);
-      set((state) => ({ bookings: state.bookings.filter((b) => b.id !== id) }));
+      set((state) => ({
+        bookings: state.bookings.map((b) => (b.id === id ? { ...b, status: 'cancelled' } : b)),
+      }));
     } catch {
-      set((state) => ({ bookings: state.bookings.filter((b) => b.id !== id) }));
+      set((state) => ({
+        bookings: state.bookings.map((b) => (b.id === id ? { ...b, status: 'cancelled' } : b)),
+      }));
     }
   },
 

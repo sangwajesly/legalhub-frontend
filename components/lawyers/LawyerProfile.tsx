@@ -159,7 +159,7 @@ const LawyerProfile: React.FC<LawyerProfileProps> = ({ lawyerId, onClose }) => {
               </p>
               <p className="text-lg font-semibold text-stone-900 dark:text-white leading-tight">
                 {l.hourlyRate.toLocaleString()}
-                <span className="text-sm font-normal text-stone-400 ml-1">CFA/hr</span>
+                <span className="text-sm font-normal text-stone-400 ml-1">FCFA/hr</span>
               </p>
             </div>
 

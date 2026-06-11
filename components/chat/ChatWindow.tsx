@@ -4,6 +4,8 @@ import React, { useRef, useEffect } from 'react';
 import { MessageBubble } from './MessageBubble';
 import { PanelLeft, Plus } from 'lucide-react';
 import { UserNav } from '@/components/shared/UserNav';
+import Link from 'next/link';
+import { useAuthStore } from '@/lib/store/auth-store';
 
 interface ChatWindowProps {
   messages: Array<{
@@ -28,6 +30,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   onNewChat,
 }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { isAuthenticated } = useAuthStore();
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -81,6 +84,21 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         </div>
         <UserNav />
       </header>
+
+      {/* Anonymous Guest Alert Banner */}
+      {!isAuthenticated && (
+        <div className="w-full bg-[#B89868]/10 border-b border-[#B89868]/20 px-6 py-2.5 text-center text-xs text-[#B89868] dark:text-[#C5A880] flex items-center justify-center gap-1.5 shrink-0 shadow-sm">
+          <span>You are chatting as a guest.</span>
+          <Link href="/login" className="font-bold underline hover:text-[#9c8056] transition-colors">
+            Log in
+          </Link>
+          <span>or</span>
+          <Link href="/signup" className="font-bold underline hover:text-[#9c8056] transition-colors">
+            Sign up
+          </Link>
+          <span>to save your consultation history and book sessions with local lawyers.</span>
+        </div>
+      )}
 
       {/* Scroll Area */}
       <div

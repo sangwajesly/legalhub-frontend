@@ -21,6 +21,9 @@ import { AnalyticsData, Case } from '@/types';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { useLawyerStore } from '@/lib/store/lawyer-store';
 import { NGODashboard } from '@/components/dashboard/NGODashboard';
+import { LawyerDashboard } from '@/components/dashboard/LawyerDashboard';
+import { AdminVerificationPanel } from '@/components/dashboard/AdminVerificationPanel';
+import { AdminOverview } from '@/components/dashboard/AdminOverview';
 
 export default function Dashboard() {
   const { user } = useAuthStore();
@@ -29,21 +32,26 @@ export default function Dashboard() {
   const [recentCases, setRecentCases] = useState<Case[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'overview' | 'verifications'>('overview');
 
   const fetchDashboardData = useCallback(async () => {
     if (!user?.id) return;
 
     try {
       setIsLoading(true);
+      const isSystemAdmin = user.role === 'admin';
       // Fetch concurrent data
       const [analytics, casesResponse] = await Promise.all([
         apiClient.getAnalyticsOverview().catch(() => null),
-        apiClient.getUserCases(user.id).catch(() => ({ data: [] }))
+        (isSystemAdmin 
+          ? apiClient.getCases() 
+          : apiClient.getUserCases(user.id)
+        ).catch(() => ({ data: [] }))
       ]);
 
       if (analytics) setStats(analytics);
       if (casesResponse && casesResponse.data) {
-        setRecentCases(casesResponse.data.slice(0, 3)); // Only show top 3
+        setRecentCases(isSystemAdmin ? casesResponse.data.slice(0, 10) : casesResponse.data.slice(0, 3));
       }
       
       // Also fetch bookings for the stat counter
@@ -55,7 +63,7 @@ export default function Dashboard() {
     } finally {
       setIsLoading(false);
     }
-  }, [user?.id, fetchUserBookings]);
+  }, [user?.id, user?.role, fetchUserBookings]);
 
   useEffect(() => {
     fetchDashboardData();
@@ -71,6 +79,15 @@ export default function Dashboard() {
     trends: []
   };
 
+  // If user is a Lawyer, show the specialized Lawyer Dashboard
+  if (user?.role === 'lawyer') {
+    return (
+      <div className="pb-12">
+        <LawyerDashboard user={user} />
+      </div>
+    );
+  }
+
   // If user is NGO or Government, show the specialized analytics dashboard
   if (user?.role === 'ngo' || user?.role === 'government') {
     return (
@@ -80,9 +97,47 @@ export default function Dashboard() {
     );
   }
 
+  const isAdmin = user?.role === 'admin';
+
   // Default Dashboard for Citizens and Lawyers/Advocates
   return (
     <div className="space-y-10 animate-fade-in pb-12">
+      {isAdmin && (
+        <div className="flex gap-4 border-b border-[#E5E2DC] dark:border-stone-850 pb-3">
+          <button
+            onClick={() => setActiveTab('overview')}
+            className={`pb-2 text-xs xl:text-sm font-semibold transition-all border-b-2 ${
+              activeTab === 'overview'
+                ? 'border-[#B89868] text-[#B89868]'
+                : 'border-transparent text-stone-400 hover:text-stone-600'
+            }`}
+          >
+            System Overview
+          </button>
+          <button
+            onClick={() => setActiveTab('verifications')}
+            className={`pb-2 text-xs xl:text-sm font-semibold transition-all border-b-2 ${
+              activeTab === 'verifications'
+                ? 'border-[#B89868] text-[#B89868]'
+                : 'border-transparent text-stone-400 hover:text-stone-600'
+            }`}
+          >
+            Pending Verifications
+          </button>
+        </div>
+      )}
+
+      {isAdmin && activeTab === 'verifications' ? (
+        <AdminVerificationPanel />
+      ) : isAdmin && activeTab === 'overview' ? (
+        <AdminOverview
+          stats={stats as any}
+          recentCases={recentCases}
+          isLoading={isLoading}
+          onRefresh={fetchDashboardData}
+        />
+      ) : (
+        <>
       {/* Upper Section: Welcome & Actions */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
         <div className="flex items-center gap-6">
@@ -98,7 +153,7 @@ export default function Dashboard() {
            <div>
               <div className="flex items-center gap-3">
                 <h1 className="text-3xl lg:text-4xl font-serif font-bold text-[#121315] dark:text-[#FAF9F5] tracking-tight">
-                    Hello, {user?.name || (user?.role === 'lawyer' ? 'Advocate' : 'Friend')}
+                    Hello, {user?.name || 'Friend'}
                 </h1>
                 <Badge className="bg-[#FAF9F5] dark:bg-stone-900 border border-[#E5E2DC] dark:border-stone-800 text-[#B89868] font-semibold text-xs rounded-xl px-2.5 py-0.5">
                    {user?.role?.toUpperCase() || 'MEMBER'}
@@ -264,6 +319,8 @@ export default function Dashboard() {
           </Card>
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 }

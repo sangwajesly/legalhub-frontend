@@ -41,14 +41,18 @@ class ApiClient {
     this.client.interceptors.request.use(async (config) => {
       let token: string | null = null;
 
-      // 1. Try to get token from Firebase if user is logged in
-      const user = auth.currentUser;
-      if (user) {
-        try {
-          token = await user.getIdToken();
-          console.log('Firebase ID token retrieved.');
-        } catch (error) {
-          console.error('Error getting Firebase ID token:', error);
+      const isLocalMode = process.env.NEXT_PUBLIC_USE_LOCAL_DATABASE === 'true';
+
+      // 1. Try to get token from Firebase if user is logged in (only if NOT in local database mode)
+      if (!isLocalMode) {
+        const user = auth.currentUser;
+        if (user) {
+          try {
+            token = await user.getIdToken();
+            console.log('Firebase ID token retrieved.');
+          } catch (error) {
+            console.error('Error getting Firebase ID token:', error);
+          }
         }
       }
 
@@ -93,7 +97,6 @@ class ApiClient {
         if (status === 401 && typeof window !== 'undefined') {
           console.warn('401 Unauthorized detected.');
 
-          const isLocalMode = process.env.NEXT_PUBLIC_USE_LOCAL_DATABASE === 'true';
           const requestUrl: string = error.config?.url || '';
           // Don't hard-redirect for auth-check endpoints — these are background
           // session hydration calls. A failure here should just clear state, not navigate.
@@ -104,8 +107,9 @@ class ApiClient {
 
           // Always clear tokens so the next request won't send a stale one
           localStorage.removeItem('auth_token');
+          localStorage.removeItem('refresh_token');
 
-          if (!isLocalMode && !isAuthCheck) {
+          if (!isAuthCheck) {
             // Only wipe persisted Zustand state and redirect when it's a "real"
             // protected resource being denied (i.e. not a background auth-check).
             localStorage.removeItem('auth-storage');
@@ -142,24 +146,72 @@ class ApiClient {
       return userData as User;
   }
 
+  // Helper to normalize booking object
+  private normalizeBooking(b: any): Booking {
+    if (!b) return b;
+    return {
+      id: b.bookingId || b.booking_id || b.id || '',
+      lawyerId: b.lawyerId || b.lawyer_id || '',
+      userId: b.userId || b.user_id || '',
+      scheduledAt: b.scheduledAt || b.scheduled_at || '',
+      duration: b.duration || 30,
+      type: b.consultationType === 'meeting' || b.consultation_type === 'meeting' ? 'in-person' : 'video',
+      status: b.status || 'pending',
+      notes: b.notes || '',
+      location: b.location || '',
+      createdAt: b.createdAt || b.created_at || '',
+      clientName: b.clientName || b.client_name || '',
+      clientEmail: b.clientEmail || b.client_email || '',
+      lawyerName: b.lawyerName || b.lawyer_name || '',
+      lawyerEmail: b.lawyerEmail || b.lawyer_email || '',
+      lawyerAvatar: b.lawyerAvatar || b.lawyer_avatar || b.lawyerImage || '',
+      fee: b.fee !== undefined ? b.fee : 0,
+      paymentMethod: b.paymentMethod || b.payment_method || '',
+    };
+  }
+
   // Helper to normalize lawyer profile object
   private normalizeLawyer(l: any): Lawyer {
       if (!l) return l;
       return {
           id: l.uid || l.id || '',
-          name: l.displayName || l.name || 'Advocate',
+          name: l.displayName || l.name || l.display_name || 'Advocate',
           email: l.email || '',
-          specialization: l.practiceAreas || l.specialization || [],
+          specialization: l.practiceAreas || l.practice_areas || l.specialization || [],
           location: l.location || 'Unknown',
           rating: l.rating !== undefined && l.rating !== null ? l.rating : 5.0,
-          reviewCount: l.numReviews !== undefined && l.numReviews !== null ? l.numReviews : 0,
-          yearsOfExperience: l.yearsExperience !== undefined && l.yearsExperience !== null ? l.yearsExperience : 0,
-          hourlyRate: l.hourlyRate !== undefined && l.hourlyRate !== null ? l.hourlyRate : 0,
-          avatar: l.profilePicture || l.avatar || undefined,
+          reviewCount: l.numReviews !== undefined && l.numReviews !== null ? l.numReviews : (l.num_reviews !== undefined && l.num_reviews !== null ? l.num_reviews : 0),
+          yearsOfExperience: l.yearsExperience !== undefined && l.yearsExperience !== null ? l.yearsExperience : (l.years_experience !== undefined && l.years_experience !== null ? l.years_experience : 0),
+          hourlyRate: l.hourlyRate !== undefined && l.hourlyRate !== null ? l.hourlyRate : (l.hourly_rate !== undefined && l.hourly_rate !== null ? l.hourly_rate : 0),
+          avatar: l.profilePicture || l.profile_picture || l.avatar || undefined,
           bio: l.bio || '',
           verified: !!l.verified,
           availability: l.availability !== undefined ? l.availability : true,
+          licenseNumber: l.licenseNumber || l.license_number || '',
       } as unknown as Lawyer;
+  }
+
+  // Helper to normalize article object
+  private normalizeArticle(a: any): Article {
+      if (!a) return a;
+      return {
+          id: a.articleId || a.id || '',
+          title: a.title || '',
+          content: a.content || '',
+          author: {
+              id: a.authorId || a.author?.id || '',
+              name: a.authorName || a.author?.name || 'Advocate',
+              avatar: a.authorAvatar || a.author?.avatar || undefined,
+              isLawyer: a.author?.isLawyer !== undefined ? a.author.isLawyer : true
+          },
+          category: a.category || 'General',
+          tags: a.tags || [],
+          likes: a.likesCount !== undefined ? a.likesCount : (a.likes || 0),
+          commentCount: a.commentCount || 0,
+          views: a.views || 0,
+          createdAt: a.createdAt || a.created_at || new Date().toISOString(),
+          updatedAt: a.updatedAt || a.updated_at || new Date().toISOString(),
+      };
   }
 
   // ============ AUTH ENDPOINTS ============
@@ -203,6 +255,12 @@ class ApiClient {
       password: registerData.password,
       displayName: registerData.name,
       role: registerData.role || 'citizen',
+      bio: registerData.bio,
+      location: registerData.location,
+      licenseNumber: registerData.licenseNumber,
+      practiceAreas: registerData.practiceAreas,
+      hourlyRate: registerData.hourlyRate,
+      yearsExperience: registerData.yearsExperience,
     };
     const response = await this.client.post('/api/v1/auth/register', payload);
     const data = response.data;
@@ -250,7 +308,18 @@ class ApiClient {
 
   async updateProfile(data: Partial<User>): Promise<User> {
     // Using users endpoint for profile updates
-    const response = await this.client.patch<User>('/api/v1/users/profile', data);
+    const payload: any = {
+      display_name: data.name,
+      bio: data.bio,
+      phone_number: data.phone,
+      location: data.location,
+      profile_picture: data.avatar,
+    };
+
+    // Remove undefined values to prevent overwriting values with nulls
+    Object.keys(payload).forEach(key => payload[key] === undefined && delete payload[key]);
+
+    const response = await this.client.patch<User>('/api/v1/users/profile', payload);
     return this.normalizeUser(response.data);
   }
 
@@ -290,8 +359,47 @@ class ApiClient {
     };
   }
 
+  async getPendingLawyers(page: number = 1, limit: number = 20): Promise<PaginatedResponse<Lawyer>> {
+    const response = await this.client.get<any>('/api/v1/lawyers/pending', {
+      params: { page, limit }
+    });
+    const data = response.data;
+    const rawLawyers = data.lawyers || [];
+    const normalizedLawyers = rawLawyers.map((l: any) => this.normalizeLawyer(l));
+    return {
+      success: true,
+      data: normalizedLawyers,
+      pagination: {
+        page: data.page || page,
+        limit: data.pageSize || limit,
+        total: data.total || 0,
+        totalPages: Math.ceil((data.total || 0) / (data.pageSize || limit))
+      }
+    };
+  }
+
+  async verifyLawyer(lawyerId: string, verified: boolean = true): Promise<Lawyer> {
+    const response = await this.client.put<any>(`/api/v1/lawyers/${lawyerId}/verify`, null, {
+      params: { verified }
+    });
+    return this.normalizeLawyer(response.data);
+  }
+
   async getLawyerById(id: string): Promise<Lawyer> {
     const response = await this.client.get<any>(`/api/v1/lawyers/${id}`);
+    return this.normalizeLawyer(response.data);
+  }
+
+  async updateLawyerProfile(id: string, data: Partial<Lawyer>): Promise<Lawyer> {
+    const response = await this.client.put<any>(`/api/v1/lawyers/${id}`, {
+      displayName: data.name,
+      bio: data.bio,
+      location: data.location,
+      practiceAreas: data.specialization,
+      hourlyRate: data.hourlyRate,
+      licenseNumber: data.licenseNumber,
+      yearsExperience: data.yearsOfExperience,
+    });
     return this.normalizeLawyer(response.data);
   }
 
@@ -307,8 +415,24 @@ class ApiClient {
   // ============ BOOKING ENDPOINTS ============
 
   async createBooking(booking: Omit<Booking, 'id' | 'createdAt'>): Promise<Booking> {
-    const response = await this.client.post<Booking>('/api/v1/bookings', booking);
-    return response.data;
+    const payload = {
+      lawyerId: booking.lawyerId,
+      userId: booking.userId,
+      scheduledAt: booking.scheduledAt,
+      duration: booking.duration,
+      consultationType: booking.type === 'video' ? 'video' : 'meeting',
+      notes: booking.notes,
+      location: booking.location,
+      fee: booking.fee,
+      paymentMethod: booking.paymentMethod,
+    };
+    const response = await this.client.post<any>('/api/v1/bookings', payload);
+    return this.normalizeBooking(response.data);
+  }
+
+  async getBooking(bookingId: string): Promise<Booking> {
+    const response = await this.client.get<any>(`/api/v1/bookings/${bookingId}`);
+    return this.normalizeBooking(response.data);
   }
 
   async getUserBookings(userId: string, page: number = 1): Promise<PaginatedResponse<Booking>> {
@@ -317,9 +441,10 @@ class ApiClient {
       params: { page }
     });
     const data = response.data;
+    const rawBookings = data.bookings || [];
     return {
       success: true,
-      data: data.bookings || [],
+      data: rawBookings.map((b: any) => this.normalizeBooking(b)),
       pagination: {
         page: data.page || page,
         limit: data.pageSize || 20,
@@ -329,10 +454,42 @@ class ApiClient {
     };
   }
 
+  async getLawyerBookings(lawyerId: string, page: number = 1, limit: number = 20): Promise<PaginatedResponse<Booking>> {
+    const response = await this.client.get<any>(`/api/v1/lawyers/${lawyerId}/bookings`, {
+      params: { page, limit }
+    });
+    const data = response.data;
+    const rawBookings = data.bookings || [];
+    return {
+      success: true,
+      data: rawBookings.map((b: any) => this.normalizeBooking(b)),
+      pagination: {
+        page: data.page || page,
+        limit: data.pageSize || limit,
+        total: data.total || 0,
+        totalPages: Math.ceil((data.total || 0) / (data.pageSize || limit))
+      }
+    };
+  }
+
   async updateBooking(id: string, updates: Partial<Booking>): Promise<Booking> {
     // FIX: Changed from PATCH to PUT to match backend
-    const response = await this.client.put<Booking>(`/api/v1/bookings/${id}`, updates);
-    return response.data;
+    const payload: any = { ...updates };
+    if (updates.type !== undefined) {
+      payload.consultationType = updates.type === 'video' ? 'video' : 'meeting';
+      delete payload.type;
+    }
+    const response = await this.client.put<any>(`/api/v1/bookings/${id}`, payload);
+    return this.normalizeBooking(response.data);
+  }
+
+  async updateBookingStatus(bookingId: string, status: string, notes?: string, cancellationReason?: string): Promise<Booking> {
+    const response = await this.client.put<any>(`/api/v1/bookings/${bookingId}/status`, {
+      status,
+      notes,
+      cancellationReason
+    });
+    return this.normalizeBooking(response.data);
   }
 
   async cancelBooking(id: string, reason?: string): Promise<void> {
@@ -347,9 +504,11 @@ class ApiClient {
       params: { ...filters, page }
     });
     const data = response.data;
+    const rawArticles = data.articles || [];
+    const normalizedArticles = rawArticles.map((a: any) => this.normalizeArticle(a));
     return {
       success: true,
-      data: data.articles || [],
+      data: normalizedArticles,
       pagination: {
         page: data.page || page,
         limit: data.pageSize || 20,
@@ -360,18 +519,25 @@ class ApiClient {
   }
 
   async getArticleById(id: string): Promise<Article> {
-    const response = await this.client.get<Article>(`/api/v1/articles/${id}`);
-    return response.data;
+    const response = await this.client.get<any>(`/api/v1/articles/${id}`);
+    return this.normalizeArticle(response.data);
   }
 
-  async createArticle(article: Omit<Article, 'id' | 'likes' | 'createdAt' | 'updatedAt'>): Promise<Article> {
-    const response = await this.client.post<Article>('/api/v1/articles', article);
-    return response.data;
+  async createArticle(article: Omit<Article, 'id' | 'likes' | 'createdAt' | 'updatedAt'> & { published?: boolean }): Promise<Article> {
+    const payload = {
+      title: article.title,
+      content: article.content,
+      tags: article.tags || [],
+      published: article.published ?? true,
+      category: article.category || 'General'
+    };
+    const response = await this.client.post<any>('/api/v1/articles', payload);
+    return this.normalizeArticle(response.data);
   }
 
   async updateArticle(id: string, updates: Partial<Article>): Promise<Article> {
-    const response = await this.client.patch<Article>(`/api/v1/articles/${id}`, updates);
-    return response.data;
+    const response = await this.client.patch<any>(`/api/v1/articles/${id}`, updates);
+    return this.normalizeArticle(response.data);
   }
 
   async deleteArticle(id: string): Promise<void> {
@@ -390,6 +556,11 @@ class ApiClient {
 
   async submitCase(caseData: CaseSubmission): Promise<Case> {
     const response = await this.client.post<Case>('/api/v1/cases', caseData);
+    return response.data;
+  }
+
+  async claimCase(caseId: string): Promise<Case> {
+    const response = await this.client.post<Case>(`/api/v1/cases/${caseId}/claim`);
     return response.data;
   }
 
@@ -433,8 +604,11 @@ class ApiClient {
     };
   }
 
-  async updateCaseStatus(id: string, status: Case['status']): Promise<Case> {
-    const response = await this.client.patch<Case>(`/api/v1/cases/${id}/status`, { status });
+  async updateCaseStatus(id: string, status: Case['status'], notes?: string): Promise<Case> {
+    const response = await this.client.put<Case>(`/api/v1/cases/${id}/status`, { 
+      status,
+      notes: notes || 'Status updated by administrator'
+    });
     return response.data;
   }
 

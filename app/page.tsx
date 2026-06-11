@@ -1,4 +1,4 @@
-import { Hero, TrustSignals, ServiceSegmentation, HowItWorks, Features, FinalCTA, Footer, HomeNavbar } from '@/components/home';
+import { Hero, TrustSignals, ServiceSegmentation, HowItWorks, Features, FinalCTA, Footer, HomeNavbar, FAQ } from '@/components/home';
 
 export default function Home() {
   return (
@@ -9,6 +9,7 @@ export default function Home() {
       <ServiceSegmentation />
       <HowItWorks />
       <Features />
+      <FAQ />
       <FinalCTA />
       <Footer />
     </div>

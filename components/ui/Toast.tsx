@@ -22,7 +22,7 @@ export const showToast = ({
       ? 'bg-green-600'
       : type === 'error'
       ? 'bg-red-600'
-      : 'bg-blue-600';
+      : 'bg-[#B89868]';
 
   const icon =
     type === 'success'

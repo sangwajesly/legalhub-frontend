@@ -1,6 +1,7 @@
 'use client';
 
 import { ShieldCheck, CreditCard, Zap } from 'lucide-react';
+import Link from 'next/link';
 
 export function Features() {
   const features = [
@@ -58,27 +59,29 @@ export function Features() {
           ))}
         </div>
 
-        {/* Supporting Stats/Premium Banner */}
+        {/* Supporting Premium Banner */}
         <div className="mt-24 bg-[#1C1B19] dark:bg-stone-900/40 border border-[#B89868]/30 rounded-2xl p-10 md:p-16 text-center relative overflow-hidden">
           <div className="relative z-10 max-w-3xl mx-auto">
-            <span className="text-[10px] text-[#B89868] font-bold uppercase tracking-widest mb-4 block">Our Community</span>
-            <h3 className="text-2xl md:text-4xl font-light font-display text-[#FAF9F5] mb-12">
+            <span className="text-[10px] text-[#B89868] font-bold uppercase tracking-widest mb-4 block">Our Mission</span>
+            <h3 className="text-2xl md:text-4xl font-light font-display text-[#FAF9F5] mb-6 leading-relaxed">
               Empowering everyday people with <span className="italic">dignified</span>, stress-free legal support.
             </h3>
-            
-            <div className="grid grid-cols-3 gap-6 border-t border-stone-800 pt-12">
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-light font-display text-[#B89868] mb-2">50,000+</div>
-                <div className="text-stone-450 text-[10px] uppercase tracking-widest font-bold">Citizens Helped</div>
-              </div>
-              <div className="text-center border-l border-r border-stone-800">
-                <div className="text-3xl md:text-4xl font-light font-display text-[#B89868] mb-2">99%</div>
-                <div className="text-stone-450 text-[10px] uppercase tracking-widest font-bold">Clarity Rating</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-light font-display text-[#B89868] mb-2">500+</div>
-                <div className="text-stone-450 text-[10px] uppercase tracking-widest font-bold">Friendly Local Lawyers</div>
-              </div>
+            <p className="text-stone-400 max-w-xl mx-auto mb-10 text-xs leading-relaxed font-sans font-medium">
+              We coordinate with leading legal aid networks and verified advocates to ensure every citizen can access clear answers and accredited representation.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Link
+                href="/chat"
+                className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 bg-[#B89868] hover:bg-[#A38253] text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-colors duration-300"
+              >
+                Ask AI a Free Question
+              </Link>
+              <Link
+                href="/lawyers"
+                className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-stone-800 text-stone-300 hover:text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-colors duration-300"
+              >
+                Find a Lawyer Near You
+              </Link>
             </div>
           </div>
         </div>

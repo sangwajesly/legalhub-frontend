@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-
 import { cn } from '@/lib/utils';
+import { Twitter, Facebook, Instagram, Linkedin } from 'lucide-react';
 
 interface FooterProps {
     className?: string;
@@ -24,11 +24,13 @@ export function Footer({ className }: FooterProps) {
 
                     <div>
                         <h4 className="font-semibold text-slate-900 dark:text-white mb-4">Quick Links</h4>
-                        <ul className="space-y-2 text-sm text-slate-650 dark:text-slate-400">
+                        <ul className="space-y-2 text-sm text-slate-655 dark:text-slate-400">
                             <li><Link href="/dashboard" className="hover:text-[#B89868] dark:hover:text-[#C5A880] transition-colors">Dashboard</Link></li>
                             <li><Link href="/lawyers" className="hover:text-[#B89868] dark:hover:text-[#C5A880] transition-colors">Find Lawyers</Link></li>
                             <li><Link href="/chat" className="hover:text-[#B89868] dark:hover:text-[#C5A880] transition-colors">AI Assistant</Link></li>
                             <li><Link href="/articles" className="hover:text-[#B89868] dark:hover:text-[#C5A880] transition-colors">Articles</Link></li>
+                            <li><Link href="/about" className="hover:text-[#B89868] dark:hover:text-[#C5A880] transition-colors">About Us</Link></li>
+                            <li><Link href="/pricing" className="hover:text-[#B89868] dark:hover:text-[#C5A880] transition-colors">Pricing Tiers</Link></li>
                         </ul>
                     </div>
 
@@ -45,19 +47,19 @@ export function Footer({ className }: FooterProps) {
                     <div>
                         <h4 className="font-semibold text-slate-900 dark:text-white mb-4">Contact</h4>
                         <p className="text-sm text-stone-500 dark:text-stone-400 mb-2">support@legalhub.com</p>
-                        <p className="text-sm text-stone-500 dark:text-stone-400 mb-2">+1 (555) 123-4567</p>
+                        <p className="text-sm text-stone-500 dark:text-stone-400 mb-2">+237 677 12 34 56</p>
                         <div className="flex gap-4 mt-4">
-                            <a href="https://twitter.com/legalhub" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-[#FAF9F5]/40 dark:bg-stone-900/10 border border-[#E5E2DC] dark:border-stone-850 rounded-xl flex items-center justify-center text-stone-500 dark:text-stone-400 hover:border-[#B89868]/40 hover:text-[#B89868] dark:hover:text-[#C5A880] transition-colors">
-                                <span>X</span>
+                            <a href="https://twitter.com/legalhub" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-[#FAF9F5]/40 dark:bg-stone-900/10 border border-[#E5E2DC] dark:border-stone-850 rounded-xl flex items-center justify-center text-stone-500 dark:text-stone-400 hover:border-[#B89868]/40 hover:text-[#B89868] dark:hover:text-[#C5A880] transition-colors" aria-label="Twitter">
+                                <Twitter className="h-4 w-4" />
                             </a>
-                            <a href="https://facebook.com/legalhub" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-[#FAF9F5]/40 dark:bg-stone-900/10 border border-[#E5E2DC] dark:border-stone-850 rounded-xl flex items-center justify-center text-stone-500 dark:text-stone-400 hover:border-[#B89868]/40 hover:text-[#B89868] dark:hover:text-[#C5A880] transition-colors">
-                                <span>FB</span>
+                            <a href="https://facebook.com/legalhub" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-[#FAF9F5]/40 dark:bg-stone-900/10 border border-[#E5E2DC] dark:border-stone-850 rounded-xl flex items-center justify-center text-stone-500 dark:text-stone-400 hover:border-[#B89868]/40 hover:text-[#B89868] dark:hover:text-[#C5A880] transition-colors" aria-label="Facebook">
+                                <Facebook className="h-4 w-4" />
                             </a>
-                            <a href="https://instagram.com/legalhub" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-[#FAF9F5]/40 dark:bg-stone-900/10 border border-[#E5E2DC] dark:border-stone-850 rounded-xl flex items-center justify-center text-stone-500 dark:text-stone-400 hover:border-[#B89868]/40 hover:text-[#B89868] dark:hover:text-[#C5A880] transition-colors">
-                                <span>IG</span>
+                            <a href="https://instagram.com/legalhub" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-[#FAF9F5]/40 dark:bg-stone-900/10 border border-[#E5E2DC] dark:border-stone-850 rounded-xl flex items-center justify-center text-stone-500 dark:text-stone-400 hover:border-[#B89868]/40 hover:text-[#B89868] dark:hover:text-[#C5A880] transition-colors" aria-label="Instagram">
+                                <Instagram className="h-4 w-4" />
                             </a>
-                            <a href="https://tiktok.com/@legalhub" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-[#FAF9F5]/40 dark:bg-stone-900/10 border border-[#E5E2DC] dark:border-stone-850 rounded-xl flex items-center justify-center text-stone-500 dark:text-stone-400 hover:border-[#B89868]/40 hover:text-[#B89868] dark:hover:text-[#C5A880] transition-colors">
-                                <span>TT</span>
+                            <a href="https://linkedin.com/company/legalhub" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-[#FAF9F5]/40 dark:bg-stone-900/10 border border-[#E5E2DC] dark:border-stone-850 rounded-xl flex items-center justify-center text-stone-500 dark:text-stone-400 hover:border-[#B89868]/40 hover:text-[#B89868] dark:hover:text-[#C5A880] transition-colors" aria-label="LinkedIn">
+                                <Linkedin className="h-4 w-4" />
                             </a>
                         </div>
                     </div>

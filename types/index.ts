@@ -39,6 +39,7 @@ export interface Lawyer {
   bio: string;
   verified: boolean;
   availability: boolean;
+  licenseNumber?: string;
 }
 
 export interface LawyerFilter {
@@ -60,7 +61,15 @@ export interface Booking {
   type: 'video' | 'in-person';
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
   notes?: string;
+  location?: string;
   createdAt: string;
+  clientName?: string;
+  clientEmail?: string;
+  lawyerName?: string;
+  lawyerEmail?: string;
+  lawyerAvatar?: string;
+  fee?: number;
+  paymentMethod?: string;
 }
 
 // Article types
@@ -106,6 +115,7 @@ export interface Case {
   submittedBy?: string;
   submittedAt: string;
   updatedAt: string;
+  assignedTo?: string;
 }
 
 export interface CaseSubmission {
@@ -142,7 +152,7 @@ export interface User {
   name: string;
   email: string;
   avatar?: string;
-  role: 'citizen' | 'lawyer' | 'ngo' | 'government';
+  role: 'citizen' | 'lawyer' | 'ngo' | 'government' | 'admin';
   bio?: string;
   phone?: string;
   location?: string;
@@ -199,7 +209,13 @@ export interface RegisterData {
   name: string;
   email: string;
   password: string;
-  role: 'citizen' | 'lawyer' | 'ngo' | 'government';
+  role: 'citizen' | 'lawyer' | 'ngo' | 'government' | 'admin';
+  bio?: string;
+  location?: string;
+  licenseNumber?: string;
+  practiceAreas?: string[];
+  hourlyRate?: number;
+  yearsExperience?: number;
 }
 
 export interface AuthResponse {

@@ -63,7 +63,7 @@ const LawyerCard: React.FC<LawyerCardProps> = ({ lawyer, onSelectLawyer }) => {
         <span className="text-xs font-semibold text-stone-800 dark:text-stone-200">
           {lawyer.hourlyRate.toLocaleString()}
         </span>
-        <span className="text-xs text-stone-400 dark:text-stone-500"> CFA/hr</span>
+        <span className="text-xs text-stone-400 dark:text-stone-500"> FCFA/hr</span>
       </div>
 
       {/* Availability dot */}

@@ -71,22 +71,6 @@ export function HowItWorks() {
             </div>
           ))}
         </div>
-
-        {/* Performance Metrics */}
-        <div className="grid md:grid-cols-3 gap-8 md:gap-0 border-t border-b md:border border-[#E5E2DC] dark:border-stone-800 mt-16 bg-[#FDFCF9]/50 dark:bg-stone-900/5 rounded-2xl overflow-hidden">
-          <div className="text-center py-8 border-b md:border-b-0 md:border-r border-[#E5E2DC] dark:border-stone-800">
-            <div className="text-3xl font-light font-display text-[#B89868] mb-2">50,000+</div>
-            <p className="text-[10px] text-stone-500 dark:text-stone-400 uppercase tracking-widest font-bold">Citizens Helped</p>
-          </div>
-          <div className="text-center py-8 border-b md:border-b-0 md:border-r border-[#E5E2DC] dark:border-stone-800">
-            <div className="text-3xl font-light font-display text-[#B89868] mb-2">100% Free</div>
-            <p className="text-[10px] text-stone-500 dark:text-stone-400 uppercase tracking-widest font-bold">AI Legal Assistant</p>
-          </div>
-          <div className="text-center py-8">
-            <div className="text-3xl font-light font-display text-[#B89868] mb-2">Zero</div>
-            <p className="text-[10px] text-stone-500 dark:text-stone-400 uppercase tracking-widest font-bold">Surprise Fees</p>
-          </div>
-        </div>
       </div>
     </section>
   );

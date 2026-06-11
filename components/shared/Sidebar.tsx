@@ -33,7 +33,35 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
     const pathname = usePathname();
-    const { logout } = useAuthStore();
+    const { logout, user } = useAuthStore();
+
+    const role = user?.role || 'citizen';
+    
+    // Filter and customize sidebar items based on role
+    const activeItems = sidebarItems.filter((item) => {
+        if (role === 'lawyer') {
+            // Lawyers manage bookings in dashboard, write/read articles, and view client cases.
+            // They do not search for lawyers, manage bookings via bookings tab, or access the chatbot.
+            return item.href !== '/chat' && item.href !== '/lawyers' && item.href !== '/bookings';
+        }
+        if (role === 'admin') {
+            // Admins manage cases and bookings globally in dashboard, and do not find lawyers, manage bookings, view personal cases, or use chatbot.
+            return item.href !== '/chat' && item.href !== '/lawyers' && item.href !== '/bookings' && item.href !== '/cases';
+        }
+        if (role === 'government') {
+            // Government view analytics globally in dashboard, and do not find lawyers, manage bookings, view cases, or use chatbot.
+            return item.href !== '/chat' && item.href !== '/lawyers' && item.href !== '/bookings' && item.href !== '/cases';
+        }
+        return true;
+    }).map((item) => {
+        if (role === 'lawyer' && item.href === '/cases') {
+            return { ...item, label: 'Client Cases' };
+        }
+        if (role === 'admin' && item.href === '/dashboard') {
+            return { ...item, label: 'System Admin' };
+        }
+        return item;
+    });
 
     return (
         <>
@@ -48,20 +76,20 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                         <X className="h-6 w-6" />
                     </Button>
                 </div>
-
+ 
                 {/* Logo */}
                 <div className="flex-none flex items-center justify-center h-16 border-b border-[#E5E2DC] dark:border-[#E5E2DC]/10">
                     <Link href="/" className="text-xl font-light font-display text-stone-900 dark:text-stone-50">
                         Legal<span className="text-[#B89868] italic font-serif font-normal">Hub</span>
                     </Link>
                 </div>
-
+ 
                 {/* Navigation Items */}
                 <nav className="flex-1 overflow-y-auto p-4 space-y-2">
-                    {sidebarItems.map((item) => {
+                    {activeItems.map((item) => {
                         const Icon = item.icon;
                         const isActive = pathname === item.href;
-
+ 
                         return (
                             <Link
                                 key={item.href}

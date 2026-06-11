@@ -22,13 +22,13 @@ export default function ContactPage() {
 
                     <div className="space-y-6">
                         <div className="flex items-start gap-4">
-                            <div className="p-3 bg-blue-100 text-blue-600 rounded-lg">
+                            <div className="p-3 bg-[#B89868]/15 text-[#B89868] rounded-lg">
                                 <Mail className="h-6 w-6" />
                             </div>
                             <div>
                                 <h3 className="font-semibold text-slate-900">Email</h3>
                                 <p className="text-slate-600">Our friendly team is here to help.</p>
-                                <p className="text-blue-600 font-medium mt-1">support@legalhub.com</p>
+                                <p className="text-[#B89868] font-medium mt-1">support@legalhub.com</p>
                             </div>
                         </div>
 

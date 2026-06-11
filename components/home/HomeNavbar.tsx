@@ -36,6 +36,18 @@ export function HomeNavbar() {
           >
             Help Guides
           </Link>
+          <Link 
+            href="/about" 
+            className="text-xs font-semibold uppercase tracking-widest text-stone-600 dark:text-stone-300 hover:text-[#B89868] dark:hover:text-[#C5A880] transition-colors"
+          >
+            About
+          </Link>
+          <Link 
+            href="/pricing" 
+            className="text-xs font-semibold uppercase tracking-widest text-stone-600 dark:text-stone-300 hover:text-[#B89868] dark:hover:text-[#C5A880] transition-colors"
+          >
+            Pricing
+          </Link>
         </div>
 
         {/* Action Buttons */}

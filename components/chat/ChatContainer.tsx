@@ -24,15 +24,6 @@ const ChatContainer: React.FC = () => {
   const { isAuthenticated, user } = useAuthStore();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  // Auto guest login if unauthenticated on mounting
-  useEffect(() => {
-    if (!isAuthenticated) {
-      console.log('[ChatContainer] Unauthenticated user entering chat. Logging in as guest mock citizen.');
-      useAuthStore.getState().login({ email: "demo@legalhub.com", password: "demo_password" })
-        .catch(err => console.error("Auto guest login failed:", err));
-    }
-  }, [isAuthenticated]);
-
   useEffect(() => {
     if (isAuthenticated) {
       fetchAllSessions();
@@ -56,16 +47,32 @@ const ChatContainer: React.FC = () => {
   const isCreatingSession = React.useRef(false);
 
   useEffect(() => {
-    // Wait for user to be available before auto-creating
-    if (isAuthenticated && user && !isLoading && !currentSessionId && allSessions.length === 0 && !error) {
-      if (isCreatingSession.current) return;
-      isCreatingSession.current = true;
-      createSession({ title: 'New Chat' })
-        .finally(() => {
-          isCreatingSession.current = false;
+    if (!isLoading && !currentSessionId) {
+      if (isAuthenticated && user) {
+        if (allSessions.length === 0 && !error) {
+          if (isCreatingSession.current) return;
+          isCreatingSession.current = true;
+          createSession({ title: 'New Chat' })
+            .finally(() => {
+              isCreatingSession.current = false;
+            });
+        } else if (allSessions.length > 0) {
+          setCurrentSession(allSessions[0].id);
+        }
+      } else if (!isAuthenticated) {
+        // Auto-initialize local guest session
+        const guestSessionId = `local-${Date.now()}`;
+        useChatStore.setState({
+          currentSessionId: guestSessionId,
+          chatHistory: [],
+          allSessions: [{
+            id: guestSessionId,
+            title: 'Guest Chat',
+            lastMessage: '',
+            timestamp: new Date().toISOString()
+          }]
         });
-    } else if (isAuthenticated && !isLoading && !currentSessionId && allSessions.length > 0) {
-       setCurrentSession(allSessions[0].id);
+      }
     }
   }, [isAuthenticated, user, currentSessionId, isLoading, allSessions, createSession, setCurrentSession, error]);
 

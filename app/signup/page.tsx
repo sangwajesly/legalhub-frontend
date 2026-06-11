@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Scale, Users, FileCheck, Globe, ArrowRight } from 'lucide-react';
+import { Scale, Users, FileCheck, Globe, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,6 +14,18 @@ const SignupPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [role, setRole] = useState<'citizen' | 'lawyer'>('citizen');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  
+  // Lawyer details states
+  const [licenseNumber, setLicenseNumber] = useState('');
+  const [practiceAreas, setPracticeAreas] = useState('');
+  const [hourlyRate, setHourlyRate] = useState('');
+  const [yearsExperience, setYearsExperience] = useState('');
+  const [location, setLocation] = useState('');
+  const [bio, setBio] = useState('');
+
   const router = useRouter();
 
   const { register, loginWithGoogle, isLoading, error: authError, clearError } = useAuthStore();
@@ -34,8 +46,22 @@ const SignupPage: React.FC = () => {
     }
 
     try {
-      await register({ name, email, password, role: 'citizen' });
-      router.push('/chat');
+      const data: any = { name, email, password, role };
+      if (role === 'lawyer') {
+        data.licenseNumber = licenseNumber;
+        data.practiceAreas = practiceAreas.split(',').map(s => s.trim()).filter(Boolean);
+        data.hourlyRate = parseFloat(hourlyRate) || 0;
+        data.yearsExperience = parseInt(yearsExperience) || 0;
+        data.location = location;
+        data.bio = bio;
+      }
+      await register(data);
+      const currentUser = useAuthStore.getState().user;
+      if (currentUser?.role && ['lawyer', 'admin', 'ngo', 'government'].includes(currentUser.role)) {
+        router.push('/dashboard');
+      } else {
+        router.push('/chat');
+      }
     } catch (err: any) {
       // Error handled by store
     }
@@ -46,14 +72,19 @@ const SignupPage: React.FC = () => {
     clearError();
     try {
       await loginWithGoogle();
-      router.push('/chat');
+      const currentUser = useAuthStore.getState().user;
+      if (currentUser?.role && ['lawyer', 'admin', 'ngo', 'government'].includes(currentUser.role)) {
+        router.push('/dashboard');
+      } else {
+        router.push('/chat');
+      }
     } catch (error) {
       // Error handled by store
     }
   };
 
   return (
-    <div className="h-screen grid lg:grid-cols-2 bg-[#FAF9F5] dark:bg-[#121315] overflow-hidden">
+    <div className="min-h-screen lg:h-screen grid lg:grid-cols-2 bg-[#FAF9F5] dark:bg-[#0E0F11] overflow-y-auto lg:overflow-hidden font-sans antialiased">
       {/* Left Side: Branding & Storytelling (Hidden on mobile) */}
       <div className="hidden lg:flex relative bg-[#121315] overflow-hidden border-r border-[#E5E2DC]/10 dark:border-stone-850">
         {/* Intense Background Decorations for Signup */}
@@ -113,10 +144,14 @@ const SignupPage: React.FC = () => {
       </div>
 
       {/* Right Side: Signup Form */}
-      <div className="flex items-center justify-center p-6 xl:p-8 bg-[#FAF9F5] dark:bg-[#121315] overflow-y-auto lg:overflow-hidden">
-        <div className="w-full max-w-md space-y-4 xl:space-y-6 animate-fade-in">
+      <div className="relative flex items-start lg:items-center justify-center p-4 sm:p-8 xl:p-12 bg-[#FAF9F5] dark:bg-[#0E0F11] overflow-y-auto h-full w-full py-12 lg:py-8">
+        {/* Dynamic mesh gradients for premium glassmorphism background glow */}
+        <div className="absolute top-[10%] right-[10%] w-[35%] h-[35%] bg-[#B89868]/10 rounded-full blur-[80px] dark:blur-[100px] pointer-events-none animate-pulse"></div>
+        <div className="absolute bottom-[10%] left-[10%] w-[30%] h-[30%] bg-[#B89868]/5 rounded-full blur-[70px] dark:blur-[90px] pointer-events-none animate-pulse delay-500"></div>
+
+        <div className="relative z-10 w-full max-w-md p-6 sm:p-8 xl:p-10 rounded-3xl border border-[#E5E2DC] dark:border-stone-800/60 bg-white/70 dark:bg-stone-950/45 backdrop-blur-xl shadow-xl dark:shadow-stone-950/40 space-y-6 xl:space-y-8 animate-fade-in my-auto">
           {/* Logo (Mobile-only) */}
-          <div className="lg:hidden flex justify-center mb-4">
+          <div className="lg:hidden flex justify-center mb-6">
             <Link href="/" className="flex items-center gap-2.5">
               <div className="h-10 w-10 border border-[#B89868]/30 rounded-xl flex items-center justify-center bg-stone-900/60 shadow-sm">
                 <Scale className="h-5 w-5 text-[#B89868]" />
@@ -127,7 +162,7 @@ const SignupPage: React.FC = () => {
             </Link>
           </div>
 
-          <div className="text-center lg:text-left space-y-1">
+          <div className="text-center lg:text-left space-y-1.5">
             <h1 className="text-2xl xl:text-3xl font-serif font-bold text-[#121315] dark:text-white tracking-tight">Create Account</h1>
             <p className="text-xs xl:text-sm text-stone-500 dark:text-stone-400 font-normal">Join the future of citizen-first legal tech.</p>
           </div>
@@ -135,7 +170,8 @@ const SignupPage: React.FC = () => {
           <Button 
             variant="outline" 
             onClick={handleGoogleSignup}
-            className="w-full py-5 xl:py-6 border-[#E5E2DC] dark:border-stone-800 bg-[#FDFCF9] dark:bg-stone-900/50 hover:bg-[#FAF9F5] dark:hover:bg-stone-900 text-stone-700 dark:text-white flex items-center justify-center gap-3 text-xs xl:text-sm shadow-sm group transition-all rounded-xl font-medium"
+            type="button"
+            className="w-full py-5 xl:py-6 border-[#E5E2DC] dark:border-stone-800 bg-white/50 dark:bg-stone-900/30 hover:bg-[#FAF9F5] dark:hover:bg-stone-900/80 text-stone-700 dark:text-stone-200 flex items-center justify-center gap-3 text-sm xl:text-base shadow-sm group transition-all rounded-xl font-medium backdrop-blur-sm active:scale-[0.99]"
           >
             <svg className="w-4 h-4 xl:w-5 xl:h-5 group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -148,35 +184,64 @@ const SignupPage: React.FC = () => {
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-[#E5E2DC] dark:border-stone-850"></span>
+              <span className="w-full border-t border-[#E5E2DC] dark:border-stone-800/80"></span>
             </div>
-            <div className="relative flex justify-center text-[10px] xl:text-xs uppercase font-semibold">
-              <span className="bg-[#FAF9F5] dark:bg-[#121315] px-4 text-stone-400 dark:text-stone-500 font-medium">Or use email</span>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-white/85 dark:bg-stone-900/80 px-4 text-stone-400 dark:text-stone-500 font-semibold rounded-full backdrop-blur-sm">Or use email</span>
             </div>
           </div>
 
-          <form onSubmit={handleSignup} className="space-y-3 xl:space-y-4">
+          <form onSubmit={handleSignup} className="space-y-4 xl:space-y-5">
             {error && (
-              <div className="p-3 bg-red-50/50 dark:bg-red-900/20 border border-red-200/50 dark:border-red-800/50 rounded-xl text-red-600 dark:text-red-400 text-[10px] xl:text-xs flex items-center gap-3">
+              <div className="p-3 xl:p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-600 dark:text-red-400 text-xs xl:text-sm flex items-center gap-3">
                 <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
                 {error}
               </div>
             )}
+
+            {/* Role Switcher */}
+            <div className="space-y-1.5 xl:space-y-2">
+              <Label className="text-stone-700 dark:text-stone-300 text-xs xl:text-sm font-semibold ml-1">I am registering as a:</Label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setRole('citizen')}
+                  className={`py-2.5 rounded-xl border text-xs xl:text-sm font-semibold transition-all duration-200 active:scale-[0.98] ${
+                    role === 'citizen'
+                      ? 'bg-[#B89868] text-white border-[#B89868] shadow-sm shadow-[#B89868]/15'
+                      : 'bg-white/50 dark:bg-stone-900/30 text-stone-600 dark:text-stone-300 border-[#E5E2DC] dark:border-stone-800/80 hover:bg-[#FAF9F5] dark:hover:bg-stone-900/50'
+                  }`}
+                >
+                  Citizen
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRole('lawyer')}
+                  className={`py-2.5 rounded-xl border text-xs xl:text-sm font-semibold transition-all duration-200 active:scale-[0.98] ${
+                    role === 'lawyer'
+                      ? 'bg-[#B89868] text-white border-[#B89868] shadow-sm shadow-[#B89868]/15'
+                      : 'bg-white/50 dark:bg-stone-900/30 text-stone-600 dark:text-stone-300 border-[#E5E2DC] dark:border-stone-800/80 hover:bg-[#FAF9F5] dark:hover:bg-stone-900/50'
+                  }`}
+                >
+                  Lawyer / Advocate
+                </button>
+              </div>
+            </div>
             
-            <div className="space-y-1">
-              <Label htmlFor="name" className="text-stone-700 dark:text-stone-300 text-xs font-semibold ml-1">Full Name</Label>
+            <div className="space-y-1.5 xl:space-y-2">
+              <Label htmlFor="name" className="text-stone-700 dark:text-stone-300 text-xs xl:text-sm font-semibold ml-1">Full Name</Label>
               <Input
                 id="name"
                 placeholder="Alex Johnson"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="h-11 bg-[#FDFCF9] dark:bg-stone-900/30 border-[#E5E2DC] dark:border-stone-850 focus:ring-2 focus:ring-[#B89868]/20 focus:border-[#B89868] transition-all rounded-xl dark:text-white"
+                className="h-11 bg-[#FDFCF9]/85 dark:bg-stone-900/10 border-[#E5E2DC] dark:border-stone-800/80 focus:ring-2 focus:ring-[#B89868]/25 focus:border-[#B89868] transition-all rounded-xl dark:text-white backdrop-blur-sm"
               />
             </div>
 
-            <div className="space-y-1">
-              <Label htmlFor="email" className="text-stone-700 dark:text-stone-300 text-xs font-semibold ml-1">Email</Label>
+            <div className="space-y-1.5 xl:space-y-2">
+              <Label htmlFor="email" className="text-stone-700 dark:text-stone-300 text-xs xl:text-sm font-semibold ml-1">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -184,55 +249,159 @@ const SignupPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="h-11 bg-[#FDFCF9] dark:bg-stone-900/30 border-[#E5E2DC] dark:border-stone-850 focus:ring-2 focus:ring-[#B89868]/20 focus:border-[#B89868] transition-all rounded-xl dark:text-white"
+                className="h-11 bg-[#FDFCF9]/85 dark:bg-stone-900/10 border-[#E5E2DC] dark:border-stone-800/80 focus:ring-2 focus:ring-[#B89868]/25 focus:border-[#B89868] transition-all rounded-xl dark:text-white backdrop-blur-sm"
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3 xl:gap-4">
-              <div className="space-y-1">
-                <Label htmlFor="password" className="text-stone-700 dark:text-stone-300 text-xs font-semibold ml-1">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="h-11 bg-[#FDFCF9] dark:bg-stone-900/30 border-[#E5E2DC] dark:border-stone-850 focus:ring-2 focus:ring-[#B89868]/20 focus:border-[#B89868] transition-all rounded-xl dark:text-white"
-                />
+            {role === 'lawyer' && (
+              <div className="space-y-3 xl:space-y-4 p-4 rounded-2xl border border-[#E5E2DC] dark:border-stone-800/60 bg-white/40 dark:bg-stone-900/10 backdrop-blur-sm animate-fade-in shadow-sm">
+                <p className="text-[10px] xl:text-xs font-bold text-[#B89868] uppercase tracking-wider">Professional Credentials</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label htmlFor="licenseNumber" className="text-stone-700 dark:text-stone-300 text-[10px] xl:text-xs font-semibold ml-1">License Number</Label>
+                    <Input
+                      id="licenseNumber"
+                      placeholder="BAR-12345"
+                      value={licenseNumber}
+                      onChange={(e) => setLicenseNumber(e.target.value)}
+                      required={role === 'lawyer'}
+                      className="h-10 bg-[#FDFCF9]/85 dark:bg-stone-900/10 border-[#E5E2DC] dark:border-stone-800/80 focus:ring-2 focus:ring-[#B89868]/25 focus:border-[#B89868] rounded-xl text-xs dark:text-white"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="yearsExperience" className="text-stone-700 dark:text-stone-300 text-[10px] xl:text-xs font-semibold ml-1">Experience (Years)</Label>
+                    <Input
+                      id="yearsExperience"
+                      type="number"
+                      placeholder="5"
+                      value={yearsExperience}
+                      onChange={(e) => setYearsExperience(e.target.value)}
+                      required={role === 'lawyer'}
+                      className="h-10 bg-[#FDFCF9]/85 dark:bg-stone-900/10 border-[#E5E2DC] dark:border-stone-800/80 focus:ring-2 focus:ring-[#B89868]/25 focus:border-[#B89868] rounded-xl text-xs dark:text-white"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label htmlFor="hourlyRate" className="text-stone-700 dark:text-stone-300 text-[10px] xl:text-xs font-semibold ml-1">Hourly Rate (FCFA)</Label>
+                    <Input
+                      id="hourlyRate"
+                      type="number"
+                      placeholder="75"
+                      value={hourlyRate}
+                      onChange={(e) => setHourlyRate(e.target.value)}
+                      required={role === 'lawyer'}
+                      className="h-10 bg-[#FDFCF9]/85 dark:bg-stone-900/10 border-[#E5E2DC] dark:border-stone-800/80 focus:ring-2 focus:ring-[#B89868]/25 focus:border-[#B89868] rounded-xl text-xs dark:text-white"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="location" className="text-stone-700 dark:text-stone-300 text-[10px] xl:text-xs font-semibold ml-1">Location</Label>
+                    <Input
+                      id="location"
+                      placeholder="Bamenda, Cameroon"
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                      required={role === 'lawyer'}
+                      className="h-10 bg-[#FDFCF9]/85 dark:bg-stone-900/10 border-[#E5E2DC] dark:border-stone-800/80 focus:ring-2 focus:ring-[#B89868]/25 focus:border-[#B89868] rounded-xl text-xs dark:text-white"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="practiceAreas" className="text-stone-700 dark:text-stone-300 text-[10px] xl:text-xs font-semibold ml-1">Practice Areas (comma separated)</Label>
+                  <Input
+                    id="practiceAreas"
+                    placeholder="family, criminal, corporate, human rights"
+                    value={practiceAreas}
+                    onChange={(e) => setPracticeAreas(e.target.value)}
+                    required={role === 'lawyer'}
+                    className="h-10 bg-[#FDFCF9]/85 dark:bg-stone-900/10 border-[#E5E2DC] dark:border-stone-800/80 focus:ring-2 focus:ring-[#B89868]/25 focus:border-[#B89868] rounded-xl text-xs dark:text-white"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="bio" className="text-stone-700 dark:text-stone-300 text-[10px] xl:text-xs font-semibold ml-1">Professional Bio</Label>
+                  <textarea
+                    id="bio"
+                    placeholder="Brief description of your background..."
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
+                    required={role === 'lawyer'}
+                    className="w-full min-h-[70px] p-2.5 text-xs bg-[#FDFCF9]/85 dark:bg-stone-900/10 border border-[#E5E2DC] dark:border-stone-800/80 focus:ring-2 focus:ring-[#B89868]/25 focus:border-[#B89868] outline-none transition-all rounded-xl dark:text-white resize-none"
+                  />
+                </div>
               </div>
-              <div className="space-y-1">
-                <Label htmlFor="confirm-password" className="text-stone-700 dark:text-stone-300 text-xs font-semibold ml-1">Confirm</Label>
-                <Input
-                  id="confirm-password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                  className="h-11 bg-[#FDFCF9] dark:bg-stone-900/30 border-[#E5E2DC] dark:border-stone-850 focus:ring-2 focus:ring-[#B89868]/20 focus:border-[#B89868] transition-all rounded-xl dark:text-white"
-                />
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 xl:gap-4">
+              <div className="space-y-1.5 xl:space-y-2">
+                <Label htmlFor="password" className="text-stone-700 dark:text-stone-300 text-xs xl:text-sm font-semibold ml-1">Password</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="h-11 pr-11 bg-[#FDFCF9]/85 dark:bg-stone-900/10 border-[#E5E2DC] dark:border-stone-800/80 focus:ring-2 focus:ring-[#B89868]/25 focus:border-[#B89868] transition-all rounded-xl dark:text-white backdrop-blur-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 transition-colors p-1"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4.5 w-4.5" />
+                    ) : (
+                      <Eye className="h-4.5 w-4.5" />
+                    )}
+                  </button>
+                </div>
+              </div>
+              <div className="space-y-1.5 xl:space-y-2">
+                <Label htmlFor="confirm-password" className="text-stone-700 dark:text-stone-300 text-xs xl:text-sm font-semibold ml-1">Confirm</Label>
+                <div className="relative">
+                  <Input
+                    id="confirm-password"
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    className="h-11 pr-11 bg-[#FDFCF9]/85 dark:bg-stone-900/10 border-[#E5E2DC] dark:border-stone-800/80 focus:ring-2 focus:ring-[#B89868]/25 focus:border-[#B89868] transition-all rounded-xl dark:text-white backdrop-blur-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 transition-colors p-1"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-4.5 w-4.5" />
+                    ) : (
+                      <Eye className="h-4.5 w-4.5" />
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 
             <Button 
               type="submit" 
-              className="w-full py-5 xl:py-6 bg-[#1C1B19] hover:bg-[#2C2A27] dark:bg-[#FAF9F5] dark:hover:bg-[#E5E2DC] text-[#FAF9F5] dark:text-[#121315] font-semibold rounded-xl shadow-sm group transition-all"
+              className="w-full py-5 xl:py-6 bg-[#1C1B19] hover:bg-[#2C2A27] dark:bg-[#FAF9F5] dark:hover:bg-[#E5E2DC] text-[#FAF9F5] dark:text-[#121315] font-semibold rounded-xl shadow-md active:scale-[0.98] transition-all duration-200 flex items-center justify-center"
               disabled={isLoading}
             >
               {isLoading ? (
                 <div className="h-5 w-5 border-2 border-stone-400 border-t-stone-800 rounded-full animate-spin"></div>
               ) : (
                 <span className="flex items-center gap-2">
-                  Create Account <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  Create Account <ArrowRight className="h-4 w-4" />
                 </span>
               )}
             </Button>
           </form>
 
-          <p className="text-center text-xs text-stone-500 dark:text-stone-500">
+          <p className="text-center text-xs xl:text-sm text-stone-500 dark:text-stone-500 font-medium">
             Already a member?{' '}
-            <Link href="/login" className="text-[#B89868] dark:text-[#B89868]/90 font-bold hover:underline">
+            <Link href="/login" className="text-[#B89868] dark:text-[#B89868]/90 font-bold hover:underline transition-all">
               Sign In
             </Link>
           </p>

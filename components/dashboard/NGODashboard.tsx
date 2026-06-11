@@ -101,9 +101,9 @@ export function NGODashboard({ data, isLoading }: NGODashboardProps) {
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-4">
-            <div className="p-4 bg-blue-50 dark:bg-blue-900/10 rounded-2xl flex-1 text-center">
+            <div className="p-4 bg-[#B89868]/10 dark:bg-[#B89868]/5 rounded-2xl flex-1 text-center">
               <p className="text-sm font-bold text-slate-500 uppercase">Total Cases</p>
-              <p className="text-3xl font-black text-blue-600">{data.totalCases}</p>
+              <p className="text-3xl font-black text-[#B89868]">{data.totalCases}</p>
             </div>
             <div className="p-4 bg-green-50 dark:bg-green-900/10 rounded-2xl flex-1 text-center">
               <p className="text-sm font-bold text-slate-500 uppercase">Resolution Rate</p>

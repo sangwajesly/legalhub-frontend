@@ -12,31 +12,40 @@ export default {
         display: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
       },
       colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
         primary: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#3b82f6', // Brand Blue
-          600: '#2563eb',
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a',
-          950: '#172554',
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+          50: '#fbfaf7',
+          100: '#f5f2eb',
+          200: '#ebdcc9',
+          300: '#dbbfa0',
+          400: '#ca9e75',
+          500: '#B89868', // Brand Gold
+          600: '#a58151',
+          700: '#89673f',
+          800: '#6f5234',
+          900: '#5c442c',
+          950: '#332517',
         },
         secondary: {
-          50: '#f0fdfa',
-          100: '#ccfbf1',
-          200: '#99f6e4',
-          300: '#5eead4',
-          400: '#2dd4bf',
-          500: '#14b8a6', // Teal Accent
-          600: '#0d9488',
-          700: '#0f766e',
-          800: '#115e59',
-          900: '#134e4a',
-          950: '#042f2e',
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+          50: '#faf9f6',
+          100: '#f3f2ed',
+          200: '#e7e5dc',
+          300: '#d1cdc0',
+          400: '#b3ad9c',
+          500: '#938c7b', // Warm Stone
+          600: '#777060',
+          700: '#5f594c',
+          800: '#4d473d',
+          900: '#403b33',
+          950: '#1c1b18',
         },
         slate: {
           50: '#f8fafc',
@@ -48,48 +57,9 @@ export default {
           600: '#475569',
           700: '#334155',
           800: '#1e293b',
-          850: '#162032', // Custom dark for cards
-          900: '#0f172a', // Deep background
-          950: '#020617', // Extremely deep
-        },
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-          ...{
-            50: '#eff6ff',
-            100: '#dbeafe',
-            200: '#bfdbfe',
-            300: '#93c5fd',
-            400: '#60a5fa',
-            500: '#3b82f6',
-            600: '#2563eb',
-            700: '#1d4ed8',
-            800: '#1e40af',
-            900: '#1e3a8a',
-            950: '#172554',
-          }
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-          ...{
-            50: '#f0fdfa',
-            100: '#ccfbf1',
-            200: '#99f6e4',
-            300: '#5eead4',
-            400: '#2dd4bf',
-            500: '#14b8a6',
-            600: '#0d9488',
-            700: '#0f766e',
-            800: '#115e59',
-            900: '#134e4a',
-            950: '#042f2e',
-          }
+          850: '#1c1b18', // Custom dark for cards (stone base)
+          900: '#0e0f11', // Deep background (stone base)
+          950: '#0a0a0b', // Extremely deep
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Scale, Shield, Zap, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Scale, Shield, Zap, CheckCircle2, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const { login, loginWithGoogle, isLoading, error: authError, clearError } = useAuthStore();
@@ -28,7 +29,12 @@ const LoginPage: React.FC = () => {
 
     try {
       await login({ email, password });
-      router.push('/chat');
+      const currentUser = useAuthStore.getState().user;
+      if (currentUser?.role && ['lawyer', 'admin', 'ngo', 'government'].includes(currentUser.role)) {
+        router.push('/dashboard');
+      } else {
+        router.push('/chat');
+      }
     } catch (err: any) {
       // Error handled by store
     }
@@ -39,14 +45,19 @@ const LoginPage: React.FC = () => {
     clearError();
     try {
       await loginWithGoogle();
-      router.push('/chat');
+      const currentUser = useAuthStore.getState().user;
+      if (currentUser?.role && ['lawyer', 'admin', 'ngo', 'government'].includes(currentUser.role)) {
+        router.push('/dashboard');
+      } else {
+        router.push('/chat');
+      }
     } catch (error) {
       // Error handled by store
     }
   };
 
   return (
-    <div className="h-screen grid lg:grid-cols-2 bg-[#FAF9F5] dark:bg-[#121315] overflow-hidden">
+    <div className="min-h-screen lg:h-screen grid lg:grid-cols-2 bg-[#FAF9F5] dark:bg-[#0E0F11] overflow-y-auto lg:overflow-hidden font-sans antialiased">
       {/* Left Side: Branding & Storytelling (Hidden on mobile) */}
       <div className="hidden lg:flex relative bg-[#121315] overflow-hidden border-r border-[#E5E2DC]/10 dark:border-stone-850">
         {/* Abstract Background Decorations */}
@@ -103,8 +114,12 @@ const LoginPage: React.FC = () => {
       </div>
 
       {/* Right Side: Login Form */}
-      <div className="flex items-center justify-center p-6 xl:p-8 bg-[#FAF9F5] dark:bg-[#121315] overflow-y-auto lg:overflow-hidden">
-        <div className="w-full max-w-md space-y-6 xl:space-y-8 animate-fade-in">
+      <div className="relative flex items-center justify-center p-4 sm:p-8 xl:p-12 bg-[#FAF9F5] dark:bg-[#0E0F11] overflow-y-auto min-h-screen lg:min-h-0">
+        {/* Dynamic mesh gradients for premium glassmorphism background glow */}
+        <div className="absolute top-[10%] right-[10%] w-[35%] h-[35%] bg-[#B89868]/10 rounded-full blur-[80px] dark:blur-[100px] pointer-events-none animate-pulse"></div>
+        <div className="absolute bottom-[10%] left-[10%] w-[30%] h-[30%] bg-[#B89868]/5 rounded-full blur-[70px] dark:blur-[90px] pointer-events-none animate-pulse delay-500"></div>
+
+        <div className="relative z-10 w-full max-w-md p-6 sm:p-8 xl:p-10 rounded-3xl border border-[#E5E2DC] dark:border-stone-800/60 bg-white/70 dark:bg-stone-950/45 backdrop-blur-xl shadow-xl dark:shadow-stone-950/40 space-y-6 xl:space-y-8 animate-fade-in">
           {/* Logo (Mobile-only) */}
           <div className="lg:hidden flex justify-center mb-6">
             <Link href="/" className="flex items-center gap-2.5">
@@ -117,15 +132,15 @@ const LoginPage: React.FC = () => {
             </Link>
           </div>
 
-          <div className="text-center lg:text-left space-y-1 xl:space-y-2">
+          <div className="text-center lg:text-left space-y-1.5">
             <h1 className="text-2xl xl:text-3xl font-serif font-bold text-[#121315] dark:text-white tracking-tight">Welcome Back</h1>
-            <p className="text-sm xl:text-base text-stone-500 dark:text-stone-400">Sign in to manage your legal matters.</p>
+            <p className="text-xs xl:text-sm text-stone-500 dark:text-stone-400 font-normal">Sign in to manage your legal matters.</p>
           </div>
 
           <Button 
             variant="outline" 
             onClick={handleGoogleLogin}
-            className="w-full py-5 xl:py-6 border-[#E5E2DC] dark:border-stone-800 bg-[#FDFCF9] dark:bg-stone-900/50 hover:bg-[#FAF9F5] dark:hover:bg-stone-900 text-stone-700 dark:text-white flex items-center justify-center gap-3 text-sm xl:text-base shadow-sm group transition-all rounded-xl font-medium"
+            className="w-full py-5 xl:py-6 border-[#E5E2DC] dark:border-stone-800 bg-white/50 dark:bg-stone-900/30 hover:bg-[#FAF9F5] dark:hover:bg-stone-900/80 text-stone-700 dark:text-stone-200 flex items-center justify-center gap-3 text-sm xl:text-base shadow-sm group transition-all rounded-xl font-medium backdrop-blur-sm active:scale-[0.99]"
           >
             <svg className="w-4 h-4 xl:w-5 xl:h-5 group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -138,23 +153,23 @@ const LoginPage: React.FC = () => {
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-[#E5E2DC] dark:border-stone-850"></span>
+              <span className="w-full border-t border-[#E5E2DC] dark:border-stone-800/80"></span>
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-[#FAF9F5] dark:bg-[#121315] px-4 text-stone-400 dark:text-stone-500 font-medium">Or email</span>
+              <span className="bg-white/80 dark:bg-stone-900/80 px-4 text-stone-400 dark:text-stone-500 font-semibold rounded-full backdrop-blur-sm">Or email</span>
             </div>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4 xl:space-y-5">
             {error && (
-              <div className="p-3 xl:p-4 bg-red-50/50 dark:bg-red-900/20 border border-red-200/50 dark:border-red-800/50 rounded-xl text-red-600 dark:text-red-400 text-xs xl:text-sm flex items-center gap-3">
+              <div className="p-3 xl:p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-600 dark:text-red-400 text-xs xl:text-sm flex items-center gap-3">
                 <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
                 {error}
               </div>
             )}
             
             <div className="space-y-1.5 xl:space-y-2">
-              <Label htmlFor="email" className="text-stone-700 dark:text-stone-300 text-xs xl:text-sm font-semibold">Email</Label>
+              <Label htmlFor="email" className="text-stone-700 dark:text-stone-300 text-xs xl:text-sm font-semibold ml-1">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -162,46 +177,59 @@ const LoginPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="h-11 bg-[#FDFCF9] dark:bg-stone-900/30 border-[#E5E2DC] dark:border-stone-850 focus:ring-2 focus:ring-[#B89868]/20 focus:border-[#B89868] transition-all rounded-xl dark:text-white"
+                className="h-11 bg-[#FDFCF9]/85 dark:bg-stone-900/10 border-[#E5E2DC] dark:border-stone-800/80 focus:ring-2 focus:ring-[#B89868]/25 focus:border-[#B89868] transition-all rounded-xl dark:text-white backdrop-blur-sm"
               />
             </div>
 
             <div className="space-y-1.5 xl:space-y-2">
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center px-1">
                 <Label htmlFor="password" className="text-stone-700 dark:text-stone-300 text-xs xl:text-sm font-semibold">Password</Label>
-                <Link href="/forgot-password" className="text-[10px] xl:text-xs text-[#B89868] dark:text-[#B89868]/90 hover:underline font-medium">
+                <Link href="/forgot-password" className="text-[10px] xl:text-xs text-[#B89868] dark:text-[#B89868]/90 hover:underline font-bold transition-all">
                   Forgot?
                 </Link>
               </div>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="h-11 bg-[#FDFCF9] dark:bg-stone-900/30 border-[#E5E2DC] dark:border-stone-850 focus:ring-2 focus:ring-[#B89868]/20 focus:border-[#B89868] transition-all rounded-xl dark:text-white"
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="h-11 pr-11 bg-[#FDFCF9]/85 dark:bg-stone-900/10 border-[#E5E2DC] dark:border-stone-800/80 focus:ring-2 focus:ring-[#B89868]/25 focus:border-[#B89868] transition-all rounded-xl dark:text-white backdrop-blur-sm"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 transition-colors p-1"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4.5 w-4.5" />
+                  ) : (
+                    <Eye className="h-4.5 w-4.5" />
+                  )}
+                </button>
+              </div>
             </div>
 
             <Button 
               type="submit" 
-              className="w-full py-5 xl:py-6 bg-[#1C1B19] hover:bg-[#2C2A27] dark:bg-[#FAF9F5] dark:hover:bg-[#E5E2DC] text-[#FAF9F5] dark:text-[#121315] font-semibold rounded-xl shadow-sm group transition-all"
+              className="w-full py-5 xl:py-6 bg-[#1C1B19] hover:bg-[#2C2A27] dark:bg-[#FAF9F5] dark:hover:bg-[#E5E2DC] text-[#FAF9F5] dark:text-[#121315] font-semibold rounded-xl shadow-md active:scale-[0.98] transition-all duration-200 flex items-center justify-center"
               disabled={isLoading}
             >
               {isLoading ? (
                 <div className="h-5 w-5 border-2 border-stone-400 border-t-stone-800 rounded-full animate-spin"></div>
               ) : (
                 <span className="flex items-center gap-2">
-                  Sign In <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  Sign In <ArrowRight className="h-4 w-4" />
                 </span>
               )}
             </Button>
           </form>
 
-          <p className="text-center text-xs xl:text-sm text-stone-500 dark:text-stone-500">
+          <p className="text-center text-xs xl:text-sm text-stone-500 dark:text-stone-500 font-medium">
             Professional access needed?{' '}
-            <Link href="/signup" className="text-[#B89868] dark:text-[#B89868]/90 font-bold hover:underline">
+            <Link href="/signup" className="text-[#B89868] dark:text-[#B89868]/90 font-bold hover:underline transition-all">
               Join the Hub
             </Link>
           </p>
